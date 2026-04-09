@@ -1,4 +1,3 @@
-
 /* ==========================================================================
    1. CSS Reset & Base Styles (기본 설정)
    ========================================================================== */
@@ -13,6 +12,9 @@ body {
     background-color: #f8f9fa;
     color: #333;
     line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* 화면 높이를 최소 100%로 유지 */
 }
 
 ul { list-style: none; }
@@ -29,6 +31,11 @@ button { cursor: pointer; border: none; background: none; }
 /* ==========================================================================
    2. Main Header (상단 메뉴)
    ========================================================================== */
+
+main.container.wide {
+    flex: 1; /* 남는 빈 공간을 main이 모두 차지해서 푸터를 바닥으로 밀어냄 */
+}
+
 .main-header {
     background: #fff;
     border-bottom: 1px solid #eee;
@@ -64,7 +71,12 @@ button { cursor: pointer; border: none; background: none; }
 
 .login-btn {
     font-weight: bold;
-    color: #4439c4 !important;
+    color: #4439c4;
+}
+
+.join-btn {
+    font-weight: bold;
+    color: #4439c4;
 }
 
 /* ==========================================================================
@@ -73,25 +85,24 @@ button { cursor: pointer; border: none; background: none; }
 .top-content {
     display: flex;
     gap: 24px;
-    margin-top: 40px;
+    margin-top: 30px;
+    align-items: stretch; /* 왼쪽과 오른쪽 높이를 맞춤 */
 }
 
-/* 왼쪽: 슬라이드 배너 */
-.banner-slider { 
-    flex: 1.8;
-    background-color: #eef4ff;
+/* 왼쪽 슬라이더 스타일 */
+.banner-slider {
+    flex: 1; /* 사이드바를 제외한 나머지 공간 전체 차지 */
+    position: relative;
     border-radius: 24px;
-    padding: 60px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    overflow: hidden;
+    background-color: #f8fbff; /* 배경색 */
+    min-height: 450px;
 }
 
 .banner-text h2 {
-    font-size: 36px;
+    font-size: 32px;
+    line-height: 1.4;
     margin-bottom: 20px;
-    line-height: 1.2;
-    color: #111;
 }
 
 .banner-text p {
@@ -109,14 +120,58 @@ button { cursor: pointer; border: none; background: none; }
     font-weight: 600;
 }
 
-.banner-img img { width: 250px; }
+.banner-img img { width: 300px; }
 
-/* 오른쪽: 검색 및 정책 그리드 */
+.slider-viewport {
+    width: 100%;
+    height: 100%;
+}
+
+.slider-track {
+    display: flex;
+    transition: transform 0.5s ease-in-out; /* 부드러운 이동 효과 */
+    height: 100%;
+}
+
+.slide {
+    min-width: 100%;
+    display: flex;
+    padding: 60px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* 깔끔한 화살표 버튼 스타일 (박스 안쪽 배치) */
+.slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.7);
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+}
+.slider-arrow:hover {
+    background: #fff;
+}
+
+.slider-arrow.prev { left: 20px; }
+.slider-arrow.next { right: 20px; }
+
+.slider-arrow img {
+    width: 18px; /* 화살표 크기 조절 */
+    height: auto;
+}
+
+/* 오른쪽 사이드바 (검색 + 그리드) - 하단과 맞추기 위해 너비 고정 */
 .side-content {
-    flex: 1;
+    width: 400px; /* 하단 card-side-group과 동일하게 설정하여 수직선 맞춤 */
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
 }
 
 .side-content h3 {
@@ -143,8 +198,6 @@ button { cursor: pointer; border: none; background: none; }
     font-size: 20px;
 }
 
-
-
 /* 정책 그리드 (이미지 버전) */
 .grid-container { 
     display: grid; 
@@ -153,6 +206,7 @@ button { cursor: pointer; border: none; background: none; }
     border-radius: 16px; 
     overflow: hidden;
     background: #fff;
+    flex: 1; /* 사이드바 높이에 맞춰 채우기 */
 }
 
 .grid-item { 
@@ -225,9 +279,9 @@ button { cursor: pointer; border: none; background: none; }
 
 .card-icon { width: 90px; }
 
-/* 오른쪽 전화번호/신혼부부 카드 */
+/* 오른쪽 전화번호/신혼부부 카드 - 상단 side-content와 너비 일치 */
 .card-side-group {
-    flex: 0.8;
+    width: 400px; /* 상단 side-content와 동일하게 설정하여 수직선 맞춤 */
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -344,12 +398,12 @@ button { cursor: pointer; border: none; background: none; }
 }
 
 .footer-links .highlight {
-    color: #ff9d00; /* 오렌지색 강조 */
+    color: #685AFF; /* 오렌지색 강조 */
     font-weight: 700;
 }
 
 .footer-links .blue-link {
-    color: #2563eb;
+    color: #FF5B5B;
     font-weight: 700;
 }
 

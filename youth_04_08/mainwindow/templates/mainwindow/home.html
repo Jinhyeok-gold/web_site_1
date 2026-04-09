@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>주거복지 플랫폼 - 마이홈 스타일</title>
-    <link rel="stylesheet" href="{% static 'mainwindow/home.css' %}">
+    <title>청년 신혼부부 맞춤 서비스 - 딱맞춤</title>
+    <link rel="stylesheet" href="{% static 'mainwindow/css/home.css' %}">
 </head>
 <body>
 
@@ -16,76 +16,124 @@
             </div>
             <nav class="main-nav">
                 <ul>
-                    <li><a href="#" onclick="setView('hero')">마이서비스</a></li>
-                    <li><a href="#">내집찾기</a></li>
+                    <li><a href="#" onclick="setView('hero')">마이리포트</a></li>
+                    <li><a href="#">자가진단</a></li>
                     <li><a href="#">정보마당</a></li>
                     <li><a href="#">추가지원</a></li>
                 </ul>
             </nav>
             <div class="header-util">
-                <span>주거복지지도찾기</span>
-                <span>공공데이터개방</span>
+                <a href="#" class="welfaremap-btn">복지지도찾기</a>
+                <a href="#" class="publicdata-btn">공공데이터개방</a>
                 <a href="#" class="login-btn">로그인</a>
+                <a href="#" class="join-btn">회원가입</a>
             </div>
         </div>
     </header>
 
     <main class="container wide">
-        
-        <!-- View: Hero (Original Home Content) -->
         <div id="view-hero" class="fade-in">
-            <section class="top-content">
-                <div class="banner-slider">
-                    <div class="banner-text">
-                        <h2>전국 주거지역<br>지원 정책들을<br>확인해보세요!</h2>
-                        <p>공공기관이 공급하는 전국의 임대·분양주택<br>입주자 모집공고와 공공임대주택을 검색할 수 있습니다.</p>
-                        <a href="#" class="btn-more" onclick="setView('form')">지원정책찾기 바로가기 →</a>
+        <section class="top-content">
+            
+            <div class="banner-slider">
+                <button class="slider-arrow prev" onclick="moveSlider(-1)">
+                    <img src="{% static 'mainwindow/images/arrow_l.png' %}" alt="이전">
+                </button>
+                <button class="slider-arrow next" onclick="moveSlider(1)">
+                    <img src="{% static 'mainwindow/images/arrow_r.png' %}" alt="다음">
+                </button>
+
+                <div class="slider-viewport">
+                    <div class="slider-track" id="sliderTrack">
+                        <div class="slide slide-bg-1">
+                            <div class="banner-text">
+                                <h2>전국 주거지역<br>지원 정책들을<br>확인해보세요!</h2>
+                                <p>공공기관이 공급하는 전국의 임대·분양주택 정보를 한눈에 확인하세요.</p>
+                                <a href="#" class="btn-more" onclick="setView('form')">지원정책찾기 바로가기 →</a>
+                            </div>
+                            <div class="banner-img">
+                                <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
+                            </div>
+                        </div>
+                        <div class="slide slide-bg-2">
+                            <div class="banner-text">
+                                <h2>내게 맞는<br>주거 복지 혜택</h2>
+                                <p>임시 문구입니다. 나중에 원하는 내용으로 수정하세요.</p>
+                                <a href="#" class="btn-more">자세히 보기 →</a>
+                            </div>
+                            <div class="banner-img">
+                                <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
+                            </div>
+                        </div>
+                        <div class="slide slide-bg-3">
+                            <div class="banner-text">
+                                <h2>내게 맞는<br>주거 복지 혜택</h2>
+                                <p>임시 문구입니다. 나중에 원하는 내용으로 수정하세요.</p>
+                                <a href="#" class="btn-more">자세히 보기 →</a>
+                            </div>
+                            <div class="banner-img">
+                                <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
+                            </div>
+                        </div>
+                        <div class="slide slide-bg-4">
+                            <div class="banner-text">
+                                <h2>내게 맞는<br>주거 복지 혜택</h2>
+                                <p>임시 문구입니다. 나중에 원하는 내용으로 수정하세요.</p>
+                                <a href="#" class="btn-more">자세히 보기 →</a>
+                            </div>
+                            <div class="banner-img">
+                                <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
+                            </div>
+                        </div>
                     </div>
-                    <div class="banner-img">
-                        <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
+                </div>
+            </div>
+
+            <aside class="side-content">
+                <div class="search-box">
+                    <h3>지역별 주거복지 검색</h3>
+                    <div class="search-input">
+                        <input type="text" placeholder="내가 찾는 지역 정보를 알아보세요!">
+                        <button type="button">
+                            <img src="{% static 'mainwindow/images/search.png' %}" alt="검색">
+                        </button>
                     </div>
                 </div>
 
-                <div class="side-content">
-                    <div class="search-box">
-                        <h3>지역별 주거복지 검색</h3>
-                        <div class="search-input">
-                            <input type="text" placeholder="내가 찾는 지역의 주거복지 정보를 알아보세요!">
-                            <button type="button"><img src="{% static 'mainwindow/images/search.png' %}" alt="검색"></button>
+                <div class="policy-grid">
+                    <h3>주거복지 주요정책</h3>
+                    <div class="grid-container">
+                        <div class="grid-item">
+                            <img src="{% static 'mainwindow/images/briefcase.png' %}" alt="취업">
+                            <span>청년취업소개</span>
                         </div>
-                    </div>
-
-                    <div class="policy-grid">
-                        <h3>주거복지 주요정책</h3>
-                        <div class="grid-container">
-                            <div class="grid-item">
-                                <img src="{% static 'mainwindow/images/briefcase.png' %}" alt="임대주택">
-                                <span>청년취업소개</span>
-                            </div>
-                            <div class="grid-item">
-                                <img src="{% static 'mainwindow/images/home.png' %}" alt="공공분양">
-                                <span>청년주거지원</span>
-                            </div>
-                            <div class="grid-item">
-                                <img src="{% static 'mainwindow/images/profit.png' %}" alt="주택금융">
-                                <span>금융상품소개</span>
-                            </div>
-                            <div class="grid-item">
-                                <img src="{% static 'mainwindow/images/pension.png' %}" alt="주거급여">
-                                <span>청년이자지원</span>
-                            </div>
-                            <div class="grid-item">
-                                <img src="{% static 'mainwindow/images/couple.png' %}" alt="기타지원">
-                                <span>신혼부부지원</span>
-                            </div>
-                            <div class="grid-item">
-                                <img src="{% static 'mainwindow/images/home.png' %}" alt="기관찾기">
-                                <span>기타지원소개</span>
-                            </div>
+                        <div class="grid-item">
+                            <img src="{% static 'mainwindow/images/home.png' %}" alt="주거">
+                            <span>청년주거지원</span>
+                        </div>
+                        <div class="grid-item">
+                            <img src="{% static 'mainwindow/images/profit.png' %}" alt="금융">
+                            <span>금융상품소개</span>
+                        </div>
+                        <div class="grid-item">
+                            <img src="{% static 'mainwindow/images/pension.png' %}" alt="이자">
+                            <span>청년이자지원</span>
+                        </div>
+                        <div class="grid-item">
+                            <img src="{% static 'mainwindow/images/couple.png' %}" alt="신혼">
+                            <span>신혼부부지원</span>
+                        </div>
+                        <div class="grid-item">
+                            <img src="{% static 'mainwindow/images/home.png' %}" alt="기타">
+                            <span>기타지원소개</span>
                         </div>
                     </div>
                 </div>
-            </section>
+            </aside>
+
+        </section>
+        
+        </div>
 
             <section class="bottom-cards">
                 <div class="card card-blue">
@@ -169,7 +217,7 @@
                             </div>
                         </div>
                         <div class="step-action-row">
-                            <button type="button" class="wizard-secondary-btn" onclick="nextStep(1)">이전</button>
+                            <button type="button" class="wizard-secondary-btn" onclick="nextStep(1)">이전으로</button>
                             <button type="button" class="nav-btn-wizard wizard-primary-btn" onclick="nextStep(3)">다음으로 (3/3) →</button>
                         </div>
                     </div>
@@ -462,5 +510,6 @@
         }
     </script>
 
+    <script src="{% static 'mainwindow/js/daemoon.js'%}"></script>
 </body>
 </html>
