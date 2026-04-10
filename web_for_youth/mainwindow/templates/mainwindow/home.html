@@ -12,14 +12,50 @@
     <header class="main-header">
         <div class="container header-inner">
             <div class="logo">
-                <img src="{% static 'mainwindow/images/logo_test.png' %}" alt="마이홈 로고">
+                <a href="{% url 'home' %}" class="logo" onclick="setView('hero'); return false;">
+                    <img src="{% static 'mainwindow/images/logo_1.png' %}" alt="딱맞춤 로고">
+                </a>
             </div>
             <nav class="main-nav">
-                <ul>
-                    <li><a href="#" onclick="setView('hero')">마이리포트</a></li>
-                    <li><a href="#">자가진단</a></li>
-                    <li><a href="#">정보마당</a></li>
-                    <li><a href="#">추가지원</a></li>
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#" onclick="setView('hero')">마이리포트</a></li>
+                    <li class="nav-item"><a href="#">자가진단</a></li>
+                    <li class="nav-item"><a href="#">정보마당</a></li>
+                    <li class="nav-item"><a href="#">추가지원</a></li>
+
+                    <div class="dropdown-panel">
+                        <div class="container dropdown-inner">
+                            <div class="drop-col">
+                                <h4>마이리포트</h4>
+                                <ul>
+                                    <li><a href="#">리포트 조회</a></li>
+                                    <li><a href="#">맞춤 정책 관리</a></li>
+                                </ul>
+                            </div>
+                            <div class="drop-col">
+                                <h4>자가진단</h4>
+                                <ul>
+                                    <li><a href="#">주거복지 자가진단</a></li>
+                                    <li><a href="#">금융상품 진단</a></li>
+                                </ul>
+                            </div>
+                            <div class="drop-col">
+                                <h4>정보마당</h4>
+                                <ul>
+                                    <li><a href="#">공공주택공고</a></li>
+                                    <li><a href="#">주거복지제도안내</a></li>
+                                    <li><a href="#">자주묻는질문</a></li>
+                                </ul>
+                            </div>
+                            <div class="drop-col">
+                                <h4>추가지원</h4>
+                                <ul>
+                                    <li><a href="#">복지지도찾기</a></li>
+                                    <li><a href="#">공공데이터개방</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </ul>
             </nav>
             <div class="header-util">
@@ -33,121 +69,131 @@
 
     <main class="container wide">
         <div id="view-hero" class="fade-in">
-        <section class="top-content">
-            
-            <div class="banner-slider">
-                <button class="slider-arrow prev" onclick="moveSlider(-1)">
-                    <img src="{% static 'mainwindow/images/arrow_l.png' %}" alt="이전">
-                </button>
-                <button class="slider-arrow next" onclick="moveSlider(1)">
-                    <img src="{% static 'mainwindow/images/arrow_r.png' %}" alt="다음">
-                </button>
+            <section class="top-content">
+                
+                <div class="banner-slider">
+                    <button class="slider-arrow prev" onclick="moveSlider(-1)">
+                        <img src="{% static 'mainwindow/images/arrow_l.png' %}" alt="이전">
+                    </button>
+                    <button class="slider-arrow next" onclick="moveSlider(1)">
+                        <img src="{% static 'mainwindow/images/arrow_r.png' %}" alt="다음">
+                    </button>
 
-                <div class="slider-viewport">
-                    <div class="slider-track" id="sliderTrack">
-                        <div class="slide slide-bg-1">
-                            <div class="banner-text">
-                                <h2>전국 주거지역<br>지원 정책들을<br>확인해보세요!</h2>
-                                <p>공공기관이 공급하는 전국의 임대·분양주택 정보를 한눈에 확인하세요.</p>
-                                <a href="#" class="btn-more" onclick="setView('form')">지원정책찾기 바로가기 →</a>
+                    <div class="slider-viewport">
+                        <div class="slider-track" id="sliderTrack">
+                            <div class="slide slide-bg-1">
+                                <div class="banner-text">
+                                    <h2>전국 주거지역<br>지원 정책들을<br>확인해보세요!</h2>
+                                    <p>공공기관이 공급하는 전국의 임대·분양주택 정보를 한눈에 확인하세요.</p>
+                                    <a href="#" class="btn-more" onclick="setView('form')">지원정책찾기 바로가기 →</a>
+                                </div>
+                                <div class="banner-img">
+                                    <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
+                                </div>
                             </div>
-                            <div class="banner-img">
-                                <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
+                            <div class="slide slide-bg-2">
+                                <div class="banner-text">
+                                    <h2>내게 맞는<br>주거 복지 혜택</h2>
+                                    <p>임시 문구입니다. 나중에 원하는 내용으로 수정하세요.</p>
+                                    <a href="#" class="btn-more">자세히 보기 →</a>
+                                </div>
+                                <div class="banner-img">
+                                    <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
+                                </div>
                             </div>
-                        </div>
-                        <div class="slide slide-bg-2">
-                            <div class="banner-text">
-                                <h2>내게 맞는<br>주거 복지 혜택</h2>
-                                <p>임시 문구입니다. 나중에 원하는 내용으로 수정하세요.</p>
-                                <a href="#" class="btn-more">자세히 보기 →</a>
+                            <div class="slide slide-bg-3">
+                                <div class="banner-text">
+                                    <h2>내게 맞는<br>주거 복지 혜택</h2>
+                                    <p>임시 문구입니다. 나중에 원하는 내용으로 수정하세요.</p>
+                                    <a href="#" class="btn-more">자세히 보기 →</a>
+                                </div>
+                                <div class="banner-img">
+                                    <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
+                                </div>
                             </div>
-                            <div class="banner-img">
-                                <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
-                            </div>
-                        </div>
-                        <div class="slide slide-bg-3">
-                            <div class="banner-text">
-                                <h2>내게 맞는<br>주거 복지 혜택</h2>
-                                <p>임시 문구입니다. 나중에 원하는 내용으로 수정하세요.</p>
-                                <a href="#" class="btn-more">자세히 보기 →</a>
-                            </div>
-                            <div class="banner-img">
-                                <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
-                            </div>
-                        </div>
-                        <div class="slide slide-bg-4">
-                            <div class="banner-text">
-                                <h2>내게 맞는<br>주거 복지 혜택</h2>
-                                <p>임시 문구입니다. 나중에 원하는 내용으로 수정하세요.</p>
-                                <a href="#" class="btn-more">자세히 보기 →</a>
-                            </div>
-                            <div class="banner-img">
-                                <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
+                            <div class="slide slide-bg-4">
+                                <div class="banner-text">
+                                    <h2>내게 맞는<br>주거 복지 혜택</h2>
+                                    <p>임시 문구입니다. 나중에 원하는 내용으로 수정하세요.</p>
+                                    <a href="#" class="btn-more">자세히 보기 →</a>
+                                </div>
+                                <div class="banner-img">
+                                    <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <aside class="side-content">
-                <div class="search-box">
-                    <h3>지역별 주거복지 검색</h3>
-                    <div class="search-input">
-                        <input type="text" placeholder="내가 찾는 지역 정보를 알아보세요!">
-                        <button type="button">
-                            <img src="{% static 'mainwindow/images/search.png' %}" alt="검색">
-                        </button>
-                    </div>
-                </div>
-
-                <div class="policy-grid">
-                    <h3>주거복지 주요정책</h3>
-                    <div class="grid-container">
-                        <div class="grid-item">
-                            <img src="{% static 'mainwindow/images/briefcase.png' %}" alt="취업">
-                            <span>청년취업소개</span>
-                        </div>
-                        <div class="grid-item">
-                            <img src="{% static 'mainwindow/images/home.png' %}" alt="주거">
-                            <span>청년주거지원</span>
-                        </div>
-                        <div class="grid-item">
-                            <img src="{% static 'mainwindow/images/profit.png' %}" alt="금융">
-                            <span>금융상품소개</span>
-                        </div>
-                        <div class="grid-item">
-                            <img src="{% static 'mainwindow/images/pension.png' %}" alt="이자">
-                            <span>청년이자지원</span>
-                        </div>
-                        <div class="grid-item">
-                            <img src="{% static 'mainwindow/images/couple.png' %}" alt="신혼">
-                            <span>신혼부부지원</span>
-                        </div>
-                        <div class="grid-item">
-                            <img src="{% static 'mainwindow/images/home.png' %}" alt="기타">
-                            <span>기타지원소개</span>
+                <aside class="side-content">
+                    <div class="search-box">
+                        <h3>지역별 주거복지 검색</h3>
+                        <div class="search-input">
+                            <input type="text" id="region-search-input" placeholder="내가 찾는 지역 정보를 알아보세요!" onkeydown="if(event.key==='Enter') searchRegion()">
+                            <button type="button" id="region-search-btn" onclick="searchRegion()">
+                                <img src="{% static 'mainwindow/images/search.png' %}" alt="검색">
+                            </button>
                         </div>
                     </div>
-                </div>
-            </aside>
 
-        </section>
+                    <div class="policy-grid">
+                        <h3>주거복지 주요정책</h3>
+                        <div class="grid-container">
+                            <a href="https://www.youthcenter.go.kr/" target="_blank" class="grid-link">
+                            <div class="grid-item">
+                                <img src="{% static 'mainwindow/images/insurance-policy.png' %}" alt="취업">
+                                <span>청년신혼 정책소개</span>
+                            </div>
+                            </a>
+                            <a href="https://www.myhome.go.kr/" target="_blank" class="grid-link">
+                            <div class="grid-item">
+                                <img src="{% static 'mainwindow/images/house.png' %}" alt="주거">
+                                <span>청년신혼 주거지원</span>
+                            </div>
+                            </a>
+                            <a href="https://nhuf.molit.go.kr/" target="_blank" class="grid-link">
+                            <div class="grid-item">
+                                <img src="{% static 'mainwindow/images/profit.png' %}" alt="금융">
+                                <span>금융상품소개</span>
+                            </div>
+                            </a>
+                            <a href="https://nhuf.molit.go.kr/FP/FP08/FP0801/FP08010101.jsp" target="_blank" class="grid-link">
+                            <div class="grid-item">
+                                <img src="{% static 'mainwindow/images/pension.png' %}" alt="이자">
+                                <span>청년신혼 이자지원</span>
+                            </div>
+                            </a>
+                            <a href="https://www.bokjiro.go.kr/" target="_blank" class="grid-link">
+                            <div class="grid-item">
+                                <img src="{% static 'mainwindow/images/couple.png' %}" alt="신혼">
+                                <span>청년신혼부부 지원</span>
+                            </div>
+                            </a>
+                            <a href="https://www.lh.or.kr/" target="_blank" class="grid-link">
+                            <div class="grid-item">
+                                <img src="{% static 'mainwindow/images/home.png' %}" alt="기타">
+                                <span>기타 지원소개</span>
+                            </div>
+                            </a>
+                        </div>
+                    </div>
+                </aside>
+
+            </section>
         
-        </div>
-
             <section class="bottom-cards">
                 <div class="card card-blue">
                     <div class="card-text">
                         <h3>주거복지 지도찾기</h3>
                         <p>관심 지역의 임대/분양 주택 정보를<br>지도에서 찾아보세요!</p>
-                        <button class="card-btn">찾아보기</button>
+                        <button class="card-btn" id="btn-map-search">찾아보기</button>
                     </div>
                     <img src="{% static 'mainwindow/images/map.png' %}" alt="지도 아이콘" class="card-icon">
                 </div>
 
                 <div class="card card-orange">
                     <div class="card-text">
-                        <h3>자가진단</h3>
+                        <h3>딱맞춤 자가진단</h3>
                         <p>나에게 딱! 맞는 맞춤형 주거복지 정보를<br>자가진단을 통해 추천해드립니다!</p>
                         <button class="card-btn" onclick="setView('form')">진단하기</button>
                     </div>
@@ -166,6 +212,7 @@
                 </div>
             </section>
         </div>
+    
 
         <!-- View: Form Wizard -->
         <div id="view-form" class="hidden fade-in view-section">
@@ -312,7 +359,7 @@
             <div class="container">
                 <div class="footer-info">
                     <div class="footer-logo">
-                        <img src="{% static 'mainwindow/images/logo_test.png' %}" alt="마이홈 로고 그레이" class="footer-logo-gray">
+                        <img src="{% static 'mainwindow/images/logo_2.png' %}" alt="딱맞춤 로고 그레이" class="footer-logo-gray">
                     </div>
                     <div class="footer-address">
                         <p><span>국토교통부</span> (30103)세종특별자치시 도움6로 11 <span>|</span> <span>주택도시보증공사(HUG)</span> (48400)부산광역시 남구 문현금융로 40 BIFC </p>
@@ -333,8 +380,8 @@
         <ul>
             <li>
                 <a href="#">
-                    <img src="{% static 'mainwindow/images/date.png' %}" alt="모집공고">
-                    <span>정책공고</span>
+                    <img src="{% static 'mainwindow/images/date.png' %}" alt="마이리포트">
+                    <span>마이리포트</span>
                 </a>
             </li>
             <li>
@@ -345,14 +392,14 @@
             </li>
             <li>
                 <a href="#">
-                    <img src="{% static 'mainwindow/images/date.png' %}" alt="지도찾기">
-                    <span>지도찾기</span>
+                    <img src="{% static 'mainwindow/images/date.png' %}" alt="정보마당">
+                    <span>정보마당</span>
                 </a>
             </li>
             <li>
                 <a href="#">
-                    <img src="{% static 'mainwindow/images/date.png' %}" alt="용어사전">
-                    <span>용어사전</span>
+                    <img src="{% static 'mainwindow/images/date.png' %}" alt="추가지원">
+                    <span>추가지원</span>
                 </a>
             </li>
             <li>
@@ -380,137 +427,8 @@
         </form>
     </div>
 
-
-    <script>
-        let currentUserData = null;
-        let matchedPolicies = [];
-
-        function setView(viewId) {
-            ['hero', 'form', 'matching', 'result'].forEach(v => {
-                const el = document.getElementById('view-' + v);
-                if(el) el.classList.add('hidden');
-            });
-            document.getElementById('view-' + viewId).classList.remove('hidden');
-            window.scrollTo(0,0);
-        }
-
-        function nextStep(step) {
-            [1, 2, 3].forEach(s => {
-                document.getElementById('step-' + s).classList.remove('active');
-                document.getElementById('dot-' + s).classList.remove('active');
-            });
-            document.getElementById('step-' + step).classList.add('active');
-            document.getElementById('dot-' + step).classList.add('active');
-        }
-
-        async function handleMatch() {
-            setView('matching');
-            
-            const userData = {
-                age: parseInt(document.getElementById('inp-age').value),
-                income: parseInt(document.getElementById('inp-income').value),
-                region: document.getElementById('inp-region').value,
-                marital: document.getElementById('inp-marital').value,
-                nonHomeowner: document.getElementById('inp-non-homeowner').checked,
-                lowIncome: document.getElementById('inp-low-income').checked
-            };
-            currentUserData = userData;
-
-            try {
-                // Fetch Policies (POST로 진단 데이터 전송)
-                const res = await fetch('/chatbot/api/policies/', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}'},
-                    body: JSON.stringify({ user_data: userData })
-                });
-                const data = await res.json();
-                const allPolicies = data.policies || [];
-                
-                // Score locally for instant feedback
-                matchedPolicies = allPolicies.map(p => {
-                    let score = p.score || 70; // Use server score if available
-                    if(p.ageMax && userData.age > p.ageMax) score *= 0.5;
-                    if(p.incomeLimit && userData.income > p.incomeLimit) score *= 0.5;
-                    return {...p, score};
-                }).sort((a,b) => b.score - a.score);
-
-                renderResults();
-                await fetchAIReport(userData, matchedPolicies.slice(0, 5));
-                setView('result');
-            } catch(e) {
-                console.error(e);
-                setView('form');
-                alert("분석 중 오류가 발생했습니다.");
-            }
-        }
-
-        function renderResults() {
-            const grid = document.getElementById('policy-results-grid');
-            grid.innerHTML = matchedPolicies.slice(0, 6).map(p => `
-                <div class="policy-card-result">
-                    <div class="score-badge">${Math.round(p.score)}%</div>
-                    <h4>${p.title}</h4>
-                    <p>${p.summary}</p>
-                </div>
-            `).join('');
-            
-            document.getElementById('policy-count').innerText = matchedPolicies.length + '건';
-            document.getElementById('gauge-text').innerText = Math.round(matchedPolicies[0]?.score || 0) + '%';
-        }
-
-        async function fetchAIReport(userData, topMatches) {
-            const box = document.getElementById('ai-report-content');
-            try {
-                const res = await fetch('/chatbot/api/ai-report/', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}'},
-                    body: JSON.stringify({ user_data: userData, top_matches: topMatches })
-                });
-                const data = await res.json();
-                box.innerHTML = `<p class="report-paragraph">${data.report}</p>`;
-            } catch(e) { 
-                box.innerText = "보고서 생성 중 세션이 만료되었습니다. 아래 리스트를 참고해 주세요."; 
-            }
-        }
-
-        // Chatbot Functions
-        function toggleChatbot() { document.getElementById('chatbot-modal').classList.toggle('hidden'); }
-        
-        async function handleChatSubmit(e) {
-            e.preventDefault();
-            const input = document.getElementById('chat-input');
-            const msg = input.value.trim();
-            if(!msg) return;
-
-            appendChat('user', msg);
-            input.value = '';
-
-            try {
-                const response = await fetch('/chatbot/api/chat/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                    },
-                    body: JSON.stringify({ message: msg, user_data: currentUserData })
-                });
-                const data = await response.json();
-                appendChat('bot', data.reply);
-            } catch(e) {
-                appendChat('bot', "오류가 발생했습니다.");
-            }
-        }
-
-        function appendChat(role, text) {
-            const box = document.getElementById('chat-messages');
-            const div = document.createElement('div');
-            div.className = `chat-bubble chat-${role}`;
-            div.innerHTML = text.replace(/\n/g, '<br/>');
-            box.appendChild(div);
-            box.scrollTop = box.scrollHeight;
-        }
-    </script>
-
+    <script src="{% static 'mainwindow/js/form.js' %}"></script>
+    <script src="{% static 'mainwindow/js/map.js' %}"></script>
     <script src="{% static 'mainwindow/js/daemoon.js'%}"></script>
 </body>
 </html>

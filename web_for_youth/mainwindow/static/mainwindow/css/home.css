@@ -1,15 +1,21 @@
 /* ==========================================================================
    1. CSS Reset & Base Styles (기본 설정)
    ========================================================================== */
+
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+html, body {
+    font-family: 'Pretendard', sans-serif;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
 }
 
 body {
-    background-color: #f8f9fa;
+    background-color: #fcfcfc;
     color: #333;
     line-height: 1.6;
     display: flex;
@@ -48,17 +54,152 @@ main.container.wide {
     align-items: center;
 }
 
-.logo img { height: 50px; }
-
-.main-nav ul {
+.logo {
+    height: 50px;
     display: flex;
-    gap: 40px;
+    align-items: center;
+    overflow: visible;
 }
 
-.main-nav ul li a {
-    font-size: 18px;
-    font-weight: 700;
+.logo img {
+    height: 50px;                 /* 레이아웃 기준 높이 */
+    transform: scale(1.5);        /* 보이는 크기만 확대 */
+    transform-origin: left center;
+    display: block;
+}
+
+/* 1. 네비게이션 부모 설정 */
+.main-nav {
+    position: static; /* 드롭다운이 헤더 전체 너비를 쓸 수 있게 함 */
+}
+
+.main-nav ul.nav-list {
+    display: flex;
+    gap: 40px;
+    height: 60px; /* 헤더 높이에 맞게 고정 (글자 흔들림 방지) */
+    align-items: center;
+}
+
+.nav-item {
+    position: relative;
+    height: 100%; /* 부모 높이 전체 사용 */
+    display: flex;
+    align-items: center; /* 글자를 항상 수직 중앙에 고정 */
+}
+
+/* 2. 메뉴 하단 파란색 바 (위치 고정) */
+.nav-item::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; /* 메인 헤더의 border-bottom 선과 겹치게 배치 */
+    left: 0;
+    width: 0;
+    height: 4px;
+    background-color: #2563eb;
+    transition: width 0.2s ease;
+    z-index: 1001; /* 드롭다운보다 위에 위치 */
+}
+
+.nav-item:hover::after {
+    width: 100%;
+}
+
+/* 3. 전체 드롭다운 패널 */
+.dropdown-panel {
+    position: absolute;
+    top: 91px; /* 메인 헤더 border-bottom 바로 아래 지점 (본인 환경에 맞게 미세조정) */
+    left: 0;
+    width: 100%;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    z-index: 998; /* 네비게이션 선보다 아래로 설정 */
+    
+    /* 애니메이션: 위에서 아래로 펼쳐지는 느낌 */
+    visibility: hidden;
+    opacity: 0;
+    max-height: 0; /* 높이를 0에서 시작 */
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.3s ease, visibility 0.3s;
+}
+
+/* 호버 시 상태 */
+.main-header:hover .dropdown-panel {
+    visibility: visible;
+    opacity: 1;
+    max-height: 400px; /* 드롭다운이 충분히 펼쳐질 수 있는 높이 */
+}
+
+/* 1. 드롭다운 내부 컨테이너 */
+.dropdown-inner {
+    max-width: 1440px; /* 전체 컨테이너 너비 유지 */
+    width: 95%;
+    margin: 0 auto;
+    
+    display: flex;
+    /* 중앙 정렬 대신 왼쪽 정렬로 변경하여 기준점을 맞춤 */
+    justify-content: flex-start; 
+    align-items: flex-start;
+    padding: 40px 0 60px;
+
+    /* [중요] 메인 메뉴(로고 옆)가 시작되는 위치만큼 왼쪽 여백을 줍니다. 
+       이미지상 로고와 메뉴 사이의 거리를 계산해서 넣어주세요. */
+    padding-left: 280px; /* 이 수치를 조절해서 '마이리포트' 위치를 맞추세요 */
+}
+
+/* 2. 각 열(Column) 스타일 */
+.drop-col {
+    /* 각 열의 최소 너비를 설정하여 글자 줄바꿈 방지 */
+    min-width: 160px; 
+    text-align: left; /* 텍스트 자체는 왼쪽 정렬 (깔끔함) */
+}
+
+/* 3. 하위 메뉴 제목 (마이리포트, 자가진단 등) */
+.drop-col h4 {
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 25px;
     color: #333;
+    position: relative;
+    display: inline-block;
+}
+
+/* 2. 각 열(Column) 스타일 */
+.drop-col {
+    /* [중요] 상단 메뉴 사이의 간격(gap) + 메뉴 글자 너비를 고려한 고정 너비 */
+    /* 상단 .main-nav ul의 gap이 40px이므로, 글자 너비 포함 110~130px 정도가 적당합니다. */
+    width: 110px;
+    margin-right: 40px; /* 상단 메뉴의 gap(40px)과 일치시켜야 수직이 맞습니다. */
+    text-align: center; /* 헤드메뉴가 중앙 정렬 느낌이면 이것도 center */
+}
+
+.drop-col h4 {
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 25px;
+    color: #333;
+    /* 이미지처럼 헤드메뉴와 똑같은 느낌을 주려면 선을 제거하거나 중앙 배치 */
+}
+
+.drop-col ul {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center; /* 하위 항목들도 열의 중앙에 배치 */
+}
+
+.drop-col ul li a {
+    font-size: 15px;
+    color: #666;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: block;
+}
+
+/* 하위 메뉴 호버 효과 */
+.drop-col ul li a:hover {
+    color: #2563eb;
+    transform: translateX(5px); /* 오른쪽으로 살짝 이동하는 디테일 */
 }
 
 .header-util {
@@ -95,7 +236,7 @@ main.container.wide {
     position: relative;
     border-radius: 24px;
     overflow: hidden;
-    background-color: #f8fbff; /* 배경색 */
+    background-color: #c8e0ff; /* 배경색 */
     min-height: 450px;
 }
 
@@ -212,7 +353,7 @@ main.container.wide {
 .grid-item { 
     padding: 25px 10px;
     text-align: center;
-    border: 0.5px solid #e0fff6;
+    border: 0.5px solid #9ccfff8a;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -221,7 +362,7 @@ main.container.wide {
 }
 
 .grid-item:hover {
-    background: #f0fdff;
+    background: #f9faff;
     transform: translateY(-2px);
 }
 
@@ -233,7 +374,7 @@ main.container.wide {
 .grid-item span {
     font-size: 14px;
     font-weight: 600;
-    color: #444;
+    color: #646272;
 }
 
 /* ==========================================================================
