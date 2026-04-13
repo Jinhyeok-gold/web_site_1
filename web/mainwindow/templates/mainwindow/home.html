@@ -1,0 +1,298 @@
+{% extends 'mainwindow/base.html' %}
+{% load static %}
+
+{% block title %}청년 신혼부부 맞춤 서비스 - 딱맞춤{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'mainwindow/css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container wide">
+    <main class="main-content-wrapper">
+        <div id="view-hero" class="fade-in">
+            <section class="top-content">
+                
+                <div class="banner-slider">
+                    <button class="slider-arrow prev" onclick="moveSlider(-1)">
+                        <img src="{% static 'mainwindow/images/arrow_l.png' %}" alt="이전">
+                    </button>
+                    <button class="slider-arrow next" onclick="moveSlider(1)">
+                        <img src="{% static 'mainwindow/images/arrow_r.png' %}" alt="다음">
+                    </button>
+
+                    <div class="slider-viewport">
+                        <div class="slider-track" id="sliderTrack">
+                            <div class="slide slide-bg-1">
+                                <div class="banner-text">
+                                    <h2>전국 주거지역<br>지원 정책들을<br>확인해보세요!</h2>
+                                    <p>공공기관이 공급하는 전국의 임대·분양주택 정보를 한눈에 확인하세요.</p>
+                                    <a href="#" class="btn-more" onclick="setView('form')">지원정책찾기 바로가기 →</a>
+                                </div>
+                                <div class="banner-img">
+                                    <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
+                                </div>
+                            </div>
+                            <div class="slide slide-bg-2">
+                                <div class="banner-text">
+                                    <h2>내게 맞는<br>주거 복지 혜택</h2>
+                                    <p>임시 문구입니다. 나중에 원하는 내용으로 수정하세요.</p>
+                                    <a href="#" class="btn-more">자세히 보기 →</a>
+                                </div>
+                                <div class="banner-img">
+                                    <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
+                                </div>
+                            </div>
+                            <div class="slide slide-bg-3">
+                                <div class="banner-text">
+                                    <h2>내게 맞는<br>주거 복지 혜택</h2>
+                                    <p>임시 문구입니다. 나중에 원하는 내용으로 수정하세요.</p>
+                                    <a href="#" class="btn-more">자세히 보기 →</a>
+                                </div>
+                                <div class="banner-img">
+                                    <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
+                                </div>
+                            </div>
+                            <div class="slide slide-bg-4">
+                                <div class="banner-text">
+                                    <h2>내게 맞는<br>주거 복지 혜택</h2>
+                                    <p>임시 문구입니다. 나중에 원하는 내용으로 수정하세요.</p>
+                                    <a href="#" class="btn-more">자세히 보기 →</a>
+                                </div>
+                                <div class="banner-img">
+                                    <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="side-content">
+                    <div class="search-box">
+                        <h3>지역별 주거복지 검색</h3>
+                        <div class="search-input">
+                            <input type="text" id="region-search-input" placeholder="내가 찾는 지역 정보를 알아보세요!" onkeydown="if(event.key==='Enter') searchRegion()">
+                            <button type="button" id="region-search-btn" onclick="searchRegion()">
+                                <img src="{% static 'mainwindow/images/search.png' %}" alt="검색">
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="policy-grid">
+                        <h3>주거복지 주요정책</h3>
+                        <div class="grid-container">
+                            <a href="https://www.youthcenter.go.kr/" target="_blank" class="grid-link">
+                            <div class="grid-item">
+                                <img src="{% static 'mainwindow/images/insurance-policy.png' %}" alt="취업">
+                                <span>청년신혼 정책소개</span>
+                            </div>
+                            </a>
+                            <a href="https://www.myhome.go.kr/" target="_blank" class="grid-link">
+                            <div class="grid-item">
+                                <img src="{% static 'mainwindow/images/house.png' %}" alt="주거">
+                                <span>청년신혼 주거지원</span>
+                            </div>
+                            </a>
+                            <a href="https://nhuf.molit.go.kr/" target="_blank" class="grid-link">
+                            <div class="grid-item">
+                                <img src="{% static 'mainwindow/images/finance.png' %}" alt="금융">
+                                <span>금융상품소개</span>
+                            </div>
+                            </a>
+                            <a href="https://nhuf.molit.go.kr/FP/FP08/FP0801/FP08010101.jsp" target="_blank" class="grid-link">
+                            <div class="grid-item">
+                                <img src="{% static 'mainwindow/images/interest.png' %}" alt="이자">
+                                <span>청년신혼 이자지원</span>
+                            </div>
+                            </a>
+                            <a href="https://www.bokjiro.go.kr/" target="_blank" class="grid-link">
+                            <div class="grid-item">
+                                <img src="{% static 'mainwindow/images/couple.png' %}" alt="신혼">
+                                <span>청년신혼부부 지원</span>
+                            </div>
+                            </a>
+                            <a href="https://www.lh.or.kr/" target="_blank" class="grid-link">
+                            <div class="grid-item">
+                                <img src="{% static 'mainwindow/images/more.png' %}" alt="기타">
+                                <span>기타 지원소개</span>
+                            </div>
+                            </a>
+                        </div>
+                    </div>
+                </aside>
+
+            </section>
+        
+            <section class="bottom-cards">
+                <div class="card card-blue">
+                    <div class="card-text">
+                        <h3>주거복지 지도찾기</h3>
+                        <p>관심 지역의 임대/분양 주택 정보를<br>지도에서 찾아보세요!</p>
+                        <a href="{% url 'welfare_map' %}" class="card-btn">찾아보기</a>
+                    </div>
+                    <img src="{% static 'mainwindow/images/map.png' %}" alt="지도 아이콘" class="card-icon">
+                </div>
+
+                <div class="card card-orange">
+                    <div class="card-text">
+                        <h3>딱맞춤 자가진단</h3>
+                        <p>나에게 딱! 맞는 맞춤형 주거복지 정보를<br>자가진단을 통해 추천해드립니다!</p>
+                        <button class="card-btn" onclick="setView('form')">진단하기</button>
+                    </div>
+                    <img src="{% static 'mainwindow/images/checklist.png' %}" alt="진단 아이콘" class="card-icon">
+                </div>
+
+                <div class="card-side-group">
+                    <div class="mini-card purple">
+                        <span>청년·신혼부부 주거지원</span>
+                        <button onclick="setView('form')">바로가기 ></button>
+                    </div>
+                    <div class="call-center">
+                        <p>콜센터 <strong>1600-1004</strong></p>
+                        <span>평일 09:00~18:00 | 점심 12:00~13:00</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    
+
+        <!-- View: Form Wizard -->
+        <div id="view-form" class="hidden fade-in view-section">
+            <div class="form-panel">
+                <div class="form-header">
+                    <div class="wizard-steps">
+                        <div class="step-dot active" id="dot-1">1</div>
+                        <div class="step-dot" id="dot-2">2</div>
+                        <div class="step-dot" id="dot-3">3</div>
+                    </div>
+                </div>
+
+                <form id="precision-form" onsubmit="return false;">
+                    {% csrf_token %}
+                    <!-- Step 1 -->
+                    <div class="wizard-step active" id="step-1">
+                        <h3 class="step-header">🏠 STEP 1. 기본 및 주거 상황</h3>
+                        <div class="wizard-grid">
+                            <div>
+                                <label class="form-label">만 나이</label>
+                                <input type="number" id="inp-age" value="29" class="form-input">
+                            </div>
+                            <div>
+                                <label class="form-label">거주 거점 (시/도)</label>
+                                <select id="inp-region" class="form-select" onchange="updateSubRegions()">
+                                    <option value="Seoul">서울특별시</option>
+                                    <option value="Gyeonggi">경기도</option>
+                                    <option value="Incheon">인천광역시</option>
+                                    <option value="Busan">부산광역시</option>
+                                    <option value="Daegu">대구광역시</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">세부 지역 (시/군/구)</label>
+                                <select id="inp-sub-region" class="form-select">
+                                    <option value="">전체</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="nav-btn-wizard" onclick="nextStep(2)">다음으로 (2/3) →</button>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="wizard-step" id="step-2">
+                        <h3 class="step-header">💰 STEP 2. 경제 상황 및 고용</h3>
+                        <div class="wizard-grid wizard-grid--spacious">
+                            <div>
+                                <label class="form-label">연소득 (만원)</label>
+                                <input type="number" id="inp-income" value="3000" class="form-input">
+                            </div>
+                            <div>
+                                <label class="form-label">순자산 (만원)</label>
+                                <input type="number" id="inp-assets" value="5000" class="form-input">
+                            </div>
+                            <div>
+                                <label class="form-label">부채 (만원)</label>
+                                <input type="number" id="inp-debt" value="1000" class="form-input">
+                            </div>
+                            <div>
+                                <label class="form-label">혼인 상황</label>
+                                <select id="inp-marital" class="form-select">
+                                    <option value="Single">미혼/1인가구</option>
+                                    <option value="Married">신혼부부(7년이내)</option>
+                                    <option value="Engaged">결혼예정</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="step-action-row">
+                            <button type="button" class="wizard-secondary-btn" onclick="nextStep(1)">이전으로</button>
+                            <button type="button" class="nav-btn-wizard wizard-primary-btn" onclick="nextStep(3)">다음으로 (3/3) →</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="wizard-step" id="step-3">
+                        <h3 class="step-header">⚡ STEP 3. 특수 조건 및 진단 완료</h3>
+                        <div class="form-header">
+                        <div class="wizard-grid">
+                            <div>
+                                <label class="form-label">자녀 수 (임신 포함)</label>
+                                <input type="number" id="inp-kids" value="0" class="form-input">
+                            </div>
+                            <div>
+                                <label class="form-label">청약통장 가입 횟수</label>
+                                <input type="number" id="inp-subscription" value="24" class="form-input">
+                            </div>
+                        </div>
+                        <div class="form-checkbox-grid">
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="inp-is-homeless" checked> <span>현재 무주택임</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="inp-is-first-home"> <span>생애최초 주택구입임</span>
+                            </label>
+                        </div>
+                        </div>
+                        <div class="step-action-row">
+                            <button type="button" class="wizard-secondary-btn" onclick="nextStep(2)">이전</button>
+                            <button type="button" class="nav-btn-wizard wizard-primary-btn" onclick="handleMatch()">정밀 분석 결과 보기 🚀</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- View: Matching Loading -->
+        <div id="view-matching" class="hidden fade-in matching-view">
+            <div class="loader-circle loader-center"></div>
+            <h2>서버 엔진에서 데이터를 분석 중입니다...</h2>
+        </div>
+
+        <!-- View: Result Dashboard -->
+        <div id="view-result" class="hidden fade-in results-view">
+            <div class="section-heading-center">
+                <h2>AI 청년·신혼부부 맞춤 분석 리포트</h2>
+                <p>사용자님의 경제 상황과 지역을 분석한 최적의 로드맵입니다.</p>
+            </div>
+            
+            <!-- 시각화 분석 패널 -->
+            <div id="visual-analytics-panel" class="visual-analytics-panel">
+                <!-- JS에서 차트와 분석 텍스트를 주입합니다 -->
+            </div>
+
+            <!-- 분야별 매칭 결과 -->
+            <div id="matching-results-container" class="matching-results-container">
+                <!-- Housing / Finance / Welfare 섹션이 여기에 생성됩니다 -->
+            </div>
+            
+            <div class="result-return">
+                <button type="button" class="btn-primary" onclick="setView('hero')">다시 진단하기</button>
+            </div>
+        </div>
+    </main>
+</div> 
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'mainwindow/js/form.js' %}"></script>
+<script src="{% static 'mainwindow/js/map.js' %}"></script>
+<script src="{% static 'mainwindow/js/daemoon.js' %}"></script>
+{% endblock %}

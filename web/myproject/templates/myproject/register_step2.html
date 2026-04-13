@@ -1,0 +1,152 @@
+{% extends 'mainwindow/base.html' %}
+{% load static %}
+
+{% block title %}회원정보입력 | 딱맞춤{% endblock %}
+
+{% block extra_css %}
+<style>
+    .register-container {
+        max-width: 600px;
+        margin: 60px auto;
+        padding: 0 20px;
+    }
+    .register-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .register-header h2 {
+        font-size: 28px;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 10px;
+    }
+    .form-panel {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+    .tab-group {
+        display: flex;
+        background: #f1f5f9;
+        padding: 5px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+    }
+    .tab-item {
+        flex: 1;
+        text-align: center;
+        padding: 12px;
+        cursor: pointer;
+        border-radius: 10px;
+        font-weight: 700;
+        color: #64748b;
+        transition: all 0.2s;
+    }
+    .tab-item.active {
+        background: #fff;
+        color: #2563eb;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .field-group {
+        margin-bottom: 25px;
+    }
+    .field-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 8px;
+    }
+    .req-star { color: #ef4444; }
+    .form-input {
+        width: 100%;
+        padding: 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 15px;
+        transition: border-color 0.2s;
+    }
+    .form-input:focus {
+        border-color: #2563eb;
+        outline: none;
+    }
+    .input-row {
+        display: flex;
+        gap: 12px;
+    }
+    .btn-check {
+        padding: 0 20px;
+        background: #f1f5f9;
+        color: #475569;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+    .btn-submit {
+        width: 100%;
+        padding: 18px;
+        background: #2563eb;
+        color: #fff;
+        border-radius: 12px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        margin-top: 20px;
+        font-size: 16px;
+    }
+    .btn-submit:hover {
+        background: #1d4ed8;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-container fade-in">
+    <div class="register-header">
+        <h2>회원정보입력</h2>
+        <p>기본 정보를 입력하여 가입을 완료해주세요.</p>
+    </div>
+
+    <form method="post" action="{% url 'register_step2' %}" class="form-panel">
+        {% csrf_token %}
+        
+        <div class="tab-group">
+            <div class="tab-item active">개인 회원</div>
+            <div class="tab-item">법인 회원</div>
+        </div>
+
+        <div class="field-group">
+            <label class="field-label">이름 <span class="req-star">*</span></label>
+            <input type="text" name="name" class="form-input" placeholder="실명을 입력해주세요" required>
+        </div>
+
+        <div class="field-group">
+            <label class="field-label">아이디 <span class="req-star">*</span></label>
+            <div class="input-row">
+                <input type="text" name="username" class="form-input" placeholder="4~16자 영문/숫자" required>
+                <button type="button" class="btn-check">중복확인</button>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <label class="field-label">비밀번호 <span class="req-star">*</span></label>
+            <input type="password" name="password" class="form-input" placeholder="8자 이상 영문/숫자/특수문자 조합" required>
+        </div>
+
+        <div class="field-group">
+            <label class="field-label">주민등록번호 <span class="req-star">*</span></label>
+            <div class="input-row">
+                <input type="text" name="resident_num_front" class="form-input" placeholder="앞 6자리" maxlength="6">
+                <span style="align-self: center;">-</span>
+                <input type="password" name="resident_num_back" class="form-input" placeholder="뒤 7자리" maxlength="7">
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit">가입 완료하기</button>
+    </form>
+</div>
+{% endblock %}

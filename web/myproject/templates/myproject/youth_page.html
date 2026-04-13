@@ -1,0 +1,81 @@
+{% extends 'mainwindow/base.html' %}
+{% load static %}
+
+{% block title %}청년 맞춤 정책 | 딱맞춤{% endblock %}
+
+{% block extra_css %}
+<style>
+    .portal-container {
+        max-width: 1100px;
+        margin: 60px auto;
+        text-align: center;
+        padding: 0 20px;
+    }
+    .portal-header h1 {
+        font-size: 32px;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 20px;
+    }
+    .portal-header p {
+        color: #64748b;
+        margin-bottom: 50px;
+    }
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+    }
+    .portal-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 24px;
+        padding: 50px 30px;
+        transition: all 0.3s;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: inherit;
+    }
+    .portal-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+        border-color: #2563eb;
+    }
+    .card-icon {
+        font-size: 48px;
+        margin-bottom: 25px;
+    }
+    .card-title {
+        font-size: 20px;
+        font-weight: 800;
+        color: #1e293b;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="portal-container fade-in">
+    <div class="portal-header">
+        <h1>청년 맞춤 정책 포털</h1>
+        <p>대한민국 청년들을 위한 주거, 금융, 복지 혜택을 한곳에서 확인하세요.</p>
+    </div>
+
+    <div class="card-grid">
+        <div class="portal-card" onclick="setView('form')">
+            <div class="card-icon">🏠</div>
+            <div class="card-title">청년 주거 지원</div>
+        </div>
+        <div class="portal-card" onclick="setView('form')">
+            <div class="card-icon">💰</div>
+            <div class="card-title">청년 금융 지원</div>
+        </div>
+        <div class="portal-card" onclick="setView('form')">
+            <div class="card-icon">🎁</div>
+            <div class="card-title">청년 복지 혜택</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

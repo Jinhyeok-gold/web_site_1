@@ -1,0 +1,540 @@
+/* ==========================================================================
+   3. Top Content (배너 & 검색 & 정책)
+   ========================================================================== */
+.top-content {
+    display: flex;
+    gap: 24px;
+    margin-top: 30px;
+    align-items: stretch;
+}
+
+.main-content-wrapper {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 왼쪽 슬라이더 스타일 */
+.banner-slider {
+    flex: 1; /* 사이드바를 제외한 나머지 공간 전체 차지 */
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    background-color: #c8e0ff; /* 배경색 */
+    min-height: 450px;
+}
+
+.banner-text h2 {
+    font-size: 32px;
+    line-height: 1.4;
+    margin-bottom: 20px;
+}
+
+.banner-text p {
+    font-size: 17px;
+    color: #555;
+    margin-bottom: 35px;
+}
+
+.btn-more {
+    background: #685AFF;
+    color: #fff;
+    padding: 14px 28px;
+    border-radius: 8px;
+    display: inline-block;
+    font-weight: 600;
+}
+
+.banner-img img { width: 300px; }
+
+.slider-viewport {
+    width: 100%;
+    height: 100%;
+}
+
+.slider-track {
+    display: flex;
+    transition: transform 0.5s ease-in-out; /* 부드러운 이동 효과 */
+    height: 100%;
+}
+
+.slide {
+    min-width: 100%;
+    display: flex;
+    padding: 60px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* 깔끔한 화살표 버튼 스타일 (박스 안쪽 배치) */
+.slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.7);
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+}
+.slider-arrow:hover {
+    background: #fff;
+}
+
+.slider-arrow.prev { left: 20px; }
+.slider-arrow.next { right: 20px; }
+
+.slider-arrow img {
+    width: 18px; /* 화살표 크기 조절 */
+    height: auto;
+}
+
+/* 오른쪽 사이드바 (검색 + 그리드) - 하단과 맞추기 위해 너비 고정 */
+.side-content {
+    width: 400px; /* 하단 card-side-group과 동일하게 설정하여 수직선 맞춤 */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.side-content h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #685AFF;
+    font-weight: 800;
+}
+
+/* 검색창 */
+.search-input { display: flex; }
+.search-input input { 
+    flex: 1;
+    padding: 18px;
+    border: 2px solid #9CCFFF;
+    border-radius: 12px 0 0 12px;
+    outline: none;
+}
+.search-input button { 
+    background: #9CCFFF;
+    width: 60px;
+    border-radius: 0 12px 12px 0;
+    color: #fff;
+    font-size: 20px;
+}
+
+/* 정책 그리드 (이미지 버전) */
+.grid-container { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    border: 1px solid #9CCFFF; 
+    border-radius: 16px; 
+    overflow: hidden;
+    background: #fff;
+    flex: 1; /* 사이드바 높이에 맞춰 채우기 */
+}
+
+.grid-item { 
+    padding: 25px 10px;
+    text-align: center;
+    border: 0.5px solid #9ccfff8a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+}
+
+.grid-item:hover {
+    background: #f9faff;
+    transform: translateY(-2px);
+}
+
+.grid-item img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+.grid-item span {
+    font-size: 14px;
+    font-weight: 600;
+    color: #646272;
+}
+
+/* ==========================================================================
+   4. Bottom Cards (하단 링크 섹션)
+   ========================================================================== */
+.bottom-cards {
+    display: flex;
+    gap: 24px;
+    margin: 40px 0 80px;
+}
+
+.card { 
+    flex: 1;
+    border-radius: 24px;
+    padding: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    color: #fff;
+}
+
+.card-blue { background: #685AFF; }
+.card-orange { background: #FF5B5B; }
+
+.card h3 {
+    font-size: 26px;
+    margin-bottom: 12px;
+}
+.card p {
+    font-size: 15px;
+    opacity: 0.9;
+    line-height: 1.4;
+}
+
+.card-btn { 
+    margin-top: 25px;
+    border: 1.5px solid #fff;
+    color: #fff;
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-weight: 600;
+}
+
+.card-icon { width: 90px; }
+
+/* 오른쪽 전화번호/신혼부부 카드 - 상단 side-content와 너비 일치 */
+.card-side-group {
+    width: 400px; /* 상단 side-content와 동일하게 설정하여 수직선 맞춤 */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.mini-card { 
+    background: #685AFF;
+    color: #fff;
+    padding: 25px;
+    border-radius: 20px; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+.call-center { 
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.call-center strong {
+    font-size: 28px;
+    color: #4439c4;
+    display: block;
+    margin: 5px 0;
+}
+
+.call-center span { font-size: 13px; color: #888; }
+
+/* ==========================================================================
+   5. Floating Quick Menu & Chatbot (고정 메뉴)
+   ========================================================================== */
+.quick-menu {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+.quick-menu ul {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    border: 1px solid #eee;
+}
+.quick-menu ul li a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 15px;
+    width: 90px;
+    border-bottom: 1px solid #f5f5f5;
+}
+.quick-menu ul li:last-child a { border-bottom: none; }
+.quick-menu ul li a img { width: 30px; margin-bottom: 5px; }
+.quick-menu ul li a span { font-size: 12px; font-weight: 500; color: #666; }
+
+/* ==========================================================================
+   6. Global Elements & Wizard / Matching / Result / Chatbot Styles
+   ========================================================================== */
+.hidden { display: none !important; }
+.fade-in { animation: fadeIn 0.4s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.view-section { padding: 60px 0; }
+.form-panel {
+    background: #fff;
+    border-radius: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 50px;
+    border: 1px solid #f1f5f9;
+}
+.form-header { margin-bottom: 40px; }
+.wizard-step { display: none; }
+.wizard-step.active { display: block; }
+.step-dot {
+    width: 36px; height: 36px; border-radius: 50%; background: #f1f5f9;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: #94a3b8; transition: all 0.3s;
+}
+.step-dot.active { background: #2563eb; color: #fff; transform: scale(1.1); }
+
+.wizard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #475569;
+}
+
+.form-input, .form-select {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #f1f5f9;
+    border-radius: 12px;
+    background: #f8fafc;
+    transition: all 0.2s;
+    font-size: 15px;
+}
+
+.form-input:focus, .form-select:focus {
+    border-color: #2563eb;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    outline: none;
+}
+
+/* Matching & Results */
+.category-section {
+    margin-bottom: 60px;
+    background: #fff;
+    padding: 40px;
+    border-radius: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+}
+
+.category-title {
+    font-size: 24px;
+    font-weight: 900;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.category-reason {
+    color: #64748b;
+    margin-bottom: 30px;
+    font-size: 16px;
+    border-left: 4px solid #e2e8f0;
+    padding-left: 15px;
+}
+
+.result-cards-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.policy-card-modern {
+    background: #fff;
+    border: 1px solid #eef2f6;
+    padding: 28px;
+    border-radius: 24px;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.policy-card-modern:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+    border-color: #2563eb;
+}
+
+.policy-card-modern.top-match {
+    background: linear-gradient(to bottom right, #ffffff, #f0f7ff);
+    border: 2px solid #2563eb;
+    box-shadow: 0 15px 30px rgba(37, 99, 235, 0.08);
+}
+
+.card-badge {
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: #334155;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.top-match .card-badge { background: #2563eb; }
+
+.card-score {
+    align-self: flex-end;
+    font-size: 14px;
+    font-weight: 800;
+    color: #2563eb;
+    background: #eff6ff;
+    padding: 4px 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.policy-card-modern h4 {
+    font-size: 19px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: #1e293b;
+    line-height: 1.4;
+}
+
+.card-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 15px;
+}
+
+.card-info .rate { color: #ef4444; font-weight: 700; }
+
+.card-summary {
+    font-size: 14px;
+    color: #475569;
+    margin-bottom: 25px;
+    flex: 1;
+}
+
+.card-link {
+    font-size: 14px;
+    font-weight: 700;
+    color: #2563eb;
+    text-align: center;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 10px;
+    transition: all 0.2s;
+}
+
+.card-link:hover { background: #2563eb; color: #fff; }
+
+.visual-analytics-panel {
+    background: #f8fafc;
+    border-radius: 25px;
+    padding: 40px;
+    margin-bottom: 40px;
+}
+
+.visual-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; }
+.radar-box h4, .sim-box h4 { font-size: 18px; font-weight: 800; margin-bottom: 25px; color: #1e293b; }
+.radar-bar-container { margin-bottom: 18px; }
+.radar-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #64748b; }
+.radar-bar-bg { height: 10px; background: #e2e8f0; border-radius: 5px; position: relative; margin-bottom: 4px; }
+.radar-bar-fill { height: 100%; background: linear-gradient(to right, #2563eb, #60a5fa); border-radius: 5px; transition: width 1s ease-out; }
+.radar-val { font-size: 12px; font-weight: 700; color: #2563eb; }
+.sim-content { background: #fff; border-radius: 20px; padding: 25px; display: flex; justify-content: space-around; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 25px; }
+.sim-item { text-align: center; }
+.sim-item span { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px; }
+.sim-item strong { font-size: 20px; font-weight: 900; color: #1e293b; }
+.pir-gauge { height: 44px; background: #e2e8f0; border-radius: 22px; overflow: hidden; position: relative; }
+.pir-fill { height: 100%; background: linear-gradient(to right, #10b981, #34d399); transition: width 1.2s ease-out; }
+.pir-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 14px; font-weight: 800; color: #064e3b; }
+.report-wrapper { background: #fff; padding: 30px; border-radius: 20px; border-left: 6px solid #2563eb; }
+
+.policy-card-result p { font-size: 13px; color: #64748b; margin: 0; }
+.report-paragraph { white-space: pre-wrap; }
+
+.chatbot-container {
+    position: fixed;
+    bottom: 100px;
+    right: 150px;
+    width: 380px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 10000;
+    border: 1px solid #e2e8f0;
+}
+.chatbot-header {
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.chat-messages {
+    height: 350px;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #f8fafc;
+}
+.chat-bubble { max-width: 85%; padding: 12px 16px; border-radius: 15px; font-size: 14px; line-height: 1.5; }
+.chat-user { background: #2563eb; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+.chat-bot { background: white; color: #1e293b; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #e2e8f0; }
+.chat-input-form { padding: 15px; background: white; border-top: 1px solid #e2e8f0; display: flex; gap: 10px; }
+.chat-input-form input { flex: 1; padding: 10px 15px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; }
+.chat-input-form button { padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; }
+
+/* ==========================================================================
+   7. Main Footer (하단 푸터)
+   ========================================================================== */
+.main-footer {
+    width: 100%; background: #f1f3f5; border-top: 1px solid #e1e4e8; color: #666; margin-top: 60px; padding-bottom: 40px; 
+}
+.footer-top { width: 100%; border-bottom: 1px solid #e1e4e8; padding: 15px 0; background: #f8f9fa; }
+.footer-inner-top { display: flex; justify-content: space-between; align-items: center; max-width: 1440px; width: 95%; margin: 0 auto; }
+.footer-links { display: flex; gap: 20px; font-size: 14px; font-weight: 500; }
+.footer-links .highlight { color: #685AFF; font-weight: 700; }
+.footer-links .blue-link { color: #FF5B5B; font-weight: 700; }
+.footer-selectors { display: flex; gap: 10px; }
+.footer-select { padding: 8px 15px; border: 1px solid #ddd; border-radius: 8px; background: #fff; font-size: 13px; color: #333; outline: none; }
+.footer-bottom { padding: 30px 0 50px; }
+.footer-bottom .container { display: flex; justify-content: space-between; align-items: flex-start; padding-top: 30px; max-width: 1440px; width: 95%; margin: 0 auto; }
+.footer-info { display: flex; gap: 30px; align-items: flex-start; }
+.footer-logo-gray { height: 40px; filter: grayscale(1); opacity: 0.6; }
+.footer-address { font-size: 13px; line-height: 1.8; }
+.footer-address span { color: #444; font-weight: 600; }
+.copyright { margin-top: 10px; color: #999; font-size: 12px; }
+.footer-partner-logos { display: flex; gap: 20px; align-items: center; }
+.footer-partner-logos img { height: 35px; opacity: 0.8; }

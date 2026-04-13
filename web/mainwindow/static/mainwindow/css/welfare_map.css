@@ -1,0 +1,127 @@
+.welfare-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 50px 20px;
+    font-family: 'Pretendard', sans-serif;
+}
+
+.welfare-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.welfare-header p {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+.welfare-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+}
+
+.welfare-header h1 span {
+    color: #3B5BDB; /* 강조 파란색 */
+}
+
+.welfare-content {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+/* 좌측 카드 스타일 */
+.move-menu {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.card {
+    border-radius: 30px;
+    padding: 40px 30px;
+    color: white;
+    height: 250px;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-blue { background: linear-gradient(135deg, #685AFF, #493beb); }
+.card-sky { background: linear-gradient(135deg, #9CCFFF, #5cb0ff); }
+
+.card-text p { font-size: 1rem; opacity: 0.9; margin-bottom: 10px; }
+.card-text h2 { font-size: 1.8rem; font-weight: 700; }
+
+.card-icon {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    width: 120px;
+}
+
+/* 우측 지도 섹션 스타일 */
+.map-section {
+    flex: 2;
+    background: white;
+    border: 2px solid #E7F1FF;
+    border-radius: 40px;
+    padding: 40px;
+}
+
+.map-header h2 {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+}
+
+.map-header h2 span { color: #5C7CFA; }
+.map-header p { color: #888; margin-bottom: 30px; }
+
+.region-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    flex: 1;
+}
+
+.region-btn {
+    border: 1px solid #D0EBFF;
+    background: white;
+    padding: 12px;
+    border-radius: 20px;
+    color: #495057;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.region-btn:hover, .region-btn.active {
+    background: #EDF2FF;
+    border-color: #3B5BDB;
+    color: #3B5BDB;
+}
+
+.map-visual {
+    flex: 1.2;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;  /* center → flex-start */
+}
+
+.map-visual img {
+    max-width: 200px;   /* 이미지 최대 크기 고정 */
+    height: auto;
+}
+
+.map-container {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start; /* ← 추가: 높이를 내용 기준으로만 맞춤 */
+}
