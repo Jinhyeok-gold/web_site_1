@@ -5,3 +5,6 @@ def home(request):
         'title': '홈페이지',
     }
     return render(request, 'mainwindow/home.html', context)
+
+def myreport(request):
+    return render(request, 'mainwindow/myreport.html')
