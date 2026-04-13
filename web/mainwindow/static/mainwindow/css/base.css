@@ -153,23 +153,6 @@ main.container.wide {
 
 /* 2. 각 열(Column) 스타일 */
 .drop-col {
-    /* 각 열의 최소 너비를 설정하여 글자 줄바꿈 방지 */
-    min-width: 160px; 
-    text-align: left; /* 텍스트 자체는 왼쪽 정렬 (깔끔함) */
-}
-
-/* 3. 하위 메뉴 제목 (마이리포트, 자가진단 등) */
-.drop-col h4 {
-    font-size: 17px;
-    font-weight: 800;
-    margin-bottom: 25px;
-    color: #333;
-    position: relative;
-    display: inline-block;
-}
-
-/* 2. 각 열(Column) 스타일 */
-.drop-col {
     /* [중요] 상단 메뉴 사이의 간격(gap) + 메뉴 글자 너비를 고려한 고정 너비 */
     /* 상단 .main-nav ul의 gap이 40px이므로, 글자 너비 포함 110~130px 정도가 적당합니다. */
     width: 110px;
@@ -628,3 +611,197 @@ main.container.wide {
     cursor: pointer;
     font-weight: 600;
 }
+
+.view-section { padding: 60px 0; }
+.form-panel {
+    background: #fff;
+    border-radius: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 50px;
+    border: 1px solid #f1f5f9;
+}
+.form-header { margin-bottom: 40px; }
+.wizard-step { display: none; }
+.wizard-step.active { display: block; }
+.step-dot {
+    width: 36px; height: 36px; border-radius: 50%; background: #f1f5f9;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: #94a3b8; transition: all 0.3s;
+}
+.step-dot.active { background: #2563eb; color: #fff; transform: scale(1.1); }
+
+.wizard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #475569;
+}
+
+.form-input, .form-select {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #f1f5f9;
+    border-radius: 12px;
+    background: #f8fafc;
+    transition: all 0.2s;
+    font-size: 15px;
+}
+
+.form-input:focus, .form-select:focus {
+    border-color: #2563eb;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    outline: none;
+}
+
+/* Matching & Results */
+.category-section {
+    margin-bottom: 60px;
+    background: #fff;
+    padding: 40px;
+    border-radius: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+}
+
+.category-title {
+    font-size: 24px;
+    font-weight: 900;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.category-reason {
+    color: #64748b;
+    margin-bottom: 30px;
+    font-size: 16px;
+    border-left: 4px solid #e2e8f0;
+    padding-left: 15px;
+}
+
+.result-cards-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.policy-card-modern {
+    background: #fff;
+    border: 1px solid #eef2f6;
+    padding: 28px;
+    border-radius: 24px;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.policy-card-modern:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+    border-color: #2563eb;
+}
+
+.policy-card-modern.top-match {
+    background: linear-gradient(to bottom right, #ffffff, #f0f7ff);
+    border: 2px solid #2563eb;
+    box-shadow: 0 15px 30px rgba(37, 99, 235, 0.08);
+}
+
+.card-badge {
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: #334155;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.top-match .card-badge { background: #2563eb; }
+
+.card-score {
+    align-self: flex-end;
+    font-size: 14px;
+    font-weight: 800;
+    color: #2563eb;
+    background: #eff6ff;
+    padding: 4px 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.policy-card-modern h4 {
+    font-size: 19px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: #1e293b;
+    line-height: 1.4;
+}
+
+.card-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 15px;
+}
+
+.card-info .rate { color: #ef4444; font-weight: 700; }
+
+.card-summary {
+    font-size: 14px;
+    color: #475569;
+    margin-bottom: 25px;
+    flex: 1;
+}
+
+.card-link {
+    font-size: 14px;
+    font-weight: 700;
+    color: #2563eb;
+    text-align: center;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 10px;
+    transition: all 0.2s;
+}
+
+.card-link:hover { background: #2563eb; color: #fff; }
+
+.visual-analytics-panel {
+    background: #f8fafc;
+    border-radius: 25px;
+    padding: 40px;
+    margin-bottom: 40px;
+}
+
+.visual-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; }
+.radar-box h4, .sim-box h4 { font-size: 18px; font-weight: 800; margin-bottom: 25px; color: #1e293b; }
+.radar-bar-container { margin-bottom: 18px; }
+.radar-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #64748b; }
+.radar-bar-bg { height: 10px; background: #e2e8f0; border-radius: 5px; position: relative; margin-bottom: 4px; }
+.radar-bar-fill { height: 100%; background: linear-gradient(to right, #2563eb, #60a5fa); border-radius: 5px; transition: width 1s ease-out; }
+.radar-val { font-size: 12px; font-weight: 700; color: #2563eb; }
+.sim-content { background: #fff; border-radius: 20px; padding: 25px; display: flex; justify-content: space-around; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 25px; }
+.sim-item { text-align: center; }
+.sim-item span { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px; }
+.sim-item strong { font-size: 20px; font-weight: 900; color: #1e293b; }
+.pir-gauge { height: 44px; background: #e2e8f0; border-radius: 22px; overflow: hidden; position: relative; }
+.pir-fill { height: 100%; background: linear-gradient(to right, #10b981, #34d399); transition: width 1.2s ease-out; }
+.pir-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 14px; font-weight: 800; color: #064e3b; }
+.report-wrapper { background: #fff; padding: 30px; border-radius: 20px; border-left: 6px solid #2563eb; }
