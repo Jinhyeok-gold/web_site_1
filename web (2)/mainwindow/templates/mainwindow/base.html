@@ -1,0 +1,189 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>청년 신혼부부 맞춤 서비스 - 딱맞춤</title>
+    <link rel="stylesheet" href="{% static 'mainwindow/css/base.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <header class="main-header">
+        <div class="container header-inner">
+            <div class="logo">
+                <a href="{% url 'home' %}" class="logo" onclick="setView('hero'); return false;">
+                    <img src="{% static 'mainwindow/images/logo_1.png' %}" alt="딱맞춤 로고">
+                </a>
+            </div>
+            <nav class="main-nav">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="{% url 'myreport' %}">마이리포트</a></li>
+                    <li class="nav-item"><a href="javascript:void(0)" onclick="setView('hero')">자가진단</a></li>
+                </ul>
+            </nav>
+            <div class="header-util">
+                <!-- Header Kakao Search Bar -->
+                <div class="header-search-wrapper">
+                    <input type="text" id="kakaoSearchGlobal" placeholder="지역 주거복지 검색!" onkeypress="if(event.key === 'Enter') executeGlobalKakaoSearch()">
+                    <button type="button" class="btn-header-search" onclick="executeGlobalKakaoSearch()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <a href="#" class="qna-btn" onclick="showCustomerService(); return false;">고객센터</a>
+                {% if user.is_authenticated %}
+                    <span style="color: #475569; font-weight: 600; font-size: 14px;">{{ user.last_name|default:user.username }}님</span>
+                    <a href="{% url 'portal:logout' %}" class="join-btn">로그아웃</a>
+                {% elif request.session.is_guest %}
+                    <span style="color: #475569; font-weight: 600; font-size: 14px;">{{ request.session.guest_name }}님 <small>(게스트)</small></span>
+                    <a href="{% url 'portal:logout' %}" class="join-btn">로그아웃</a>
+                {% else %}
+                    <a href="{% url 'portal:login' %}" class="login-btn">로그인</a>
+                    <a href="{% url 'portal:register_step1' %}" class="join-btn">회원가입</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <main class="container wide">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-top">
+            <div class="container footer-inner-top">
+                <div class="footer-links">
+                    <a href="#" class="highlight">개인정보처리방침</a>
+                    <a href="#">개인정보처리방침 EASY 버전</a>
+                    <a href="#">홈페이지 이용약관</a>
+                    <a href="#">이메일 무단수집 거부</a>
+                    <a href="#" class="blue-link">품질오류신고 및 확인</a>
+                </div>
+                <div class="footer-selectors">
+                    <select class="footer-select">
+                        <option value="">패밀리 사이트</option>
+                    </select>
+                    <select class="footer-select">
+                        <option value="">유관기관 및 관련사이트</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="footer-info">
+                    <div class="footer-logo">
+                        <img src="{% static 'mainwindow/images/logo_2.png' %}" alt="딱맞춤 로고 그레이"
+                            class="footer-logo-gray">
+                    </div>
+                    <div class="footer-address">
+                        <p><span>국토교통부</span> (30103)세종특별자치시 도움6로 11 <span>|</span> <span>주택도시보증공사(HUG)</span>
+                            (48400)부산광역시 남구 문현금융로 40 BIFC </p>
+                        <p class="call_number">청년·신혼부부 주거지원 콜센터: 1600-1004</p>
+                        <p class="copyright">Copyright © 딱맞춤. All Rights Reserved.</p>
+                    </div>
+                </div>
+                <div class="footer-partner-logos">
+                    <img src="{% static 'mainwindow/images/국토교통부.png' %}" alt="국토교통부">
+                    <img src="{% static 'mainwindow/images/주택도시보증공사.png' %}" alt="주택도시보증공사">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <aside class="quick-menu" id="quickMenuContainer">
+        <button id="quickMenuToggle" onclick="toggleQuickMenu()" title="빠른 메뉴 숨기기/열기">
+            <svg id="chevronIcon" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+            </svg>
+        </button>
+        <ul>
+            <li>
+                <a href="https://www.youthcenter.go.kr/" target="_blank" class="grid-link">
+                    <img src="{% static 'mainwindow/images/privacy-policy.png' %}" alt="정책소개">
+                    <span>정책소개</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.myhome.go.kr/" target="_blank" class="grid-link">
+                    <img src="{% static 'mainwindow/images/home-automation.png' %}" alt="주거지원">
+                    <span>주거지원</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://nhuf.molit.go.kr/FP/FP08/FP0801/FP08010101.jsp" target="_blank" class="grid-link">
+                    <img src="{% static 'mainwindow/images/money-management.png' %}" alt="이자지원">
+                    <span>이자지원</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://finlife.fss.or.kr/" target="_blank" class="grid-link">
+                    <img src="{% static 'mainwindow/images/delivery-box.png' %}" alt="금융상품">
+                    <span>금융상품</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.gov.kr/" target="_blank" class="grid-link">
+                    <img src="{% static 'mainwindow/images/more.png' %}" alt="기타지원">
+                    <span>기타지원</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="toggleChatbot(); return false;">
+                    <img src="{% static 'mainwindow/images/bot.png' %}" alt="챗봇">
+                    <span>챗봇</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- AI Chatbot Floating UI -->
+    <div id="chatbot-modal" class="hidden chatbot-container">
+        <div class="chatbot-header">
+            <span>⚖️ 정책/법률 전문 상담</span>
+            <button onclick="toggleChatbot()" class="close-btn">✕</button>
+        </div>
+        <div id="chat-messages" class="chat-messages">
+            <div class="chat-bubble chat-bot">안녕하세요! 정책/취업/법률 전문가입니다. 상담을 위해 먼저 <b>자가진단</b>을 완료해 주시면 더욱 정확한 안내가 가능합니다.
+            </div>
+        </div>
+        <form onsubmit="handleChatSubmit(event)" class="chat-input-form">
+            {% csrf_token %}
+            <input type="text" id="chat-input" placeholder="금융, 취업, 법률 질문하기..." autocomplete="off">
+            <button type="submit">전송</button>
+        </form>
+    </div>
+    <script>
+        function executeGlobalKakaoSearch() {
+            const query = document.getElementById('kakaoSearchGlobal').value.trim();
+            if (query) {
+                const kakaoMapUrl = `https://map.kakao.com/link/search/${encodeURIComponent(query + " 주거복지센터")}`;
+                window.open(kakaoMapUrl, '_blank');
+            } else {
+                alert('검색할 지역을 입력해주세요. (예: 서울, 강남구)');
+                document.getElementById('kakaoSearchGlobal').focus();
+            }
+        }
+
+        function showCustomerService() {
+            alert("📞 딱맞춤 콜센터 안내\n\n- 대표 콜센터: 1600-1004 (평일 09:00 - 18:00)\n\n지금 바로 궁금한 점이 있으시다면 우측 하단의 AI 챗봇을 이용해 보세요!\n확인을 누르시면 24시간 대기 중인 AI 챗봇 창이 열립니다.");
+            if(typeof toggleChatbot === 'function') {
+                toggleChatbot();
+            }
+        }
+
+        function toggleQuickMenu() {
+            const qm = document.getElementById('quickMenuContainer');
+            qm.classList.toggle('collapsed');
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

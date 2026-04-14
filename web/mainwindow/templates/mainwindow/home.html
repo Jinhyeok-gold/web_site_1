@@ -5,290 +5,255 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'mainwindow/css/home.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 {% endblock %}
 
 {% block content %}
 <div class="container wide">
     <main class="main-content-wrapper">
-        <div id="view-hero" class="fade-in">
-            <section class="top-content">
-                
-                <div class="banner-slider">
-                    <button class="slider-arrow prev" onclick="moveSlider(-1)">
-                        <img src="{% static 'mainwindow/images/arrow_l.png' %}" alt="이전">
-                    </button>
-                    <button class="slider-arrow next" onclick="moveSlider(1)">
-                        <img src="{% static 'mainwindow/images/arrow_r.png' %}" alt="다음">
-                    </button>
-
-                    <div class="slider-viewport">
-                        <div class="slider-track" id="sliderTrack">
-                            <div class="slide slide-bg-1">
-                                <div class="banner-text">
-                                    <h2>전국 주거지역<br>지원 정책들을<br>확인해보세요!</h2>
-                                    <p>공공기관이 공급하는 전국의 임대·분양주택 정보를 한눈에 확인하세요.</p>
-                                    <a href="#" class="btn-more" onclick="setView('form')">지원정책찾기 바로가기 →</a>
-                                </div>
-                                <div class="banner-img">
-                                    <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
-                                </div>
-                            </div>
-                            <div class="slide slide-bg-2">
-                                <div class="banner-text">
-                                    <h2>내게 맞는<br>주거 복지 혜택</h2>
-                                    <p>임시 문구입니다. 나중에 원하는 내용으로 수정하세요.</p>
-                                    <a href="#" class="btn-more">자세히 보기 →</a>
-                                </div>
-                                <div class="banner-img">
-                                    <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
-                                </div>
-                            </div>
-                            <div class="slide slide-bg-3">
-                                <div class="banner-text">
-                                    <h2>내게 맞는<br>주거 복지 혜택</h2>
-                                    <p>임시 문구입니다. 나중에 원하는 내용으로 수정하세요.</p>
-                                    <a href="#" class="btn-more">자세히 보기 →</a>
-                                </div>
-                                <div class="banner-img">
-                                    <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
-                                </div>
-                            </div>
-                            <div class="slide slide-bg-4">
-                                <div class="banner-text">
-                                    <h2>내게 맞는<br>주거 복지 혜택</h2>
-                                    <p>임시 문구입니다. 나중에 원하는 내용으로 수정하세요.</p>
-                                    <a href="#" class="btn-more">자세히 보기 →</a>
-                                </div>
-                                <div class="banner-img">
-                                    <img src="{% static 'mainwindow/images/pngegg.png' %}" alt="배너 이미지">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <!-- New Primary Hero: Premium Diagnostic Hub -->
+        <div id="view-hero" class="fade-in hub-container">
+            <div class="hub-content">
+                <div class="hub-header">
+                    <h1>청년·신혼부부 <span class="highlight">맞춤형 주거 자가진단</span></h1>
+                    <p>몇 가지 질문에 답하면 사용자님께 딱 맞는 정책과 금융 상품을 AI가 분석해 드립니다.</p>
                 </div>
 
-                <aside class="side-content">
-                    <div class="search-box">
-                        <h3>지역별 주거복지 검색</h3>
-                        <div class="search-input">
-                            <input type="text" id="region-search-input" placeholder="내가 찾는 지역 정보를 알아보세요!" onkeydown="if(event.key==='Enter') searchRegion()">
-                            <button type="button" id="region-search-btn" onclick="searchRegion()">
-                                <img src="{% static 'mainwindow/images/search.png' %}" alt="검색">
-                            </button>
+                <div class="form-panel glass-morphism">
+                    <div class="form-header">
+                        <div class="wizard-steps-container">
+                            <div class="progress-bar">
+                                <div id="progress-fill" class="progress-fill" style="width: 33%;"></div>
+                            </div>
+
+                            <!-- Live Matching Teaser Widget -->
+                            <div class="live-match-teaser">
+                                <div class="teaser-icon pulse-blue"><i class="fas fa-robot"></i></div>
+                                <div class="teaser-text">
+                                    <span class="teaser-title">AI 정밀 매칭 엔진 가동 중</span>
+                                    <span class="teaser-sub">입력하신 데이터를 기반으로 최적의 정책을 실시간으로 추적하고 있습니다.</span>
+                                </div>
+                            </div>
+
+                            <div class="wizard-steps">
+                                <div class="step-item">
+                                    <div id="dot-1" class="step-dot active"><i class="fas fa-user-check"></i></div>
+                                    <span class="step-label">기본정보</span>
+                                </div>
+                                <div class="step-item">
+                                    <div id="line-1" class="step-line"></div>
+                                </div>
+                                <div class="step-item">
+                                    <div id="dot-2" class="step-dot"><i class="fas fa-wallet"></i></div>
+                                    <span class="step-label">경제상황</span>
+                                </div>
+                                <div class="step-item">
+                                    <div id="line-2" class="step-line"></div>
+                                </div>
+                                <div class="step-item">
+                                    <div id="dot-3" class="step-dot"><i class="fas fa-home-user"></i></div>
+                                    <span class="step-label">생활여건</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="policy-grid">
-                        <h3>주거복지 주요정책</h3>
-                        <div class="grid-container">
-                            <a href="https://www.youthcenter.go.kr/" target="_blank" class="grid-link">
-                            <div class="grid-item">
-                                <img src="{% static 'mainwindow/images/insurance-policy.png' %}" alt="취업">
-                                <span>청년신혼 정책소개</span>
-                            </div>
-                            </a>
-                            <a href="https://www.myhome.go.kr/" target="_blank" class="grid-link">
-                            <div class="grid-item">
-                                <img src="{% static 'mainwindow/images/house.png' %}" alt="주거">
-                                <span>청년신혼 주거지원</span>
-                            </div>
-                            </a>
-                            <a href="https://nhuf.molit.go.kr/" target="_blank" class="grid-link">
-                            <div class="grid-item">
-                                <img src="{% static 'mainwindow/images/finance.png' %}" alt="금융">
-                                <span>금융상품소개</span>
-                            </div>
-                            </a>
-                            <a href="https://nhuf.molit.go.kr/FP/FP08/FP0801/FP08010101.jsp" target="_blank" class="grid-link">
-                            <div class="grid-item">
-                                <img src="{% static 'mainwindow/images/interest.png' %}" alt="이자">
-                                <span>청년신혼 이자지원</span>
-                            </div>
-                            </a>
-                            <a href="https://www.bokjiro.go.kr/" target="_blank" class="grid-link">
-                            <div class="grid-item">
-                                <img src="{% static 'mainwindow/images/couple.png' %}" alt="신혼">
-                                <span>청년신혼부부 지원</span>
-                            </div>
-                            </a>
-                            <a href="https://www.lh.or.kr/" target="_blank" class="grid-link">
-                            <div class="grid-item">
-                                <img src="{% static 'mainwindow/images/more.png' %}" alt="기타">
-                                <span>기타 지원소개</span>
-                            </div>
-                            </a>
-                        </div>
-                    </div>
-                </aside>
+                    <form id="precision-form" onsubmit="return false;">
+                        {% csrf_token %}
+                        <!-- Step 1: Basic & Region -->
+                        <div class="wizard-step active" id="step-1">
+                            <div class="step-inner">
+                                <div class="step-title">📍 어디에 살고 계신가요?</div>
+                                <p class="step-desc">사용자님의 연령과 지역에 맞는 정책을 선별합니다.</p>
 
-            </section>
-        
-            <section class="bottom-cards">
-                <div class="card card-blue">
-                    <div class="card-text">
-                        <h3>주거복지 지도찾기</h3>
-                        <p>관심 지역의 임대/분양 주택 정보를<br>지도에서 찾아보세요!</p>
-                        <a href="{% url 'welfare_map' %}" class="card-btn">찾아보기</a>
-                    </div>
-                    <img src="{% static 'mainwindow/images/map.png' %}" alt="지도 아이콘" class="card-icon">
+                                <div class="wizard-grid">
+                                    <div class="form-group floating">
+                                        <input type="number" id="inp-age" value="29" min="19" max="49"
+                                            class="form-input" required>
+                                        <label class="form-label">만 나이 (세)</label>
+                                    </div>
+                                    <div class="form-group floating">
+                                        <select id="inp-region" class="form-select" onchange="updateSubRegions()"
+                                            required>
+                                            <option value="" selected disabled hidden></option>
+                                            <option value="Seoul">서울특별시</option>
+                                            <option value="Gyeonggi">경기도</option>
+                                            <option value="Incheon">인천광역시</option>
+                                            <option value="Busan">부산광역시</option>
+                                            <option value="Daegu">대구광역시</option>
+                                            <option value="Gwangju">광주광역시</option>
+                                            <option value="Daejeon">대전광역시</option>
+                                            <option value="Ulsan">울산광역시</option>
+                                            <option value="Sejong">세종특별자치시</option>
+                                            <option value="Gangwon">강원특별자치도</option>
+                                        </select>
+                                        <label class="form-label">거주 시/도</label>
+                                    </div>
+                                    <div class="form-group floating">
+                                        <select id="inp-sub-region" class="form-select" required>
+                                            <option value="" selected disabled hidden></option>
+                                        </select>
+                                        <label class="form-label">세부 시/군/구</label>
+                                    </div>
+                                </div>
+                                <div class="step-actions">
+                                    <button class="btn-next" onclick="nextStep(2)">다음 단계로 <i
+                                            class="fas fa-arrow-right"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Economic Status -->
+                        <div class="wizard-step" id="step-2">
+                            <div class="step-inner">
+                                <div class="step-title">💰 현재 경제 상황은 어떤가요?</div>
+                                <p class="step-desc">금융 지원 및 대출 한도 산출에 중요한 정보입니다.</p>
+
+                                <div class="wizard-grid grid-2x2">
+                                    <div class="form-group floating">
+                                        <input type="number" id="inp-income" value="3000" class="form-input" required>
+                                        <label class="form-label">연소득 (가구 합산, 만원)</label>
+                                    </div>
+                                    <div class="form-group floating">
+                                        <input type="number" id="inp-assets" value="5000" class="form-input" required>
+                                        <label class="form-label">순자산 규모 (만원)</label>
+                                    </div>
+                                    <div class="form-group floating">
+                                        <input type="number" id="inp-debt" value="0" class="form-input" required>
+                                        <label class="form-label">부채 규모 (만원)</label>
+                                    </div>
+                                    <div class="form-group floating">
+                                        <input type="number" id="inp-subscription" value="24" class="form-input"
+                                            required>
+                                        <label class="form-label">청약통장 납입 횟수 (회)</label>
+                                    </div>
+                                    <div class="form-group floating">
+                                        <input type="number" id="inp-subscription-amount" value="240" class="form-input"
+                                            required>
+                                        <label class="form-label">청약통장 총 납입액 (만원)</label>
+                                    </div>
+                                </div>
+                                <div class="step-actions flex-between">
+                                    <button type="button" class="btn-prev" onclick="nextStep(1)">이전</button>
+                                    <button type="button" class="btn-next" onclick="nextStep(3)">다음 단계로 <i
+                                            class="fas fa-arrow-right"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Life Stage & Special Conditions -->
+                        <div class="wizard-step" id="step-3">
+                            <div class="step-inner">
+                                <div class="step-title">🏘️ 주거나 혼인 등 생활 여건은요?</div>
+                                <p class="step-desc">특수 가점 및 주거 지원 분류를 위해 필요합니다.</p>
+
+                                <div class="wizard-grid">
+                                    <div class="form-group floating">
+                                        <select id="inp-marital" class="form-select" required>
+                                            <option value="" selected disabled hidden></option>
+                                            <option value="Single">미혼 (1인가구 포함)</option>
+                                            <option value="Engaged">예비신혼 (결혼 예정)</option>
+                                            <option value="Married">신혼부부 (혼인 7년 이내)</option>
+                                        </select>
+                                        <label class="form-label">혼인 상황</label>
+                                    </div>
+                                    <div class="form-group floating">
+                                        <input type="number" id="inp-kids" value="0" class="form-input">
+                                        <label class="form-label">자녀 수 (명)</label>
+                                    </div>
+                                    <div class="form-group floating">
+                                        <input type="number" id="inp-homeless-years" value="0" max="15"
+                                            class="form-input">
+                                        <label class="form-label">무주택 기간 (년)</label>
+                                    </div>
+                                </div>
+
+                                <div class="checkbox-group-modern">
+                                    <label class="choice-card">
+                                        <input type="checkbox" id="inp-is-homeless" checked>
+                                        <div class="card-content">
+                                            <span class="emoji">🏠</span>
+                                            <span class="label">현재 무주택</span>
+                                        </div>
+                                    </label>
+                                    <label class="choice-card">
+                                        <input type="checkbox" id="inp-is-first-home">
+                                        <div class="card-content">
+                                            <span class="emoji">✨</span>
+                                            <span class="label">생애최초 주택구입</span>
+                                        </div>
+                                    </label>
+                                    <label class="choice-card">
+                                        <input type="checkbox" id="inp-is-pregnant">
+                                        <div class="card-content">
+                                            <span class="emoji">🍼</span>
+                                            <span class="label">임신 중</span>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div class="step-actions flex-between">
+                                    <button type="button" class="btn-prev" onclick="nextStep(2)">이전</button>
+                                    <button type="button" class="btn-finish" onclick="handleMatch()">정밀 분석 시작하기
+                                        🚀</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-
-                <div class="card card-orange">
-                    <div class="card-text">
-                        <h3>딱맞춤 자가진단</h3>
-                        <p>나에게 딱! 맞는 맞춤형 주거복지 정보를<br>자가진단을 통해 추천해드립니다!</p>
-                        <button class="card-btn" onclick="setView('form')">진단하기</button>
-                    </div>
-                    <img src="{% static 'mainwindow/images/checklist.png' %}" alt="진단 아이콘" class="card-icon">
-                </div>
-
-                <div class="card-side-group">
-                    <div class="mini-card purple">
-                        <span>청년·신혼부부 주거지원</span>
-                        <button onclick="setView('form')">바로가기 ></button>
-                    </div>
-                    <div class="call-center">
-                        <p>콜센터 <strong>1600-1004</strong></p>
-                        <span>평일 09:00~18:00 | 점심 12:00~13:00</span>
-                    </div>
-                </div>
-            </section>
-        </div>
-    
-
-        <!-- View: Form Wizard -->
-        <div id="view-form" class="hidden fade-in view-section">
-            <div class="form-panel">
-                <div class="form-header">
-                    <div class="wizard-steps">
-                        <div class="step-dot active" id="dot-1">1</div>
-                        <div class="step-dot" id="dot-2">2</div>
-                        <div class="step-dot" id="dot-3">3</div>
-                    </div>
-                </div>
-
-                <form id="precision-form" onsubmit="return false;">
-                    {% csrf_token %}
-                    <!-- Step 1 -->
-                    <div class="wizard-step active" id="step-1">
-                        <h3 class="step-header">🏠 STEP 1. 기본 및 주거 상황</h3>
-                        <div class="wizard-grid">
-                            <div>
-                                <label class="form-label">만 나이</label>
-                                <input type="number" id="inp-age" value="29" class="form-input">
-                            </div>
-                            <div>
-                                <label class="form-label">거주 거점 (시/도)</label>
-                                <select id="inp-region" class="form-select" onchange="updateSubRegions()">
-                                    <option value="Seoul">서울특별시</option>
-                                    <option value="Gyeonggi">경기도</option>
-                                    <option value="Incheon">인천광역시</option>
-                                    <option value="Busan">부산광역시</option>
-                                    <option value="Daegu">대구광역시</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="form-label">세부 지역 (시/군/구)</label>
-                                <select id="inp-sub-region" class="form-select">
-                                    <option value="">전체</option>
-                                </select>
-                            </div>
-                        </div>
-                        <button class="nav-btn-wizard" onclick="nextStep(2)">다음으로 (2/3) →</button>
-                    </div>
-
-                    <!-- Step 2 -->
-                    <div class="wizard-step" id="step-2">
-                        <h3 class="step-header">💰 STEP 2. 경제 상황 및 고용</h3>
-                        <div class="wizard-grid wizard-grid--spacious">
-                            <div>
-                                <label class="form-label">연소득 (만원)</label>
-                                <input type="number" id="inp-income" value="3000" class="form-input">
-                            </div>
-                            <div>
-                                <label class="form-label">순자산 (만원)</label>
-                                <input type="number" id="inp-assets" value="5000" class="form-input">
-                            </div>
-                            <div>
-                                <label class="form-label">부채 (만원)</label>
-                                <input type="number" id="inp-debt" value="1000" class="form-input">
-                            </div>
-                            <div>
-                                <label class="form-label">혼인 상황</label>
-                                <select id="inp-marital" class="form-select">
-                                    <option value="Single">미혼/1인가구</option>
-                                    <option value="Married">신혼부부(7년이내)</option>
-                                    <option value="Engaged">결혼예정</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="step-action-row">
-                            <button type="button" class="wizard-secondary-btn" onclick="nextStep(1)">이전으로</button>
-                            <button type="button" class="nav-btn-wizard wizard-primary-btn" onclick="nextStep(3)">다음으로 (3/3) →</button>
-                        </div>
-                    </div>
-
-                    <!-- Step 3 -->
-                    <div class="wizard-step" id="step-3">
-                        <h3 class="step-header">⚡ STEP 3. 특수 조건 및 진단 완료</h3>
-                        <div class="form-header">
-                        <div class="wizard-grid">
-                            <div>
-                                <label class="form-label">자녀 수 (임신 포함)</label>
-                                <input type="number" id="inp-kids" value="0" class="form-input">
-                            </div>
-                            <div>
-                                <label class="form-label">청약통장 가입 횟수</label>
-                                <input type="number" id="inp-subscription" value="24" class="form-input">
-                            </div>
-                        </div>
-                        <div class="form-checkbox-grid">
-                            <label class="checkbox-item">
-                                <input type="checkbox" id="inp-is-homeless" checked> <span>현재 무주택임</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" id="inp-is-first-home"> <span>생애최초 주택구입임</span>
-                            </label>
-                        </div>
-                        </div>
-                        <div class="step-action-row">
-                            <button type="button" class="wizard-secondary-btn" onclick="nextStep(2)">이전</button>
-                            <button type="button" class="nav-btn-wizard wizard-primary-btn" onclick="handleMatch()">정밀 분석 결과 보기 🚀</button>
-                        </div>
-                    </div>
-                </form>
             </div>
         </div>
 
         <!-- View: Matching Loading -->
-        <div id="view-matching" class="hidden fade-in matching-view">
-            <div class="loader-circle loader-center"></div>
-            <h2>서버 엔진에서 데이터를 분석 중입니다...</h2>
+        <div id="view-result" class="hidden results-view">
+    <div class="result-header fade-in">
+        <span class="header-badge">AI Diagnostic Complete</span>
+        <h2 class="gradient-text">나만을 위한 맞춤형 정책 포트폴리오</h2>
+    </div>
+
+    <div class="bento-grid">
+        <div class="bento-item main-score-card">
+            <div class="unit-title">종합 적합도</div>
+            <div class="gauge-wrapper">
+                <canvas id="scoreGaugeCanvas"></canvas>
+                <div class="gauge-center">
+                    <span id="gauge-score-val">0</span><span class="unit-pct">%</span>
+                </div>
+            </div>
         </div>
 
-        <!-- View: Result Dashboard -->
-        <div id="view-result" class="hidden fade-in results-view">
-            <div class="section-heading-center">
-                <h2>AI 청년·신혼부부 맞춤 분석 리포트</h2>
-                <p>사용자님의 경제 상황과 지역을 분석한 최적의 로드맵입니다.</p>
-            </div>
-            
-            <!-- 시각화 분석 패널 -->
-            <div id="visual-analytics-panel" class="visual-analytics-panel">
-                <!-- JS에서 차트와 분석 텍스트를 주입합니다 -->
-            </div>
+        <div class="bento-item ai-report-card">
+            <div class="ai-avatar"><i class="fas fa-robot"></i> Expert Analyst</div>
+            <div id="ai-report-content" class="ai-report-box">
+                </div>
+        </div>
 
-            <!-- 분야별 매칭 결과 -->
-            <div id="matching-results-container" class="matching-results-container">
-                <!-- Housing / Finance / Welfare 섹션이 여기에 생성됩니다 -->
-            </div>
-            
-            <div class="result-return">
-                <button type="button" class="btn-primary" onclick="setView('hero')">다시 진단하기</button>
+        <div class="bento-item finance-sim-card">
+            <div class="unit-title">예상 지원 혜택</div>
+            <div class="sim-dashboard">
+                <div class="sim-pill">
+                    <span class="pill-label">최대 한도</span>
+                    <strong><span id="sim-limit-val">0</span><span class="pill-unit">만원</span></strong>
+                </div>
+                <div class="sim-pill">
+                    <span class="pill-label">월 예상 이자</span>
+                    <strong><span id="sim-interest-val">0</span><span class="pill-unit">만원</span></strong>
+                </div>
             </div>
         </div>
+
+        <div class="bento-item chart-card">
+            <div class="unit-title">분야별 적합도</div>
+            <div class="chart-container">
+                <canvas id="radarChartCanvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div id="matching-results-container" class="policy-stagger-grid"></div>
+</div>
     </main>
-</div> 
+</div>
 {% endblock %}
 
 {% block extra_js %}

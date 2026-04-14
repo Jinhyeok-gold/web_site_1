@@ -1,3 +1,4 @@
+/* global Chart */
 const REGIONAL_DATA = {
     'Seoul': ['강남구', '강동구', '강북구', '강서구', '관악구', '광진구', '구로구', '금천구', '노원구', '도봉구', '동대문구', '동작구', '마포구', '서대문구', '서초구', '성동구', '성북구', '송파구', '양천구', '영등포구', '용산구', '은평구', '종로구', '중구', '중랑구'],
     'Busan': ['강서구', '금정구', '기장군', '남구', '동구', '동래구', '부산진구', '북구', '사상구', '사하구', '서구', '수영구', '연제구', '영도구', '중구', '해운대구'],
@@ -20,14 +21,24 @@ const REGIONAL_DATA = {
 
 let currentUserData = null;
 let currentReport = null;
+let activeCharts = {
+    gauge: null,
+    radar: null
+};
 
 function setView(viewId) {
-    ['hero', 'form', 'matching', 'result'].forEach(v => {
+    if (viewId === 'hero') {
+        // [STABILITY] Restarting from hero - reset wizard visuals only
+        nextStep(1); 
+    }
+    
+    ['hero', 'matching', 'result'].forEach(v => {
         const el = document.getElementById('view-' + v);
         if(el) el.classList.add('hidden');
     });
-    document.getElementById('view-' + viewId).classList.remove('hidden');
-    window.scrollTo(0,0);
+    const target = document.getElementById('view-' + viewId);
+    if(target) target.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function nextStep(step) {
@@ -37,16 +48,31 @@ function nextStep(step) {
         if(stepEl) stepEl.classList.remove('active');
         if(dotEl) dotEl.classList.remove('active');
     });
+
     const targetStep = document.getElementById('step-' + step);
     const targetDot = document.getElementById('dot-' + step);
+    
     if(targetStep) targetStep.classList.add('active');
     if(targetDot) targetDot.classList.add('active');
+
+    // Progress bar update
+    const progressFill = document.getElementById('progress-fill');
+    if(progressFill) {
+        const pct = (step / 3) * 100;
+        progressFill.style.width = pct + '%';
+    }
+
+    // Procedural adjustment: Ensure the user is looking at the start of the form
+    const formPanel = document.querySelector('.form-panel');
+    if(formPanel) {
+        formPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 }
 
 function updateSubRegions() {
     const region = document.getElementById('inp-region').value;
     const subSelect = document.getElementById('inp-sub-region');
-    subSelect.innerHTML = '<option value="">세부 지역 선택</option>';
+    subSelect.innerHTML = '<option value="" selected disabled hidden></option>';
     
     if(REGIONAL_DATA[region]) {
         REGIONAL_DATA[region].forEach(sub => {
@@ -56,54 +82,90 @@ function updateSubRegions() {
             subSelect.appendChild(opt);
         });
     }
+    
+    // Manually trigger has-value check for sub-region
+    if(window.updateHasValue) {
+        window.updateHasValue(subSelect);
+    }
 }
 
 async function handleMatch() {
+    console.log("Starting precision diagnostic matching...");
     setView('matching');
     
+    // [STABILITY] Helper for safe data collection
+    const getVal = (id, fallback = 0) => {
+        const el = document.getElementById(id);
+        if(!el) {
+            console.warn(`[MISSING FIELD] ${id} was not found in the document.`);
+            return fallback;
+        }
+        return el.value;
+    };
+
+    const getChecked = (id) => {
+        const el = document.getElementById(id);
+        if(!el) {
+            console.warn(`[MISSING CHECKBOX] ${id} was not found.`);
+            return false;
+        }
+        return el.checked;
+    };
+
+    // Collect all detailed fields
     const userData = {
-        age: parseInt(document.getElementById('inp-age').value),
-        region: document.getElementById('inp-region').value,
-        sub_region: document.getElementById('inp-sub-region').value,
-        is_homeless: document.getElementById('inp-is-homeless').checked,
-        income: parseInt(document.getElementById('inp-income').value),
-        assets: parseInt(document.getElementById('inp-assets').value),
-        debt: parseInt(document.getElementById('inp-debt').value),
-        marital: document.getElementById('inp-marital').value,
-        kids: parseInt(document.getElementById('inp-kids').value),
-        sub_count: parseInt(document.getElementById('inp-subscription').value),
-        first_home: document.getElementById('inp-is-first-home').checked,
-        low_income: false // Removed from UI, default false
+        age: parseInt(getVal('inp-age', 29)),
+        region: getVal('inp-region', 'Seoul'),
+        sub_region: getVal('inp-sub-region', ''),
+        is_homeless: getChecked('inp-is-homeless'),
+        income: parseInt(getVal('inp-income', 3000)),
+        assets: parseInt(getVal('inp-assets', 5000)),
+        debt: parseInt(getVal('inp-debt', 0)),
+        marital: getVal('inp-marital', 'Single'),
+        kids: parseInt(getVal('inp-kids', 0)),
+        sub_count: parseInt(getVal('inp-subscription', 24)),
+        sub_amount: parseInt(getVal('inp-subscription-amount', 240)),
+        homeless_years: parseInt(getVal('inp-homeless-years', 0)),
+        is_pregnant: getChecked('inp-is-pregnant'),
+        first_home: getChecked('inp-is-first-home'),
+        low_income: false
     };
     currentUserData = userData;
+    console.log("Diagnostic Data Collected:", userData);
 
     try {
         const res = await fetch('/chatbot/api/policies/', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''},
+            headers: {
+                'Content-Type': 'application/json', 
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+            },
             body: JSON.stringify({ user_data: userData })
         });
         
-        const contentType = res.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
+        if (!res.ok) {
             const errorText = await res.text();
-            console.error("Non-JSON response received:", errorText);
-            throw new Error("서버 엔진 내부 오류가 발생했습니다. (HTTP " + res.status + ")");
+            console.error("API Error Response:", errorText);
+            throw new Error(`분석 중 오류 발생 (상태코드: ${res.status})`);
         }
         
         const data = await res.json();
-        if (data.error) {
-            throw new Error(data.error);
-        }
+        console.log("Matching Engine Results Received:", data);
+        if (data.error) throw new Error(data.error);
+        
         currentReport = data.report;
+        
+        // Reset container and render
+        const container = document.getElementById('matching-results-container');
+        if (container) container.innerHTML = ""; 
         
         renderResults();
         await fetchAIReport(userData, data.report);
         setView('result');
     } catch(e) {
-        console.error("DEBUG [handleMatch Error]:", e);
-        setView('form');
-        alert("분석 엔진 연결 중 오류가 발생했습니다: " + e.message);
+        console.error("Match Error Trace:", e);
+        setView('hero');
+        alert("분석 엔진 연결 실패: " + e.message);
     }
 }
 
@@ -111,7 +173,13 @@ function renderResults() {
     if(!currentReport) return;
     
     const container = document.getElementById('matching-results-container');
-    const { housing, finance, welfare, chart_data, financial_simulation } = currentReport;
+    const { 
+        housing = { list: [], reason: "" }, 
+        finance = { list: [], reason: "" }, 
+        welfare = { list: [], reason: "" },
+        chart_data = { radar: {} },
+        financial_simulation = { max_limit: 0, monthly_interest: 0 }
+    } = currentReport;
     
     let html = '';
     
@@ -175,55 +243,101 @@ function renderPolicyCard(p, type, isTop = false) {
 }
 
 function renderVisuals(chart_data, sim) {
-    const visualPanel = document.getElementById('visual-analytics-panel');
-    const radar = chart_data.radar;
+    const radarData = chart_data.radar;
+    const matchingScore = Math.round((radarData["주거"] + radarData["금융"] + radarData["복지"]) / 3);
+
+    // 1. Overall Matching Gauge (Doughnut)
+    const gaugeCtx = document.getElementById('scoreGaugeCanvas').getContext('2d');
     
-    visualPanel.innerHTML = `
-        <div class="visual-grid">
-            <div class="radar-box">
-                <h4>📊 정책 수혜 밸런스</h4>
-                <div class="radar-chart-simple">
-                    ${Object.entries(radar).map(([key, val]) => `
-                        <div class="radar-bar-container">
-                            <span class="radar-label">${key}</span>
-                            <div class="radar-bar-bg">
-                                <div class="radar-bar-fill" style="width: ${val}%"></div>
-                            </div>
-                            <span class="radar-val">${Math.round(val)}%</span>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-            <div class="sim-box">
-                <h4>🏦 대출 시뮬레이션</h4>
-                <div class="sim-content">
-                    <div class="sim-item">
-                        <span>예상 한도</span>
-                        <strong>${sim.max_limit.toLocaleString()}만원</strong>
-                    </div>
-                    <div class="sim-item">
-                        <span>예상 금리</span>
-                        <strong>연 ${sim.expected_rate}%</strong>
-                    </div>
-                    <div class="sim-item">
-                        <span>월 납입액</span>
-                        <strong>약 ${sim.monthly_interest.toLocaleString()}만원</strong>
-                    </div>
-                </div>
-                <div class="pir-gauge">
-                    <div class="pir-fill" style="width: ${sim.dsr}%"></div>
-                    <span class="pir-text">DSR 건전성 ${sim.dsr}%</span>
-                </div>
-                <!-- AI 분석 텍스트가 들어갈 자리 -->
-                <div id="ai-report-content" class="report-text" style="margin-top: 25px;"></div>
-            </div>
-        </div>
-    `;
+    // [STABILITY] Destroy existing chart instance
+    if (activeCharts.gauge) activeCharts.gauge.destroy();
+    
+    activeCharts.gauge = new Chart(gaugeCtx, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [matchingScore, 100 - matchingScore],
+                backgroundColor: ['#6366f1', '#f1f5f9'],
+                borderWidth: 0,
+                circumference: 270,
+                rotation: 225,
+                cutout: '85%',
+                borderRadius: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { tooltip: { enabled: false }, legend: { display: false } },
+            animation: { duration: 2000, easing: 'easeOutQuart' }
+        }
+    });
+    
+    // Animate the score number
+    animateNumber('gauge-score-val', 0, matchingScore, 2000);
+
+    // 2. Financial Simulation Restore
+    const simLimitEl = document.getElementById('sim-limit-val');
+    const simInterestEl = document.getElementById('sim-interest-val');
+    if (simLimitEl && sim) {
+        animateNumber('sim-limit-val', 0, sim.max_limit, 1500);
+    }
+    if (simInterestEl && sim) {
+        animateNumber('sim-interest-val', 0, sim.monthly_interest, 1500);
+    }
+
+    // 3. Policy Suitability Radar Chart
+    const radarCtx = document.getElementById('radarChartCanvas').getContext('2d');
+    
+    // [STABILITY] Destroy existing chart instance
+    if (activeCharts.radar) activeCharts.radar.destroy();
+    
+    activeCharts.radar = new Chart(radarCtx, {
+        type: 'radar',
+        data: {
+            labels: Object.keys(radarData),
+            datasets: [{
+                label: '추천 적합도',
+                data: Object.values(radarData),
+                backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                borderColor: '#6366f1',
+                pointBackgroundColor: '#6366f1',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: { display: false },
+                    grid: { color: '#f1f5f9' },
+                    pointLabels: { font: { size: 12, weight: 'bold' } }
+                }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+}
+
+function animateNumber(id, start, end, duration) {
+    const obj = document.getElementById(id);
+    let startTimestamp = null;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        obj.innerHTML = Math.floor(progress * (end - start) + start);
+        if (progress < 1) {
+            window.requestAnimationFrame(step);
+        }
+    };
+    window.requestAnimationFrame(step);
 }
 
 async function fetchAIReport(userData, reportData) {
     const box = document.getElementById('ai-report-content');
-    box.innerHTML = '<div class="loader-circle mini"></div> 보고서를 작성 중입니다...';
     try {
         const res = await fetch('/chatbot/api/ai-report/', {
             method: 'POST',
@@ -231,15 +345,75 @@ async function fetchAIReport(userData, reportData) {
             body: JSON.stringify({ user_data: userData, report_data: reportData })
         });
         const data = await res.json();
-        box.innerHTML = `<div class="report-wrapper"><p class="report-paragraph">${data.report.replace(/\n/g, '<br/>')}</p></div>`;
+        // Modernized text injection
+        box.innerHTML = `<div class="report-wrapper fade-in">
+            <div class="ai-avatar"><i class="fas fa-robot"></i> Expert Analyst</div>
+            <p class="report-paragraph">${data.report.replace(/\n/g, '<br/>')}</p>
+        </div>`;
     } catch(e) { 
-        box.innerText = "보고서 생성 중 오류가 발생했습니다. 아래 맞춤 목록을 확인해 주세요."; 
+        box.innerHTML = "리포트를 가져오는데 실패했습니다. 아래 상세 목록을 확인해주세요."; 
+    }
+}
+
+async function sendEmailToUser() {
+    console.log("Attempting to send report via email...");
+    const btn = document.querySelector('.btn-email-user');
+    const originalHtml = btn.innerHTML;
+    
+    try {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 전송 중...';
+        
+        const res = await fetch('/chatbot/api/send-email/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+            }
+        });
+        
+        const data = await res.json();
+        if (data.status === 'success') {
+            alert("📩 " + data.message);
+            btn.innerHTML = '<i class="fas fa-check"></i> 전송 완료';
+            btn.style.background = '#059669';
+        } else {
+            throw new Error(data.error);
+        }
+    } catch(e) {
+        console.error("Email send failed:", e);
+        alert("이메일 전송 실패: " + e.message);
+        btn.innerHTML = originalHtml;
+        btn.disabled = false;
     }
 }
 
 // 초기화
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Form Wizard Monitoring System Initialized.");
+    
+    // Floating labels helper: Add 'has-value' class when input/select is not empty
+    const inputs = document.querySelectorAll('.form-input, .form-select');
+    window.updateHasValue = (el) => {
+        if (el.value && el.value !== "") {
+            el.classList.add('has-value');
+        } else {
+            el.classList.remove('has-value');
+        }
+    };
+
+    inputs.forEach(el => {
+        // Initial check
+        window.updateHasValue(el);
+        
+        // Listener for changes
+        el.addEventListener('input', () => window.updateHasValue(el));
+        el.addEventListener('change', () => window.updateHasValue(el));
+        // Add focus/blur listeners for extra reactivity
+        el.addEventListener('focus', () => el.classList.add('is-focused'));
+        el.addEventListener('blur', () => el.classList.remove('is-focused'));
+    });
+
     if (document.getElementById('inp-region')) {
         updateSubRegions();
     }

@@ -1,0 +1,118 @@
+{% extends 'mainwindow/base.html' %}
+{% load static %}
+
+{% block title %}QR코드 로그인 | 딱맞춤{% endblock %}
+
+{% block extra_css %}
+<style>
+    .login-container {
+        max-width: 600px;
+        margin: 80px auto;
+        padding: 0 20px;
+    }
+    .form-panel {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 24px;
+        padding: 50px;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    }
+    .qr-box {
+        width: 200px;
+        height: 200px;
+        background: #f1f5f9;
+        border: 4px solid #e2e8f0;
+        border-radius: 16px;
+        margin: 0 auto 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    .qr-overlay {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(255,255,255,0.8);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+    }
+    .qr-timer {
+        font-weight: 700;
+        color: #ef4444;
+        margin-top: 10px;
+    }
+    .form-panel h2 {
+        font-size: 24px;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 12px;
+    }
+    .form-panel p {
+        color: #64748b;
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 35px;
+    }
+    .btn-refresh {
+        padding: 12px 24px;
+        background: #f1f5f9;
+        color: #475569;
+        border: none;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .info-notice {
+        margin-top: 40px;
+        padding: 20px;
+        background: #f8fafc;
+        border-radius: 12px;
+        text-align: left;
+    }
+    .info-notice li {
+        margin-bottom: 10px;
+        color: #64748b;
+        font-size: 13px;
+        list-style: none;
+        display: flex;
+        gap: 10px;
+    }
+    .info-notice li i { color: #2563eb; margin-top: 3px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container fade-in">
+    <div class="form-panel">
+        <h2>QR코드 로그인</h2>
+        <p>스마트폰 '딱맞춤' 앱으로 아래 QR코드를 스캔하여<br>안전하게 로그인하세요.</p>
+
+        <div class="qr-box">
+            <i class="fas fa-qrcode fa-6x" style="color: #cbd5e1;"></i>
+            <div class="qr-overlay">
+                <i class="fas fa-sync-alt fa-2x" style="color: #64748b; cursor: pointer;"></i>
+                <div class="qr-timer">만료됨</div>
+            </div>
+        </div>
+
+        <button class="btn-refresh">
+            <i class="fas fa-redo"></i> 코드 재발급
+        </button>
+
+        <div class="info-notice">
+            <ul>
+                <li><i class="fas fa-info-circle"></i><span>QR코드는 3분 동안 유효합니다.</span></li>
+                <li><i class="fas fa-info-circle"></i><span>스마트폰 앱 내 [로그인 -> QR스캔] 메뉴를 이용하세요.</span></li>
+                <li><i class="fas fa-info-circle"></i><span>개인정보 보호를 위해 공용 PC에서는 사용 후 로그아웃을 확인하세요.</span></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

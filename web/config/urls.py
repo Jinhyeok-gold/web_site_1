@@ -25,7 +25,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
     path('chatbot/', include('chatbot.core.urls')),
-    path('portal/', include('myproject.urls')), # 포털 관련 기능은 /portal/ 또는 개별 경로로 접근
+    path('portal/', include('myproject.urls')),
+    path('youth/', include('youth_road.urls')), # youth_road 앱 통합
     path('myreport/', views.myreport, name='myreport'),
     path('welfare_map/', views.welfare_map, name='welfare_map'),
 ]

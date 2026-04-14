@@ -11,6 +11,7 @@ urlpatterns = [
     path('api/policies/', views.match_policies, name='match_policies'),
     path('api/chat/', views.chat_gemini, name='chat_gemini'),
     path('api/ai-report/', views.get_ai_report, name='ai_report'),
+    path('api/send-email/', views.send_user_report_email, name='send_email'),
     
     # Auth & Profile
     path('accounts/login/', auth_login_views.LoginView.as_view(template_name='registration/login.html'), name='login'),

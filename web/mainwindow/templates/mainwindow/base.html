@@ -1,13 +1,16 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>청년 신혼부부 맞춤 서비스 - 딱맞춤</title>
     <link rel="stylesheet" href="{% static 'mainwindow/css/base.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     {% block extra_css %}{% endblock %}
 </head>
+
 <body>
 
     <header class="main-header">
@@ -20,48 +23,11 @@
             <nav class="main-nav">
                 <ul class="nav-list">
                     <li class="nav-item"><a href="{% url 'myreport' %}">마이리포트</a></li>
-                    <li class="nav-item"><a href="javascript:void(0)" onclick="setView('form')">자가진단</a></li>
-                    <li class="nav-item"><a href="javascript:void(0)" onclick="setView('hero')">정보마당</a></li>
-                    <li class="nav-item"><a href="javascript:void(0)">추가지원</a></li>
-
-                    <div class="dropdown-panel">
-                        <div class="container dropdown-inner">
-                            <div class="drop-col">
-                                <h4>마이리포트</h4>
-                                <ul>
-                                    <li><a href="#">리포트 조회</a></li>
-                                    <li><a href="#">맞춤 정책 관리</a></li>
-                                </ul>
-                            </div>
-                            <div class="drop-col">
-                                <h4>자가진단</h4>
-                                <ul>
-                                    <li><a href="#">주거복지 자가진단</a></li>
-                                    <li><a href="#">금융상품 진단</a></li>
-                                </ul>
-                            </div>
-                            <div class="drop-col">
-                                <h4>정보마당</h4>
-                                <ul>
-                                    <li><a href="#">공공주택공고</a></li>
-                                    <li><a href="#">주거복지제도안내</a></li>
-                                    <li><a href="#">자주묻는질문</a></li>
-                                </ul>
-                            </div>
-                            <div class="drop-col">
-                                <h4>추가지원</h4>
-                                <ul>
-                                    <li><a href="#">복지지도찾기</a></li>
-                                    <li><a href="#">공공데이터개방</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                    <li class="nav-item"><a href="javascript:void(0)" onclick="setView('hero')">자가진단</a></li>
                 </ul>
             </nav>
             <div class="header-util">
-                <a href="#" class="welfaremap-btn">복지지도찾기</a>
-                <a href="#" class="publicdata-btn">공공데이터개방</a>
+                <a href="#" class="qna-btn">고객센터</a>
                 <a href="{% url 'login' %}" class="login-btn">로그인</a>
                 <a href="{% url 'register_step1' %}" class="join-btn">회원가입</a>
             </div>
@@ -92,15 +58,17 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="footer-bottom">
             <div class="container">
                 <div class="footer-info">
                     <div class="footer-logo">
-                        <img src="{% static 'mainwindow/images/logo_2.png' %}" alt="딱맞춤 로고 그레이" class="footer-logo-gray">
+                        <img src="{% static 'mainwindow/images/logo_2.png' %}" alt="딱맞춤 로고 그레이"
+                            class="footer-logo-gray">
                     </div>
                     <div class="footer-address">
-                        <p><span>국토교통부</span> (30103)세종특별자치시 도움6로 11 <span>|</span> <span>주택도시보증공사(HUG)</span> (48400)부산광역시 남구 문현금융로 40 BIFC </p>
+                        <p><span>국토교통부</span> (30103)세종특별자치시 도움6로 11 <span>|</span> <span>주택도시보증공사(HUG)</span>
+                            (48400)부산광역시 남구 문현금융로 40 BIFC </p>
                         <p class="call_number">청년·신혼부부 주거지원 콜센터: 1600-1004</p>
                         <p class="copyright">Copyright © 딱맞춤. All Rights Reserved.</p>
                     </div>
@@ -117,33 +85,33 @@
     <aside class="quick-menu">
         <ul>
             <li>
-                <a href="#">
-                    <img src="{% static 'mainwindow/images/home.png' %}" alt="홈">
-                    <span>홈</span>
+                <a href="https://www.youthcenter.go.kr/" target="_blank" class="grid-link">
+                    <img src="{% static 'mainwindow/images/privacy-policy.png' %}" alt="정책소개">
+                    <span>정책소개</span>
                 </a>
             </li>
             <li>
-                <a href="{% url 'myreport' %}" onclick="setView('form'); return false;">
-                    <img src="{% static 'mainwindow/images/report.png' %}" alt="마이리포트">
-                    <span>마이리포트</span>
+                <a href="https://www.myhome.go.kr/" target="_blank" class="grid-link">
+                    <img src="{% static 'mainwindow/images/home-automation.png' %}" alt="주거지원">
+                    <span>주거지원</span>
                 </a>
             </li>
             <li>
-                <a href="#">
-                    <img src="{% static 'mainwindow/images/diagnosis.png' %}" alt="자가진단">
-                    <span>자가진단</span>
+                <a href="https://nhuf.molit.go.kr/FP/FP08/FP0801/FP08010101.jsp" target="_blank" class="grid-link">
+                    <img src="{% static 'mainwindow/images/money-management.png' %}" alt="이자지원">
+                    <span>이자지원</span>
                 </a>
             </li>
             <li>
-                <a href="#">
-                    <img src="{% static 'mainwindow/images/info.png' %}" alt="정보마당">
-                    <span>정보마당</span>
+                <a href="https://nhuf.molit.go.kr/" target="_blank" class="grid-link">
+                    <img src="{% static 'mainwindow/images/delivery-box.png' %}" alt="금융상품">
+                    <span>금융상품</span>
                 </a>
             </li>
             <li>
-                <a href="#">
-                    <img src="{% static 'mainwindow/images/add.png' %}" alt="추가지원">
-                    <span>추가지원</span>
+                <a href="https://nhuf.molit.go.kr/" target="_blank" class="grid-link">
+                    <img src="{% static 'mainwindow/images/more.png' %}" alt="기타지원">
+                    <span>기타지원</span>
                 </a>
             </li>
             <li>
@@ -162,7 +130,8 @@
             <button onclick="toggleChatbot()" class="close-btn">✕</button>
         </div>
         <div id="chat-messages" class="chat-messages">
-            <div class="chat-bubble chat-bot">안녕하세요! 정책/취업/법률 전문가입니다. 상담을 위해 먼저 <b>자가진단</b>을 완료해 주시면 더욱 정확한 안내가 가능합니다.</div>
+            <div class="chat-bubble chat-bot">안녕하세요! 정책/취업/법률 전문가입니다. 상담을 위해 먼저 <b>자가진단</b>을 완료해 주시면 더욱 정확한 안내가 가능합니다.
+            </div>
         </div>
         <form onsubmit="handleChatSubmit(event)" class="chat-input-form">
             {% csrf_token %}
@@ -172,4 +141,5 @@
     </div>
     {% block extra_js %}{% endblock %}
 </body>
+
 </html>

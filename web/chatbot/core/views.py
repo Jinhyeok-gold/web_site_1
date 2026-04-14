@@ -30,14 +30,22 @@ def match_policies(request):
                 assets=u.get('assets', 5000),
                 debt=u.get('debt', 0),
                 kids_count=u.get('kids', 0),
+                is_pregnant=u.get('is_pregnant', False),
                 subscription_count=u.get('sub_count', 24),
+                subscription_amount=u.get('sub_amount', 240),
                 is_homeless=u.get('is_homeless', True),
                 is_first_home=u.get('first_home', True),
-                homeless_years=5 # 기본값
+                homeless_years=u.get('homeless_years', 0)
             )
             
             # [STRICT] 매칭 엔진 가동
             report = MatchingEngine.get_full_report(diag)
+            
+            # [SAVE] 로그인 상태라면 진단 데이터를 DB에 영구 보관
+            if request.user.is_authenticated:
+                diag.user = request.user
+                diag.save()
+                u['diagnostic_id'] = diag.id # ID 저장해서 나중에 이메일 보낼 때 참조 가능
             
             # 세션에 최신 진단 데이터 캐싱 (AI 리포트 호출 시 사용)
             request.session['latest_diagnostic_data'] = u
@@ -48,6 +56,63 @@ def match_policies(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
+@login_required
+def send_user_report_email(request):
+    """현재 로그인된 사용자에게 정밀 분석 보고서 이메일 발송"""
+    if request.method == 'POST':
+        try:
+            user_data = request.session.get('latest_diagnostic_data')
+            report_data = request.session.get('latest_report_data')
+            
+            if not user_data or not report_data:
+                return JsonResponse({'error': '진단 데이터가 세션에 없습니다. 다시 시도해주세요.'}, status=400)
+            
+            user_email = request.user.email
+            if not user_email:
+                return JsonResponse({'error': '계정에 등록된 이메일 주소가 없습니다.'}, status=400)
+
+            # HTML 이메일 템플릿 렌더링 (나중에 템플릿 파일 생성 필요)
+            context = {
+                'user': request.user,
+                'data': user_data,
+                'report': report_data,
+            }
+            
+            # 우선은 간단하게 구성
+            subject = f"[딱맞춤] {request.user.username}님의 정밀 분석 보고서입니다."
+            html_message = f"""
+            <h2>안녕하세요, {request.user.username}님! 딱맞춤입니다.</h2>
+            <p>사용자 정보 기반 정밀 분석 결과가 도착했습니다.</p>
+            <hr>
+            <h3>📊 분석 요약</h3>
+            <ul>
+                <li>종합 평점: {report_data.get('radar_scores', {}).get('주거', 0)}점 (예제)</li>
+                <li>최대 대출 한도: {report_data.get('financial_simulation', {}).get('max_limit', 0)}만원</li>
+            </ul>
+            <h3>🏠 주요 추천 정책</h3>
+            <p>1. {report_data.get('housing', {}).get('top_1', {}).get('title', '정보 없음')}</p>
+            <p>2. {report_data.get('finance', {}).get('top_1', {}).get('title', '정보 없음')}</p>
+            <p>자세한 내용은 딱맞춤 홈페이지 마이리포트에서 확인하실 수 있습니다.</p>
+            """
+            plain_message = strip_tags(html_message)
+            
+            send_mail(
+                subject,
+                plain_message,
+                'noreply@ddak-match.com',
+                [user_email],
+                html_message=html_message,
+            )
+            
+            return JsonResponse({'status': 'success', 'message': f'{user_email}로 리포트가 전송되었습니다.'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    return JsonResponse({'error': 'Invalid method'}, status=400)
 
 @csrf_exempt
 def chat_gemini(request):
