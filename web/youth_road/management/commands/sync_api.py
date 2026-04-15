@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from django.core.management.base import BaseCommand
 from youth_road.models import HousingProduct, FinanceProduct, WelfareProduct
-from youth_road.firebase_service import FirebaseManager
+# from youth_road.firebase_service import FirebaseManager (Removed)
 from urllib.parse import unquote
 
 class Command(BaseCommand):
@@ -36,8 +36,8 @@ class Command(BaseCommand):
         self.sync_welfare(decoded_key)
         self.sync_youth_center(youth_key)
 
-        # [FINAL] Firebase 삼분할 전송
-        self.sync_all_to_firebase()
+        # [FINAL] Firebase 삼분할 전송 제거됨
+        # self.sync_all_to_firebase()
 
     def sync_applyhome(self, api_key):
         endpoint = "https://api.odcloud.kr/api/ApplyhomeInfoDetailSvc/v1/getAPTLttotPblancDetail"
@@ -261,10 +261,6 @@ class Command(BaseCommand):
             self.stderr.write(f"YouthCenter Parsing Error: {e}")
 
     def sync_all_to_firebase(self):
-        h_data = [{ 'manage_no': p.manage_no, 'title': p.title, 'category': p.category, 'region': p.region, 'url': p.url, 'org': p.org } for p in HousingProduct.objects.all()]
-        FirebaseManager.sync_data('housing_products', h_data, id_field='manage_no')
-        f_data = [{ 'product_id': p.product_id, 'title': p.title, 'bank_nm': p.bank_nm, 'base_rate': p.base_rate, 'limit': p.limit_amt, 'url': p.url } for p in FinanceProduct.objects.all()]
-        FirebaseManager.sync_data('finance_products', f_data, id_field='product_id')
-        w_data = [{ 'policy_id': p.policy_id, 'title': p.title, 'org': p.org_nm, 'category': p.category, 'region': p.region, 'url': p.url } for p in WelfareProduct.objects.all()]
-        FirebaseManager.sync_data('welfare_policies', w_data, id_field='policy_id')
-        self.stdout.write(self.style.SUCCESS(f"🏆 ALL SYSTEM INTEGRATION COMPLETE (v20.0 - Hyper-Strict Edition)!"))
+        # Firebase 제거됨
+        pass
+        # self.stdout.write(self.style.SUCCESS(f"🏆 ALL SYSTEM INTEGRATION COMPLETE (v20.0 - Hyper-Strict Edition)!"))

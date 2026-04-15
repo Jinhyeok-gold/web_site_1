@@ -32,7 +32,7 @@ function setView(viewId) {
         nextStep(1); 
     }
     
-    ['hero', 'matching', 'result'].forEach(v => {
+     ['hero', 'matching', 'result', 'recap'].forEach(v => {
         const el = document.getElementById('view-' + v);
         if(el) el.classList.add('hidden');
     });
@@ -161,7 +161,8 @@ async function handleMatch() {
         
         renderResults();
         await fetchAIReport(userData, data.report);
-        setView('result');
+        currentReport = data.report;
+        renderRecap(data.report);
     } catch(e) {
         console.error("Match Error Trace:", e);
         setView('hero');
@@ -419,8 +420,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Chatbot 모듈
+// Chatbot 모듈 [v22 Advanced Integration]
 function toggleChatbot() { document.getElementById('chatbot-modal').classList.toggle('hidden'); }
+
 async function handleChatSubmit(e) {
     e.preventDefault();
     const input = document.getElementById('chat-input');
@@ -434,19 +436,95 @@ async function handleChatSubmit(e) {
         const response = await fetch('/chatbot/api/chat/', {
             method: 'POST',
             headers: {'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value},
-            body: JSON.stringify({ message: msg, user_data: currentUserData })
+            body: JSON.stringify({ message: msg, user_data: currentUserData, report_data: currentReport })
         });
         const data = await response.json();
-        appendChat('bot', data.reply);
+        
+        let text = data.reply;
+        
+        // 🎯 [ID:...] 태그 모두 찾기 (지원: 중복 카드)
+        const idMatches = [...text.matchAll(/\[ID:([\w-]+)\]/g)];
+        
+        // 태그들을 제거한 본문 텍스트 추출
+        let cleanText = text;
+        idMatches.forEach(m => { cleanText = cleanText.replace(m[0], ''); });
+        
+        // 본문 먼저 출력
+        appendChat('bot', cleanText.trim());
+        
+        // 발견된 모든 상품 카드 순차적으로 렌더링
+        for (const match of idMatches) {
+            await appendProductCardToChat(match[1]);
+        }
     } catch(e) {
-        appendChat('bot', "오류가 발생했습니다.");
+        appendChat('bot', "오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
     }
 }
+
+async function appendProductCardToChat(productId) {
+    const box = document.getElementById('chat-messages');
+    
+    // 로딩 인디케이터
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'chat-bubble chat-bot loading-card';
+    loadingDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 맞춤 정책 정보를 불러오는 중...';
+    box.appendChild(loadingDiv);
+    box.scrollTop = box.scrollHeight;
+
+    try {
+        const res = await fetch(`/chatbot/api/product-detail/?id=${productId}`);
+        const data = await res.json();
+        if(loadingDiv.parentNode) box.removeChild(loadingDiv);
+        
+        if (data.error) throw new Error(data.error);
+
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'chat-product-card fade-in';
+        cardDiv.innerHTML = `
+            <div class="chat-card-header">
+                <span class="chat-card-type">${data.type === 'FinanceProduct' ? '금융' : '주거'}</span>
+                <strong>${data.title}</strong>
+            </div>
+            <p class="chat-card-summary">${data.summary.substring(0, 100)}...</p>
+            <a href="${data.url}" target="_blank" class="chat-card-btn">상세보기 <i class="fas fa-external-link-alt"></i></a>
+        `;
+        box.appendChild(cardDiv);
+    } catch (e) {
+        if(loadingDiv.parentNode) box.removeChild(loadingDiv);
+        // 에러 시 로그만 남기고 지나감 (이미 본문이 출력되었으므로)
+        console.warn("Card render failed for ID:", productId);
+    }
+    box.scrollTop = box.scrollHeight;
+}
+
 function appendChat(role, text) {
+    if(!text) return;
     const box = document.getElementById('chat-messages');
     const div = document.createElement('div');
     div.className = `chat-bubble chat-${role}`;
-    div.innerHTML = text.replace(/\n/g, '<br/>');
+    
+    // [[BUTTON:TYPE|LABEL]] 모두 처리
+    let cleanText = text;
+    const btnMatches = [...text.matchAll(/\[\[BUTTON:([\w_]+)\|([^\]]+)\]\]/g)];
+    let buttonsHtml = '';
+    
+    if (btnMatches.length > 0) {
+        buttonsHtml = '<div class="chat-btn-row">';
+        btnMatches.forEach(m => {
+            cleanText = cleanText.replace(m[0], '');
+            buttonsHtml += `<button class="chat-action-btn" onclick="handleChatAction('${m[1]}')">${m[2]}</button>`;
+        });
+        buttonsHtml += '</div>';
+    }
+
+    div.innerHTML = cleanText.replace(/\n/g, '<br/>') + buttonsHtml;
     box.appendChild(div);
     box.scrollTop = box.scrollHeight;
+}
+
+function handleChatAction(type) {
+    if (type === 'REPORT_VIEW') setView('result');
+    else if (type === 'POLICY_LIST') window.location.href = 'https://www.youthcenter.go.kr';
+    else if (type === 'DSR_CALC') alert('DSR 계산기 기능을 준비 중입니다.');
+    else toggleChatbot();
 }

@@ -1,5 +1,5 @@
 from .models import HousingProduct, FinanceProduct, WelfareProduct
-from .firebase_service import FirebaseManager
+# from .firebase_service import FirebaseManager (Removed)
 import random
 from datetime import datetime, date, timedelta
 from django.db.models import Q
@@ -15,6 +15,36 @@ class MatchingEngine:
         'Jeonbuk': '전북', 'Jeonnam': '전남', 'Gyeongbuk': '경북', 'Gyeongnam': '경남', 
         'Jeju': '제주'
     }
+    
+    @staticmethod
+    def map_profile_to_instance(profile):
+        """[Adapter] UserProfile(policyapp) 객체를 MatchingEngine용 가상 인스턴스로 변환"""
+        # 간단한 가상 클래스 생성 (getattr 대응용)
+        class VirtualInstance:
+            def __init__(self, p):
+                self.age = p.age or 29
+                # 지역 매핑 (Sido 한글 -> Key)
+                self.region = 'Seoul' # Default
+                for k, v in MatchingEngine.REGION_KEYWORD_MAP.items():
+                    if v in (p.sido or ""):
+                        self.region = k
+                self.sub_region = p.sigungu
+                self.total_income = p.income or 3000
+                self.assets = p.net_assets or 10000
+                self.debt = p.debt or 0
+                self.subscription_count = p.subscription_count or 0
+                self.subscription_amount = p.subscription_amount or 0
+                self.marital_status = 'Married' if p.marital_status == '신혼부부' else 'Single'
+                self.kids_count = p.children_count or 0
+                self.is_pregnant = getattr(p, 'is_pregnant', False)
+                self.is_first_home = getattr(p, 'is_first_home', True)
+                self.is_homeless = getattr(p, 'is_homeless', True)
+                self.homeless_years = p.homeless_period or 0
+            
+            def get_marital_status_display(self):
+                return "신혼부부" if self.marital_status == 'Married' else "미혼"
+
+        return VirtualInstance(profile)
 
     @staticmethod
     def get_default_item(category_name, message=None):
@@ -126,10 +156,12 @@ class MatchingEngine:
         if end_date and end_date < today:
             return False
         
-        # [v21] 모집 종료일이 없는 경우 공고일 기준 90일 초과 데이터 엄격 배제 (90 Days Cutoff)
+        # [v25] 모집 종료일이 없는 경우 공고일 기준 60일 초과 데이터 엄격 배제 (60 Days Cutoff)
         if not end_date and notice_date:
-            is_always = "상시" in (product.get('title', '') or "")
-            if not is_always and notice_date < (today - timedelta(days=90)):
+            is_always = any(x in (product.get('title', '') or "") for x in ["상시", "기본", "급여"])
+            # 일반 공고는 60일, 상시 공고도 최소 180일 이내 공고만 인정
+            limit_days = 180 if is_always else 60
+            if notice_date < (today - timedelta(days=limit_days)):
                 return False
             
         # 5. [v19] 무주택 및 소유 이력 필터링 (Hyper-Strict)
@@ -169,6 +201,7 @@ class MatchingEngine:
             local_products = list(HousingProduct.objects.filter(
                 Q(region__icontains=reg_key) | Q(region__icontains="전용") | Q(region__icontains="전국"),
                 Q(end_date__gte=today) | Q(end_date__isnull=True),
+                notice_date__isnull=False,
                 is_active=True
             ).order_by('-notice_date')[:50])
             
@@ -230,21 +263,28 @@ class MatchingEngine:
     def analyze_finance(instance):
         """[STRICT] 금융: 소득 및 상황별 적격성 무한 대조"""
         try:
-            local = list(FinanceProduct.objects.filter(is_active=True)[:100])
+            today = date.today()
+            # [v25] DB 레벨에서 1차 날짜 필터링 및 최신순 정렬
+            local = list(FinanceProduct.objects.filter(
+                Q(end_date__gte=today) | Q(end_date__isnull=True),
+                is_active=True
+            ).order_by('-notice_date')[:100])
+            
             valid = []
             sim = MatchingEngine.calculate_simulation(instance)
             
             for p in local:
                 title = p.title or ""
                 
-                # [v21] 모집 기간 엄격 필터링 (과거 공고 배제)
-                if p.end_date and p.end_date < date.today():
+                # [v25] 모집 기간 엄격 필터링 (과거 공고 배제)
+                if p.end_date and p.end_date < today:
                     continue
                 
-                # [v21] 공고 기간이 명시되지 않은 경우 최근 90일 이내 공고만 인정 (90 Days Cutoff)
+                # [v25] 공고 기간이 명시되지 않은 경우 최근 60일 이내 공고만 인정 (60 Days Cutoff)
                 if not p.end_date and p.notice_date:
-                    is_always = "상시" in title
-                    if not is_always and p.notice_date < (date.today() - timedelta(days=90)):
+                    is_always = any(x in title for x in ["상시", "기본", "급여"])
+                    limit_days = 180 if is_always else 60
+                    if p.notice_date < (today - timedelta(days=limit_days)):
                         continue
                 if any(x in title for x in ["무주택", "디딤돌", "버팀목"]) and not instance.is_homeless:
                     continue
@@ -377,20 +417,26 @@ class MatchingEngine:
             if reg_key:
                 query |= Q(region__icontains=reg_key)
             
-            local = list(WelfareProduct.objects.filter(query, is_active=True)[:150])
+            today = date.today()
+            # [v25] DB 레벨에서 쿼리 최적화 및 날짜 필터링
+            local = list(WelfareProduct.objects.filter(
+                query, 
+                Q(end_date__gte=today) | Q(end_date__isnull=True),
+                is_active=True
+            ).order_by('-notice_date')[:150])
+            
             valid = []
             
             for p in local:
                 # [STRICT] 모집 기간 필터링 (과거 공고 절대 배제)
-                today = date.today()
                 if p.end_date and p.end_date < today:
                     continue
                 
-                # 공고일 기준 90일 초과 데이터 배제 (상시 정책 제외) [90 Days Cutoff]
-                if p.notice_date and p.notice_date < (today - timedelta(days=90)):
-                    # 일부 '상시' 지원 사업은 예외적으로 허용하되, 그 외에는 칼같이 배제
+                # [v25] 공고일 기준 최대 60일 초과 데이터 배제 (상시는 180일) [60/180 Days Cutoff]
+                if p.notice_date:
                     is_const = any(x in (p.title or "") for x in ["상시", "기본", "급여"]) or any(x in (p.benefit_desc or "") for x in ["상시", "기본", "급여"])
-                    if not is_const:
+                    limit_days = 180 if is_const else 60
+                    if p.notice_date < (today - timedelta(days=limit_days)):
                         continue
 
                 score = MatchingEngine.calculate_welfare_score(instance, p)

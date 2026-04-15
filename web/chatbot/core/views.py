@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from .services import get_all_policies, ask_expert_ai, generate_expert_report
 from .models import UserProfile
-from youth_road.models import UserDiagnostic
+from youth_road.models import UserDiagnostic, HousingProduct, FinanceProduct, WelfareProduct
 from youth_road.matching_service import MatchingEngine
 
 def index(request):
@@ -121,8 +121,15 @@ def chat_gemini(request):
         try:
             body = json.loads(request.body)
             user_msg = body.get('message', '')
-            user_data = request.session.get('latest_diagnostic_data', {'name': '방문자', 'age': 29, 'income': 3000, 'region': 'Seoul'})
-            report_data = request.session.get('latest_report_data', None)
+            
+            # 자가진단(body의 user_data) 우선 연동
+            frontend_user_data = body.get('user_data')
+            if frontend_user_data:
+                user_data = frontend_user_data
+            else:
+                user_data = request.session.get('latest_diagnostic_data', {'name': '방문자', 'age': 29, 'income': 3000, 'region': 'Seoul'})
+                
+            report_data = body.get('report_data') or request.session.get('latest_report_data', None)
             
             user_api_key = None
             if request.user.is_authenticated:
@@ -188,3 +195,30 @@ def update_profile(request):
         profile.save()
         return redirect('index')
     return redirect('index')
+
+@csrf_exempt
+def get_product_detail(request):
+    """[v22] 특정 상품의 상세 정보를 반환 (AI 카드 렌더링용)"""
+    product_id = request.GET.get('id')
+    if not product_id:
+        return JsonResponse({'error': 'No ID provided'}, status=400)
+    
+    # 여러 테이블에서 ID 검색
+    product = None
+    if product_id.startswith('HOU_'):
+        product = HousingProduct.objects.filter(manage_no=product_id.replace('HOU_', '')).first()
+    elif product_id.startswith('FIN_'):
+        product = FinanceProduct.objects.filter(product_id=product_id).first()
+    elif product_id.startswith('WEL_'):
+        product = WelfareProduct.objects.filter(policy_id=product_id).first()
+    
+    if product:
+        return JsonResponse({
+            'id': product_id,
+            'title': product.title,
+            'summary': getattr(product, 'benefit_desc', getattr(product, 'location', '상세 정보 없음')),
+            'url': getattr(product, 'url', '#'),
+            'type': product.__class__.__name__
+        })
+    
+    return JsonResponse({'error': 'Product not found'}, status=404)

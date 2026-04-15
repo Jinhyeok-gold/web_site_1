@@ -246,6 +246,19 @@ wheels = [
 ]
 
 [[package]]
+name = "django-allauth"
+version = "65.16.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "asgiref" },
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/40/a0/94f485e056c1d1ddd0a50ef240a8d810aaa917855dccecbc3d9af3d7f880/django_allauth-65.16.0.tar.gz", hash = "sha256:7a94857146f8dfe810da1ab78514792e5f7ddb115c22d054e04c1ef18112af32", size = 2233580, upload-time = "2026-04-13T18:35:22.307Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b6/45/e3b2ccbf1a6d07725ed089812bfc13065795213f19b50ec27b7c4b6abaa9/django_allauth-65.16.0-py3-none-any.whl", hash = "sha256:e65d4aa4ed754c634d0f381dc58c6bbe2a0453f9a26d5bf7f138eee86919dc7e", size = 2053654, upload-time = "2026-04-13T18:35:10.753Z" },
+]
+
+[[package]]
 name = "django-environ"
 version = "0.13.0"
 source = { registry = "https://pypi.org/simple" }
@@ -992,6 +1005,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "django" },
+    { name = "django-allauth" },
     { name = "django-environ" },
     { name = "firebase-admin" },
     { name = "google-genai" },
@@ -1003,6 +1017,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "django", specifier = ">=6.0.3" },
+    { name = "django-allauth", specifier = ">=65.16.0" },
     { name = "django-environ", specifier = ">=0.13.0" },
     { name = "firebase-admin", specifier = ">=7.4.0" },
     { name = "google-genai", specifier = ">=1.72.0" },

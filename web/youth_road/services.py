@@ -3,7 +3,7 @@ import environ
 import urllib.parse
 import xml.etree.ElementTree as ET
 import os
-from .firebase_service import FirebaseManager
+# from .firebase_service import FirebaseManager (Removed)
 from django.conf import settings
 
 # Initialize environ
@@ -41,8 +41,8 @@ class PublicDataHousingService:
     
     @staticmethod
     def get_lh_sh_notices(region_name, type_code='05'):
-        # 1. Firebase Archive 먼저 로드 (수동 데이터 포함)
-        items = FirebaseManager.fetch_archive('housing_notices', region_name)
+        # 1. Local Archive 로드 (Firebase 제거됨)
+        items = [] 
         
         # 2. API 호출 시도
         raw_key = env('DATA_PORTAL_KEY', default='').strip()
@@ -87,7 +87,7 @@ class PublicDataHousingService:
                     })
                 
                 if api_items:
-                    FirebaseManager.sync_data('housing_notices', api_items, id_field='id')
+                    # firebase_sync_disabled: FirebaseManager.sync_data('housing_notices', api_items, id_field='id')
                     existing_ids = {i.get('id') for i in items}
                     items += [ai for ai in api_items if ai.get('id') not in existing_ids]
 
@@ -101,8 +101,8 @@ class SubscriptionHomeService:
     
     @staticmethod
     def get_subscription_notices(region_name):
-        # 1. Firebase Archive 먼저 로드
-        items = FirebaseManager.fetch_archive('housing_notices', region_name)
+        # 1. Local Archive 먼저 로드
+        items = []
         
         # 2. API 호출 시도
         raw_key = env('DATA_PORTAL_KEY', default='').strip()
@@ -136,7 +136,7 @@ class SubscriptionHomeService:
                         })
                 
                 if api_items:
-                    FirebaseManager.sync_data('housing_notices', api_items, id_field='id')
+                    # firebase_sync_disabled: FirebaseManager.sync_data('housing_notices', api_items, id_field='id')
                     existing_ids = {i.get('id') for i in items}
                     items += [ai for ai in api_items if ai.get('id') not in existing_ids]
 
@@ -157,7 +157,7 @@ class FssFinanceService:
             {"id": "P_03", "name": "버팀목 전세자금", "base_rate": 1.8, "target": "Rent", "limit": 20000, "org": "정부지원", "url": "https://nhuf.molit.go.kr/"},
             {"id": "P_04", "name": "청년 전용 보증부월세", "base_rate": 1.0, "target": "LowIncome", "limit": 5000, "org": "정부지원", "url": "https://nhuf.molit.go.kr/"}
         ]
-        items = policy_loans + FirebaseManager.fetch_archive('loan_products')
+        items = policy_loans # Firebase 제거됨
         
         # 2. API 호출 시도
         api_key = env('FSS_FINANCE_KEY', default='').strip()
@@ -185,7 +185,7 @@ class FssFinanceService:
                     })
                 
                 if api_loans:
-                    FirebaseManager.sync_data('loan_products', api_loans, id_field='id')
+                    # FirebaseManager.sync_data('loan_products', api_loans, id_field='id')
                     existing_ids = {i.get('id') for i in items}
                     items += [al for al in api_loans if al.get('id') not in existing_ids]
             else:
@@ -200,8 +200,8 @@ class OntongWelfareService:
     
     @staticmethod
     def get_welfare_policies(age, region_name):
-        # 1. Firebase Archive 로드
-        items = FirebaseManager.fetch_archive('welfare_policies', region_name)
+        # 1. Local Archive 로드
+        items = []
         
         # 2. API 호출 시도
         api_key = env('YOUTH_CENTER_KEY', default='').strip()
@@ -251,7 +251,7 @@ class OntongWelfareService:
                     })
                 
                 if api_policies:
-                    FirebaseManager.sync_data('welfare_policies', api_policies, id_field='id')
+                    # firebase_sync_disabled: FirebaseManager.sync_data('welfare_policies', api_policies, id_field='id')
                     existing_names = {i.get('name') for i in items}
                     items += [ap for ap in api_policies if ap.get('name') not in existing_names]
             else:

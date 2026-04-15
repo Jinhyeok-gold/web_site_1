@@ -5,12 +5,14 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'mainwindow/css/home.css' %}">
+<link rel="stylesheet" href="{% static 'mainwindow/css/recap.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 {% endblock %}
 
 {% block content %}
 <div class="container wide">
     <main class="main-content-wrapper">
+
         <!-- New Primary Hero: Premium Diagnostic Hub -->
         <div id="view-hero" class="fade-in hub-container">
             <div class="hub-content">
@@ -205,59 +207,102 @@
         </div>
 
         <!-- View: Matching Loading -->
-        <div id="view-result" class="hidden results-view">
-    <div class="result-header fade-in">
-        <span class="header-badge">AI Diagnostic Complete</span>
-        <h2 class="gradient-text">나만을 위한 맞춤형 정책 포트폴리오</h2>
-    </div>
-
-    <div class="bento-grid">
-        <div class="bento-item main-score-card">
-            <div class="unit-title">종합 적합도</div>
-            <div class="gauge-wrapper">
-                <canvas id="scoreGaugeCanvas"></canvas>
-                <div class="gauge-center">
-                    <span id="gauge-score-val">0</span><span class="unit-pct">%</span>
-                </div>
+        <div id="view-matching" class="hidden fade-in matching-view">
+            <div class="loader-wrapper">
+                <div class="premium-loader"></div>
+                <h2>사용자님의 딱맞춤 정보를 분석 중입니다...</h2>
+                <p>전국의 정책 데이터베이스와 금융 상품을 실시간 매칭하고 있습니다.</p>
             </div>
         </div>
 
-        <div class="bento-item ai-report-card">
-            <div class="ai-avatar"><i class="fas fa-robot"></i> Expert Analyst</div>
-            <div id="ai-report-content" class="ai-report-box">
-                </div>
-        </div>
+        <!-- View: Result Dashboard -->
+        <div id="view-result" class="hidden fade-in results-view">
+            <div class="result-header">
+                <div class="header-badge">PREMIUM ANALYSIS REPORT</div>
+                <h2>사용자 정보 기반 <span class="gradient-text">정책 분석 대시보드</span></h2>
+                <p>전국 정책 데이터와 금융 시뮬레이션을 결합한 최적의 로드맵입니다.</p>
+            </div>
 
-        <div class="bento-item finance-sim-card">
-            <div class="unit-title">예상 지원 혜택</div>
-            <div class="sim-dashboard">
-                <div class="sim-pill">
-                    <span class="pill-label">최대 한도</span>
-                    <strong><span id="sim-limit-val">0</span><span class="pill-unit">만원</span></strong>
+            <!-- Visualization Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Unit 1: Overall Matching Gauge -->
+                <div class="dashboard-unit score-gauge-unit">
+                    <div class="unit-title">종합 정책 적합도</div>
+                    <div class="gauge-container">
+                        <canvas id="scoreGaugeCanvas"></canvas>
+                        <div class="gauge-center">
+                            <span id="gauge-score-val">0</span>
+                            <span class="unit-pct">%</span>
+                        </div>
+                    </div>
+                    <div class="gauge-desc">사용자님의 프로필과 100%에 가까울수록 강력 추천되는 정책입니다.</div>
                 </div>
-                <div class="sim-pill">
-                    <span class="pill-label">월 예상 이자</span>
-                    <strong><span id="sim-interest-val">0</span><span class="pill-unit">만원</span></strong>
+
+                <!-- Unit 2: Spider Chart -->
+                <div class="dashboard-unit radar-unit">
+                    <div class="unit-title">분야별 수혜 밸런스</div>
+                    <div class="chart-container">
+                        <canvas id="radarChartCanvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- Unit 3: Financial Simulation & AI Insights -->
+                <div class="dashboard-unit simulation-unit">
+                    <div class="unit-title">📊 맞춤 금융 시뮬레이션</div>
+                    <div class="sim-dashboard">
+                        <div class="sim-pill">
+                            <span class="pill-label">최대 대출 한도</span>
+                            <strong id="sim-limit-val">0</strong><span class="pill-unit">만원</span>
+                        </div>
+                        <div class="sim-pill">
+                            <span class="pill-label">예상 이자 (월)</span>
+                            <strong id="sim-interest-val">0</strong><span class="pill-unit">만원</span>
+                        </div>
+                    </div>
+
+                    <div class="unit-title" style="margin-top: 20px;">🤖 AI 전문가 정밀 진단</div>
+                    <div id="ai-report-content" class="ai-report-box">
+                        <div class="loading-report">
+                            <div class="loader-dots"><span></span><span></span><span></span></div>
+                            AI 분석 리포트 생성 중...
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="bento-item chart-card">
-            <div class="unit-title">분야별 적합도</div>
-            <div class="chart-container">
-                <canvas id="radarChartCanvas"></canvas>
+            <!-- Detailed Matching Results -->
+            <div class="results-sub-title">
+                <i class="fas fa-list-ul"></i> 분야별 추천 상세 목록
+            </div>
+
+            <div id="matching-results-container" class="matching-results-container">
+                <!-- Housing / Finance / Welfare 섹션이 여기에 주입됩니다 -->
+            </div>
+
+            <div class="result-actions">
+                <button type="button" class="btn-print" onclick="window.print();"><i class="fas fa-print"></i> 리포트
+                    인쇄</button>
+
+                {% if user.is_authenticated %}
+                <button type="button" class="btn-email-user" onclick="sendEmailToUser();">
+                    <i class="fas fa-envelope-open-text"></i> 내 이메일({{ user.email }})로 발송
+                </button>
+                {% else %}
+                <button type="button" class="btn-email-guest"
+                    onclick="location.href=`{% url 'policy:login' %}?next={{ request.path }}`;">
+                    <i class="fas fa-user-lock"></i> 로그인하고 리포트 저장/발송
+                </button>
+                {% endif %}
+
+                <button type="button" class="btn-restart" onclick="setView('hero');"><i class="fas fa-redo"></i> 다시
+                    진단하기</button>
             </div>
         </div>
-    </div>
-
-    <div id="matching-results-container" class="policy-stagger-grid"></div>
-</div>
     </main>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script src="{% static 'mainwindow/js/form.js' %}"></script>
-<script src="{% static 'mainwindow/js/map.js' %}"></script>
-<script src="{% static 'mainwindow/js/daemoon.js' %}"></script>
+<script src="{% static 'mainwindow/js/recap.js' %}"></script>
 {% endblock %}

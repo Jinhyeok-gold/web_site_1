@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 from django.core.management.base import BaseCommand
 from web_for_youth.youth_road.models import HousingProduct, FinanceProduct, WelfareProduct, HousingMarketData
-from web_for_youth.youth_road.firebase_service import FirebaseManager
+# from web_for_youth.youth_road.firebase_service import FirebaseManager (Removed)
 
 class Command(BaseCommand):
     help = 'Load products from CSV/Excel folders into DB and Sync to Firebase (Pandas Enhanced)'
@@ -61,9 +61,9 @@ class Command(BaseCommand):
             except Exception as e:
                 continue # 개별 행 에러는 건너뜀
 
-        # Firebase Sync (샘플 예시로 주거만 우선 적용, 필요시 확장)
-        if category == 'housing' and all_sync_data:
-            FirebaseManager.sync_data('housing_notices', all_sync_data[:500], id_field='id')
+        # Firebase Sync 제거됨
+        # if category == 'housing' and all_sync_data:
+        #     FirebaseManager.sync_data('housing_notices', all_sync_data[:500], id_field='id')
 
     def handle_housing_row(self, row, sync_list):
         # 1. 통계 데이터인지 일반 공고인지 컬럼명으로 판단 (Smart Logic)

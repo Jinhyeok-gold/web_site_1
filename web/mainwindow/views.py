@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from youth_road.models import WelfareProduct, HousingProduct, UserDiagnostic
+from django.db.models import Q
 
 def home(request):
     context = {

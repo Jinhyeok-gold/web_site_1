@@ -120,6 +120,68 @@ main.container.wide {
     color: #666;
 }
 
+/* Premium Header Search Bar (Kakao Map) */
+.header-search-wrapper {
+    display: flex;
+    border: 2px solid transparent;
+    border-radius: 25px;
+    overflow: hidden;
+    height: 42px;
+    align-items: center;
+    background: #fff;
+    margin-right: 15px;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2); /* Soft ambient indigo glow */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+}
+
+/* Glow border effect on hover/focus */
+.header-search-wrapper:hover,
+.header-search-wrapper:focus-within {
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+    border-color: rgba(99, 102, 241, 0.5);
+    transform: translateY(-1px);
+}
+
+.header-search-wrapper input {
+    border: none;
+    outline: none;
+    padding: 0 16px;
+    width: 200px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+    background: transparent;
+    transition: width 0.3s ease;
+}
+
+.header-search-wrapper input:focus {
+    width: 220px; /* Slight expansion animation on focus */
+}
+
+.header-search-wrapper input::placeholder {
+    color: #cbd5e1;
+    font-weight: 500;
+}
+
+.header-search-wrapper .btn-header-search {
+    background: linear-gradient(135deg, #6366f1, #4f46e5); /* Indigo gradient matching theme */
+    color: #fff;
+    height: 100%;
+    border: none;
+    padding: 0 20px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: filter 0.3s;
+}
+
+.header-search-wrapper .btn-header-search:hover {
+    filter: brightness(1.15);
+}
+
 .login-btn {
     font-weight: bold;
     color: #4439c4;
@@ -143,6 +205,43 @@ main.container.wide {
     flex-direction: column;
     align-items: center;
     gap: 15px;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.quick-menu.collapsed {
+    transform: translate(150%, -50%);
+}
+
+#quickMenuToggle {
+    position: absolute;
+    left: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #fff;
+    border: 1px solid #eee;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.06);
+    width: 40px;
+    height: 60px;
+    border-radius: 12px 0 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #666;
+    transition: all 0.3s ease;
+}
+
+#quickMenuToggle svg {
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.quick-menu.collapsed #quickMenuToggle svg {
+    transform: rotate(180deg);
+}
+
+#quickMenuToggle:hover {
+    background: #f8fafc;
+    color: #2563eb;
 }
 
 .quick-menu ul {
@@ -963,4 +1062,87 @@ main.container.wide {
     padding: 30px;
     border-radius: 20px;
     border-left: 6px solid #2563eb;
+}
+
+/* --- [v22] Chatbot AI Card & Button Styling --- */
+.chat-product-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 15px;
+    margin: 10px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    animation: fadeInUp 0.4s ease-out;
+    width: 90%;
+}
+
+.chat-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.chat-card-type {
+    font-size: 10px;
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 800;
+}
+
+.chat-card-summary {
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.chat-card-btn {
+    display: block;
+    text-align: center;
+    padding: 8px;
+    background: #2563eb;
+    color: #fff;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    transition: all 0.2s;
+}
+
+.chat-card-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+.chat-btn-row {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.chat-action-btn {
+    padding: 8px 16px;
+    background: #fff;
+    border: 1px solid #2563eb;
+    color: #2563eb;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.chat-action-btn:hover {
+    background: #2563eb;
+    color: #fff;
+    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.2);
+}
+
+.loading-card {
+    font-size: 12px;
+    color: #94a3b8;
+    font-style: italic;
 }

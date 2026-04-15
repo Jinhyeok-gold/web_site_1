@@ -24,9 +24,10 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
-    path('chatbot/', include('chatbot.core.urls')),
-    path('portal/', include('myproject.urls')),
-    path('youth/', include('youth_road.urls')), # youth_road 앱 통합
+    path('chatbot/', include(('chatbot.core.urls', 'chatbot'), namespace='chatbot')),
+    path('youth/', include(('youth_road.urls', 'youth'), namespace='youth')),
+    path('auth/', include('policyapp.urls', namespace='policy')),
+    path('accounts/', include('allauth.urls')),
     path('myreport/', views.myreport, name='myreport'),
     path('welfare_map/', views.welfare_map, name='welfare_map'),
 ]

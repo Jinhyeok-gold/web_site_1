@@ -9,10 +9,17 @@ document.addEventListener('DOMContentLoaded', function() {
             // 클릭한 버튼 활성화
             this.classList.add('active');
 
-            const regionName = this.textContent;
-            console.log(regionName + " 지역 데이터를 불러옵니다.");
+            const regionName = this.textContent.trim();
+            const searchQuery = regionName + " 주거복지센터";
             
-            // 여기에 지도 이미지를 교체하거나 특정 마커를 강조하는 로직을 추가할 수 있습니다.
+            console.log(regionName + " 지역 주거복지센터 카카오맵 검색을 실행합니다.");
+            
+            // 카카오맵 URL Scheme 활용 (API 키 불필요)
+            // https://map.kakao.com/link/search/[검색어]
+            const kakaoMapUrl = `https://map.kakao.com/link/search/${encodeURIComponent(searchQuery)}`;
+            
+            // 새 창에서 띄우기
+            window.open(kakaoMapUrl, '_blank');
         });
     });
 });

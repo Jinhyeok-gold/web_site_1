@@ -1,6 +1,7 @@
 import os
 import requests
 import time
+import json
 import concurrent.futures
 try:
     from google import genai
@@ -177,7 +178,7 @@ class ResponseSynthesizer:
         "반갑습니다 {name}님, 정책 전문가로서 면밀히 분석해 드릴게요. 🧐",
         "안녕하세요 {name}님! 현재 상황에서 가장 이득이 되는 경로를 스캔했습니다. ✨",
         "{name}님만을 위한 데이터 기반 로드맵입니다. 분석 결과를 확인해 보세요. 🚀",
-        "청년 정책 마스터 안티그래비티입니다. {name}님께 딱 맞는 정보를 선별했습니다. 🎁",
+        "안녕하세요. {name}님을 위한 최적의 맞춤 정책 분석이 완료되었습니다. 💡",
         "상담을 시작합니다. {name}님의 데이터를 바탕으로 최적의 조언을 구성했어요. 🧭"
     ]
     
@@ -212,6 +213,10 @@ class ResponseSynthesizer:
         name = user_data.get('name') or '방문자'
         top_policies = user_data.get('top_matches', [])[:3]
         
+        from youth_road.matching_service import MatchingEngine
+        raw_region = user_data.get('region', '전국')
+        korean_region = MatchingEngine.REGION_KEYWORD_MAP.get(raw_region, raw_region)
+
         opener = random.choice(cls.OPENERS).format(name=name)
         hook = random.choice(cls.ANALYSIS_HOOKS).format(
             name=name, 
@@ -219,7 +224,7 @@ class ResponseSynthesizer:
             assets=user_data.get('assets', 0),
             debt=user_data.get('debt', 0),
             age=user_data.get('age', 0),
-            region=user_data.get('region', '전국'),
+            region=korean_region,
             subscription=user_data.get('subscription', '미보유')
         )
         advices = cls.EXPERT_ADVICES.get(category, cls.EXPERT_ADVICES['Default'])
@@ -230,8 +235,9 @@ class ResponseSynthesizer:
         if top_policies:
             res += "\n\n현재 조건에서 가장 승산이 높은 **TOP 3 정책**입니다:"
             for p in top_policies:
-                # 🎯 [POLICY_URL] 프로토콜: 챗봇에서 해당 정책 사이트로 직접 연결
-                res += f"\n- **{p.get('title')}**: [[BUTTON:POLICY_URL | {p.get('title')}]]"
+                # 🎯 [ID:...] 태그를 추가하여 로컬 폴백에서도 카드가 뜨게 함
+                product_id = p.get('id', 'GUID-1')
+                res += f"\n- **{p.get('title')}**: [ID:{product_id}] [[BUTTON:POLICY_URL|상세보기]]"
                 
         return res
 
@@ -245,26 +251,35 @@ def ask_expert_ai(user_message, user_data=None, report_data=None, user_api_key=N
     sim_data = report_data.get('financial_simulation', {}) if report_data else {}
     housing_report = report_data.get('housing', {}) if report_data else {}
     
+    # 지역 코드 한국어로 변환
+    from youth_road.matching_service import MatchingEngine
+    raw_region = user_data.get('region', '전국')
+    korean_region = MatchingEngine.REGION_KEYWORD_MAP.get(raw_region, raw_region)
+    
     # --- [System Instruction] 전문가 페르소나 및 액션 프로토콜 정립 ---
-    SYSTEM_INSTRUCTION = f"""당신은 청년 주거/금융 전문가 '안티그래비티 AI'입니다. 
+    SYSTEM_INSTRUCTION = f"""당신은 청년 주거/금융 전문가 '맞춤형 정책 AI'입니다. 
 다음은 현재 상담 중인 사용자의 실시간 진단 데이터입니다:
-- 성함: {name} | 연령: 만 {user_data.get('age')}세 | 거주지: {user_data.get('region')} | 혼인: {user_data.get('marital')}
+- 성함: {name} | 연령: 만 {user_data.get('age')}세 | 거주지: {korean_region} | 혼인: {user_data.get('marital')}
 - 경제: 연소득 {user_data.get('income')}만원, 자산 {user_data.get('assets')}만원, 부채 {user_data.get('debt')}만원
 - 청약: {user_data.get('subscription')}
 - 지표: DSR 한도 {sim_data.get('max_limit')}만원, PIR 점검({housing_report.get('reason')})
 
+최근 매칭된 추천 상품 목록(ID 포함):
+{json.dumps(top_policies if top_policies else [], ensure_ascii=False)}
+
 지침: 
-1. 위 데이터 수치를 언급하며 전문가답게 조언하세요. 
-2. 친절하지만 신뢰감 있는 전문가 톤을 유지하세요.
-3. [중요] 답변 끝에 사용자가 다음에 할 법한 행동을 다음 규격의 버튼으로 제안하세요: [[BUTTON:유형|라벨]]
+1. 위 데이터 수치를 언급하며 전문가답게 조언하세요. 절대 '일단 ~입니다' 와 같은 가볍고 모호하거나 어색한 표현을 사용하지 마세요. 대신 확신에 찬 전문가의 어조(예: '~를 적극 권장합니다', '~가 매우 유리합니다')를 사용하세요.
+2. 특정 상품을 추천할 때는 반드시 답변 중간에 `[ID:상품ID]` 태그를 포함하세요. 이 태그는 자동으로 카드 UI로 변환됩니다.
+   - 예: "가장 추천하는 정책은 [ID:{top_policies[0].get('id') if top_policies else 'GUID-1'}] 입니다."
+3. 친절하지만 신뢰감 있는 전문가 톤을 유지하세요.
+4. 답변 끝에 사용자가 다음에 할 법한 행동을 다음 규격의 버튼으로 제안하세요: [[BUTTON:유형|라벨]]
    - 유형 예시: DSR_CALC (계산기), POLICY_LIST (정책목록), APPLY_LH (신청사이트), REPORT_VIEW (리포트보기)
-   - 예: "더 자세한 대출 한도가 궁금하시면 [[BUTTON:DSR_CALC|DSR 계산기 실행]]을 눌러보세요."
 """
 
     def expert_fallback(msg, data):
         # ResponseSynthesizer를 통한 융합형 답변 생성
         res = ResponseSynthesizer.generate(user_data, 'Default')
-        return res + "\n\n더 자세한 분석은 [[BUTTON:REPORT_VIEW|전체 리포트 보기]]에서 확인하실 수 있습니다."
+        return res + "\n\n더 자세한 분석은 [[BUTTON:REPORT_VIEW|전체리포트보기]]에서 확인하실 수 있습니다."
 
     try:
         load_dotenv(override=True)
@@ -319,4 +334,10 @@ def generate_expert_report(user_data, top_matches):
         return response.text.strip()
     except Exception as e:
         print(f"Report AI Issue: {e}")
-        return "현재 분석 서버 실시간 쿼터가 초과되었습니다. 우선순위 요약 리스트를 확인해 주세요."
+        # AI 호출 실패 시 기본적인 가이드 문구로 대체 (서버 쿼터 오류 방지)
+        fallback_report = f"### 💡 [정밀 요약] {user_data.get('name', '사용자')}님 맞춤형 핵심 제언\n\n"
+        fallback_report += "현재 AI 서버망이 혼잡하여 **데이터 엔진 기반 하이브리드 리포트**를 제공해 드립니다.\n\n"
+        for p in top_matches[:5]:
+            fallback_report += f"- **{p.get('title')}** (추천 적합도 {p.get('score', 0):.1f}%)\n"
+        fallback_report += "\n> _본 보고서는 입력하신 정보(연령, 소득, 가구)를 기반으로 자동 필터링 되었습니다._"
+        return fallback_report
