@@ -1071,3 +1071,115 @@
     max-width: 820px !important;
     padding: 0 20px !important;
 }
+
+/* ================================================================
+   PATCH — 스크롤 여백 + 아이콘 정렬 + 입력창 언더라인 리디자인
+   ================================================================ */
+
+/* 1. 스크롤 여백 확보 */
+.hero-landing {
+    min-height: 100vh !important;
+    padding-bottom: 300px !important;
+}
+.form-section-wrap {
+    padding-top: 60px !important;
+    padding-bottom: 120px !important;
+}
+
+/* 2. live-match-teaser 아이콘·텍스트 수직 정렬 */
+.live-match-teaser {
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+}
+.teaser-icon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0;
+    width: 36px !important;
+    height: 36px !important;
+}
+.teaser-text {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    line-height: 1.4 !important;
+}
+
+/* 3. 입력창 언더라인 스타일 완전 교체 */
+.form-input,
+.form-select {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: none !important;
+    border-bottom: 2px solid rgba(99,102,241,.25) !important;
+    border-radius: 0 !important;
+    padding: 22px 4px 10px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: #0f172a !important;
+    box-shadow: none !important;
+    outline: none !important;
+    transition: border-color .25s ease !important;
+    min-height: 58px !important;
+}
+.form-input:focus,
+.form-select:focus {
+    background: transparent !important;
+    border-bottom: 2px solid #6366f1 !important;
+    box-shadow: none !important;
+}
+
+/* floating label 위치 재조정 (언더라인 기준) */
+.form-label {
+    left: 4px !important;
+    top: 50% !important;
+    font-size: 15px !important;
+    color: #94a3b8 !important;
+}
+.form-input:focus ~ .form-label,
+.form-input.has-value ~ .form-label,
+.form-select:focus ~ .form-label,
+.form-select.has-value ~ .form-label,
+.form-select:valid ~ .form-label {
+    top: 8px !important;
+    font-size: 10.5px !important;
+    color: #6366f1 !important;
+    font-weight: 800 !important;
+    letter-spacing: .3px !important;
+}
+
+/* select 화살표 색상 */
+.form-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 4px center !important;
+    background-size: 16px !important;
+}
+
+/* form-group 하단선 강조용 after — 포커스 시 인디고 라인 확장 */
+.form-group.floating {
+    filter: none !important;
+    position: relative !important;
+}
+.form-group.floating::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 4px; right: 4px;
+    height: 2px;
+    background: var(--primary-gradient);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .3s cubic-bezier(.165,.84,.44,1);
+    border-radius: 2px;
+}
+.form-group.floating:focus-within::after {
+    transform: scaleX(1);
+}
+
+/* wizard-grid 간격 조정 */
+.wizard-grid {
+    gap: 12px 30px !important;
+}
