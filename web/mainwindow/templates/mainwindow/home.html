@@ -13,13 +13,53 @@
 <div class="container wide">
     <main class="main-content-wrapper">
 
-        <!-- New Primary Hero: Premium Diagnostic Hub -->
-        <div id="view-hero" class="fade-in hub-container">
-            <div class="hub-content">
-                <div class="hub-header">
-                    <h1>청년·신혼부부 <span class="highlight">맞춤형 주거 자가진단</span></h1>
-                    <p>몇 가지 질문에 답하면 사용자님께 딱 맞는 정책과 금융 상품을 AI가 분석해 드립니다.</p>
+        <!-- ① 히어로 랜딩 섹션 -->
+        <div id="view-hero" class="fade-in view-hero-fullwidth">
+        <section class="hero-landing">
+            <div class="hero-aura"></div>
+            <div class="hero-aura hero-aura--2"></div>
+            <div class="hero-landing-inner">
+
+                <!-- 신뢰 배지 -->
+                <div class="hero-trust-badges">
+                    <span class="htb"><span class="htb-dot"></span>AI 실시간 정책 매칭</span>
+                    <span class="htb">📋 진단 시간 약 3분</span>
+                    <span class="htb">✓ 무료 · 비로그인 가능</span>
                 </div>
+
+                <h1 class="hero-title">
+                    나에게 딱 맞는<br>
+                    <span class="highlight">청년·신혼 주거 정책</span><br>
+                    찾아드립니다
+                </h1>
+                <p class="hero-sub">AI가 연령·소득·지역을 분석해<br>놓치기 쉬운 정책과 금융 혜택을 한번에 정리해 드립니다.</p>
+
+                <!-- 플로팅 스탯 -->
+                <div class="hero-stats">
+                    <div class="hero-stat"><span class="hs-num">150+</span><span class="hs-label">매칭 정책</span></div>
+                    <div class="hero-stat"><span class="hs-num">3분</span><span class="hs-label">진단 시간</span></div>
+                    <div class="hero-stat"><span class="hs-num">98%</span><span class="hs-label">만족도</span></div>
+                    <div class="hero-stat"><span class="hs-num">AI</span><span class="hs-label">정밀 엔진</span></div>
+                </div>
+
+                <button class="hero-cta-btn" onclick="document.getElementById('form-anchor').scrollIntoView({behavior:'smooth'})">
+                    지금 바로 진단 시작하기 <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- 스크롤 힌트 -->
+            <div class="hero-scroll-hint">
+                <span>자가진단 시작</span>
+                <div class="scroll-line-v"></div>
+            </div>
+        </section>
+
+        <!-- ② 폼 섹션 -->
+        <section id="form-anchor" class="form-section-wrap">
+            <div class="form-section-header">
+                <span class="form-eyebrow-pill">자가진단</span>
+                <p class="form-section-desc">아래 3단계만 입력하면 AI가 맞춤형 정책을 분석합니다</p>
+            </div>
 
                 <div class="form-panel glass-morphism">
                     <div class="form-header">
@@ -202,9 +242,9 @@
                             </div>
                         </div>
                     </form>
-                </div>
-            </div>
-        </div>
+                </div><!-- /.form-panel -->
+            </section><!-- /.form-section-wrap -->
+        </div><!-- /#view-hero -->
 
         <!-- View: Matching Loading -->
         <div id="view-matching" class="hidden fade-in matching-view">

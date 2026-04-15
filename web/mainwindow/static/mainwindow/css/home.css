@@ -31,16 +31,7 @@
   100% { --aura-h1: 228deg; --aura-h2: 265deg; --aura-a: 0.09; }
 }
 
-.hub-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.4) 100%);
-    z-index: 1;
-}
+/* ::before 오버레이 제거 — @property 아우라 배경이 보이도록 */
 
 .hub-content {
     position: relative;
@@ -731,11 +722,10 @@
 .hero-stat:nth-child(3) { animation-range: entry 25% entry 55%; }
 .hero-stat:nth-child(4) { animation-range: entry 30% entry 60%; }
 
-/* 폼 패널 전체 — 스크롤 내리면 올라오며 등장 */
+/* 폼 패널 — 페이지 로드 시 fadein (처음부터 뷰포트 안에 있으므로 view() 대신 일반 animation) */
 .form-panel.glass-morphism {
-  animation: sdReveal linear both;
-  animation-timeline: view();
-  animation-range: entry 0% entry 30%;
+  animation: sdReveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.15s;
 }
 
 @keyframes sdReveal {
@@ -745,9 +735,216 @@
 
 /* 미지원 브라우저 폴백 — 항상 보이게 */
 @supports not (animation-timeline: view()) {
-  .hero-stat, .form-panel.glass-morphism {
+  .hero-stat {
     animation: none;
     opacity: 1;
     transform: none;
   }
 }
+/* ================================================================
+   HERO LANDING + FORM OPEN-AIR — 전면 리디자인
+   ================================================================ */
+
+/* ── 히어로 섹션 ── */
+.hero-landing {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 40px 110px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    background:
+        radial-gradient(ellipse 80% 65% at 50% 0%,
+            hsl(var(--aura-h1), 75%, 70%, var(--aura-a)), transparent 65%),
+        radial-gradient(ellipse 50% 50% at 92% 95%,
+            hsl(var(--aura-h2), 70%, 68%, 0.11), transparent 65%),
+        radial-gradient(ellipse 40% 45% at 4% 80%,
+            hsl(280deg, 70%, 75%, 0.07), transparent 65%),
+        linear-gradient(160deg, #fafbff 0%, #f4f3ff 50%, #fdf4ff 100%);
+    animation: auraFloat 9s ease-in-out infinite alternate;
+}
+.hero-landing-inner {
+    position: relative; z-index: 2;
+    max-width: 800px; width: 100%;
+}
+
+/* 신뢰 배지 */
+.hero-trust-badges {
+    display: flex; gap: 10px; justify-content: center;
+    flex-wrap: wrap; margin-bottom: 32px;
+}
+.htb {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,.82); backdrop-filter: blur(10px);
+    border: 1px solid rgba(99,102,241,.2); border-radius: 100px;
+    padding: 5px 14px; font-size: 12px; font-weight: 700; color: #4f46e5;
+    box-shadow: 0 2px 10px rgba(99,102,241,.08);
+}
+.htb-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #6366f1; animation: htbPulse 1.8s ease-in-out infinite;
+}
+@keyframes htbPulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50%      { opacity:.6; transform:scale(.85); }
+}
+
+/* 타이틀 */
+.hero-title {
+    font-size: clamp(34px, 5.5vw, 56px);
+    font-weight: 900; letter-spacing: -2.5px;
+    line-height: 1.12; color: #0f172a;
+    margin-bottom: 20px; word-break: keep-all;
+}
+.hero-sub {
+    font-size: clamp(15px, 2vw, 18px); color: #64748b;
+    line-height: 1.7; margin-bottom: 48px; word-break: keep-all;
+}
+
+/* 스탯 */
+.hero-stats {
+    display: flex; gap: 14px; justify-content: center;
+    flex-wrap: wrap; margin-bottom: 48px;
+}
+.hero-stat {
+    background: rgba(255,255,255,.88); backdrop-filter: blur(12px);
+    border: 1px solid rgba(99,102,241,.13); border-radius: 18px;
+    padding: 14px 24px; text-align: center; min-width: 110px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.05);
+}
+.hs-num { display: block; font-size: 22px; font-weight: 900; color: #4f46e5; letter-spacing: -1px; }
+.hs-label { display: block; font-size: 11px; font-weight: 700; color: #94a3b8; margin-top: 3px; }
+
+/* CTA 버튼 */
+.hero-cta-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--primary-gradient);
+    color: #fff; border: none; border-radius: 100px;
+    padding: 18px 48px; font-size: 17px; font-weight: 800;
+    cursor: pointer; letter-spacing: -.3px; font-family: inherit;
+    box-shadow: 0 12px 32px rgba(99,102,241,.35);
+    transition: transform .25s cubic-bezier(.165,.84,.44,1), box-shadow .25s;
+}
+.hero-cta-btn:hover { transform: scale(1.04) translateY(-2px); box-shadow: 0 18px 40px rgba(99,102,241,.45); }
+.hero-cta-btn i { transition: transform .2s; }
+.hero-cta-btn:hover i { transform: translateX(4px); }
+
+/* 스크롤 힌트 */
+.hero-scroll-hint {
+    position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    color: #94a3b8; font-size: 11px; font-weight: 700; letter-spacing: .5px;
+    animation: scrollBob 2.2s ease-in-out infinite; pointer-events: none;
+}
+.scroll-line-v { width: 1px; height: 36px; background: linear-gradient(to bottom, #6366f1, transparent); }
+@keyframes scrollBob {
+    0%,100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(7px); }
+}
+.hero-aura, .hero-aura--2 { display: none; } /* 배경은 CSS로 처리 */
+
+/* ================================================================
+   FORM OPEN-AIR — 흰 패널 제거, 오라 배경 위에 필드만 부유
+   ================================================================ */
+.form-section-wrap {
+    width: 100%;
+    padding: 80px 40px 100px;
+    position: relative;
+    background:
+        radial-gradient(ellipse 70% 60% at 50% 100%,
+            hsl(var(--aura-h1), 72%, 72%, 0.13), transparent 65%),
+        radial-gradient(ellipse 45% 45% at 5% 10%,
+            hsl(var(--aura-h2), 68%, 70%, 0.09), transparent 65%),
+        linear-gradient(180deg, #fdf4ff 0%, #f4f3ff 40%, #fafbff 100%);
+    animation: auraFloat 11s ease-in-out infinite alternate-reverse;
+}
+.form-section-wrap::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(99,102,241,.2), rgba(217,70,239,.15), transparent);
+}
+.form-section-header { text-align: center; margin-bottom: 52px; }
+.form-eyebrow-pill {
+    display: inline-block;
+    background: linear-gradient(135deg, rgba(99,102,241,.1), rgba(217,70,239,.1));
+    border: 1px solid rgba(99,102,241,.2); border-radius: 100px;
+    padding: 5px 20px; font-size: 12px; font-weight: 800;
+    color: #6366f1; letter-spacing: .5px;
+}
+.form-section-desc { font-size: 14px; color: #94a3b8; font-weight: 500; margin-top: 10px; }
+
+/* 폼 패널: 흰 카드 → 투명 오픈에어 */
+.form-panel.glass-morphism {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    max-width: 760px !important;
+    margin: 0 auto;
+    position: relative; z-index: 2;
+}
+
+/* 스텝 dot — 오라 배경 위에서 가독성 */
+.step-dot {
+    background: rgba(255,255,255,.9) !important;
+    backdrop-filter: blur(8px);
+}
+
+/* 입력 필드 — frosted glass */
+.form-input,
+.form-select {
+    background: rgba(255,255,255,.75) !important;
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border: 1.5px solid rgba(255,255,255,.6) !important;
+    box-shadow: 0 4px 20px rgba(99,102,241,.06), 0 1px 3px rgba(0,0,0,.04);
+    transition: all .25s ease;
+}
+.form-input:focus,
+.form-select:focus {
+    background: rgba(255,255,255,.95) !important;
+    border-color: rgba(99,102,241,.5) !important;
+    box-shadow: 0 0 0 4px rgba(99,102,241,.1), 0 4px 20px rgba(99,102,241,.1) !important;
+}
+
+/* choice 카드도 frosted */
+.choice-card .card-content {
+    background: rgba(255,255,255,.75) !important;
+    backdrop-filter: blur(14px);
+    border: 1.5px solid rgba(255,255,255,.6) !important;
+}
+.choice-card input:checked + .card-content {
+    background: rgba(245,243,255,.9) !important;
+    border-color: #6366f1 !important;
+}
+
+/* step-title / step-desc 가독성 강화 */
+.step-title { color: #0f172a !important; }
+.step-desc  { color: #475569 !important; }
+
+/* 스텝 레이블 */
+.step-label { color: #64748b; font-size: 12px; font-weight: 700; }
+
+/* live-match-teaser도 frosted */
+.live-match-teaser {
+    background: rgba(255,255,255,.7) !important;
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(99,102,241,.15) !important;
+}
+
+/* hub-container 비활성화 */
+.hub-container { display: none !important; }
+
+/* ── full-width 탈출: container wide의 max-width 제한 돌파 ── */
+.view-hero-fullwidth {
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    width: 100vw;
+}
+/* hero-landing / form-section-wrap은 이미 width:100% 이므로 자동으로 꽉 참 */
