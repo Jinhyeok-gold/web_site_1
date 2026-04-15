@@ -47,7 +47,6 @@ button {
 
 /* 공통 컨테이너 (와이드 버전) */
 .container {
-    max-width: 1440px;
     width: 100%;
     margin: 0 auto;
 }
@@ -68,8 +67,11 @@ main.container.wide {
 }
 
 .header-inner {
+    padding-left: 50px;
+    padding-right: 50px;
+    position: relative;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
 }
 
@@ -91,8 +93,9 @@ main.container.wide {
 
 /* 1. 네비게이션 부모 설정 */
 .main-nav {
-    position: static;
-    /* 드롭다운이 헤더 전체 너비를 쓸 수 있게 함 */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .main-nav ul.nav-list {
@@ -113,6 +116,7 @@ main.container.wide {
 }
 
 .header-util {
+    margin-left: auto;
     display: flex;
     gap: 20px;
     font-size: 14px;

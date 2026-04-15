@@ -240,7 +240,7 @@ function renderRecap(report) {
     const financeList = document.getElementById('recap-finance-list');
     if (financeList) {
         const items = [finance.top_1, ...(finance.list || [])].filter(Boolean).slice(0, 3);
-        financeList.innerHTML = items.map((p, i) => recapPolicyRow(p, i + 1)).join('');
+        financeList.innerHTML = items.map((p, i) => recapFinanceRow(p, i + 1)).join('');
     }
 
     /* ── 카드 6: 복지 벤토 렌더 ── */
@@ -279,6 +279,25 @@ function recapPolicyRow(p, rank) {
             </div>
         </div>`;
 }
+
+function recapFinanceRow(p, rank) {
+    if (!p) return '';
+    const url = (p.url && p.url !== '#') ? p.url : 'https://www.youthcenter.go.kr';
+    const topClass = rank === 1 ? 'top' : '';
+    return `
+        <div class="rc5-item">
+            <div class="rc5-rank ${topClass}">${rank}</div>
+            <div class="rc5-content">
+                <div class="rc5-name">${p.title || p.name || ''}</div>
+                <div class="rc5-org">${p.org || p.bank_nm || ''}</div>
+            </div>
+            <div class="rc5-meta">
+                <div class="rc5-pct">${p.score || 80}%</div>
+                <a class="rc-clink" href="${url}" target="_blank" rel="noopener noreferrer" style="margin-left:8px">공고 확인 →</a>
+            </div>
+        </div>`;
+}
+
 
 function recapBentoTile(p, rank) {
     if (!p) return '';

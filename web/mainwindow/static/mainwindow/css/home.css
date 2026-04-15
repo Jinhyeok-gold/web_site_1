@@ -94,11 +94,12 @@
 
 .wizard-steps {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     position: relative;
     z-index: 2;
     margin-top: 40px;
+    gap: 80px;
 }
 
 .step-item {
@@ -1359,19 +1360,19 @@
     margin-bottom: 0 !important;
 }
 .live-match-teaser {
-    margin-bottom: 70px !important;
+    margin-bottom: 120px !important;
 }
 .wizard-steps {
-    margin-bottom: 50px !important;
+    margin-bottom: 70px !important;
 }
 
 /* 스텝 제목 위 간격 */
 .step-title {
     margin-top: 10px !important;
-    margin-bottom: 5px !important;
+    margin-bottom: 10px !important;
 }
 .step-desc {
-    margin-bottom: 70px !important;
+    margin-bottom: 50px !important;
 }
 
 /* 입력창 그리드 → 카드 사이 간격 */
@@ -1384,10 +1385,25 @@
     margin-bottom: 0 !important;
 }
 .step-actions {
-    margin-top: 150px !important;
+    margin-top: 100px !important;
 }
 
 /* 버튼 아래 폼 섹션 하단 여백 */
 .form-section-wrap {
-    padding-bottom: 300px !important;
+    padding-bottom: 250px !important;
+}
+
+/* ================================================================
+   PATCH 5 — 타이틀 + 입력 글씨 색상
+   ================================================================ */
+
+/* step-title — 살짝 명도 뺀 인디고 */
+.step-title {
+    color: #373374 !important;
+}
+
+/* 입력창 타이핑 글씨 — 동일한 톤 */
+.form-input,
+.form-select {
+    color: #3730a3 !important;
 }

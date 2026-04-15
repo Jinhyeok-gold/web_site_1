@@ -450,7 +450,7 @@
     padding: 0 30px;
     display: flex;
     flex-direction: column;
-    gap: 9px;
+    gap: 15px;
     z-index: 3;
 }
 
@@ -458,7 +458,7 @@
     background: rgba(255,255,255,.15);
     border: 1px solid rgba(255,255,255,.26);
     border-radius: 14px;
-    padding: 13px 16px;
+    padding: 20px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -490,7 +490,7 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    padding: 14px 0;
+    padding: 22px 0;
     border-bottom: 1px solid rgba(255,255,255,.13);
 }
 
