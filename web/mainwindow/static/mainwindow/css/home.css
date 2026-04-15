@@ -948,3 +948,126 @@
     width: 100vw;
 }
 /* hero-landing / form-section-wrap은 이미 width:100% 이므로 자동으로 꽉 참 */
+
+/* ================================================================
+   FINAL POLISH — 배경 통일 + 텍스트 컬러 + 폼 업그레이드
+   ================================================================ */
+
+/* 1. 히어로·폼 배경 완전 통일 — 하나의 연속 배경 */
+.hero-landing {
+    min-height: 110vh !important;
+    padding-bottom: 140px !important;
+}
+.form-section-wrap {
+    background: none !important;
+    padding-top: 0 !important;
+}
+.form-section-wrap::before { display: none !important; }
+
+/* view-hero-fullwidth 전체가 하나의 배경 */
+.view-hero-fullwidth {
+    background:
+        radial-gradient(ellipse 80% 55% at 50% 0%,
+            hsl(var(--aura-h1), 75%, 70%, 0.18), transparent 62%),
+        radial-gradient(ellipse 50% 50% at 92% 95%,
+            hsl(var(--aura-h2), 70%, 68%, 0.12), transparent 65%),
+        radial-gradient(ellipse 40% 45% at 4% 80%,
+            hsl(280deg, 70%, 75%, 0.08), transparent 65%),
+        linear-gradient(170deg, #fafbff 0%, #f4f3ff 45%, #fdf4ff 100%);
+    animation: auraFloat 9s ease-in-out infinite alternate;
+}
+/* hero-landing 자체 배경은 제거 — 부모가 담당 */
+.hero-landing {
+    background: none !important;
+    animation: none !important;
+}
+
+/* 2. "청년·신혼" 그라디언트 텍스트 */
+.hero-color-word {
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline;
+}
+
+/* 3. 폼 섹션 헤더 위 여백 조정 */
+.form-section-header {
+    padding-top: 20px !important;
+    margin-bottom: 36px !important;
+}
+
+/* 4. 스텝 dot — flaticon img 크기 */
+.step-flaticon {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+    filter: brightness(0) saturate(100%) invert(40%) sepia(10%) saturate(300%) hue-rotate(200deg);
+    transition: filter .3s;
+}
+.step-dot.active .step-flaticon {
+    filter: brightness(0) invert(1);
+}
+
+/* teaser flaticon */
+.teaser-flaticon {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
+
+/* 5. choice-card flaticon img */
+.card-flaticon {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    transition: transform .3s;
+    filter: saturate(80%);
+}
+.choice-card input:checked + .card-content .card-flaticon {
+    transform: scale(1.12);
+    filter: saturate(100%);
+}
+
+/* 6. 폼 필드 디자인 업그레이드 — 더 세련되게 */
+.form-input,
+.form-select {
+    border-radius: 16px !important;
+    font-size: 16px !important;
+}
+.form-group.floating {
+    filter: drop-shadow(0 2px 12px rgba(99,102,241,.06));
+}
+
+/* 7. choice-card 업그레이드 */
+.choice-card .card-content {
+    border-radius: 20px !important;
+    padding: 22px 16px !important;
+    gap: 12px !important;
+    transition: all .25s cubic-bezier(.175,.885,.32,1.275) !important;
+}
+.choice-card input:checked + .card-content {
+    transform: translateY(-6px) scale(1.02) !important;
+    box-shadow: 0 12px 28px rgba(99,102,241,.15) !important;
+}
+
+/* 8. live-match-teaser 업그레이드 */
+.live-match-teaser {
+    border-radius: 16px !important;
+    padding: 14px 20px !important;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 0 !important;
+}
+.teaser-title { font-size: 13px !important; font-weight: 800 !important; color: #4f46e5 !important; }
+.teaser-sub   { font-size: 12px !important; color: #64748b !important; }
+
+/* 9. 스텝 레이블 활성 색상 */
+.step-dot.active + span { color: #4f46e5 !important; }
+
+/* 10. 폼 전체 max-width 여유있게 */
+.form-panel.glass-morphism {
+    max-width: 820px !important;
+    padding: 0 20px !important;
+}
