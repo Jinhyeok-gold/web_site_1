@@ -1079,7 +1079,7 @@
 /* 1. 스크롤 여백 확보 */
 .hero-landing {
     min-height: 100vh !important;
-    padding-bottom: 300px !important;
+    padding-bottom: 200px !important;
 }
 .form-section-wrap {
     padding-top: 60px !important;
@@ -1182,4 +1182,212 @@
 /* wizard-grid 간격 조정 */
 .wizard-grid {
     gap: 12px 30px !important;
+}
+
+/* ================================================================
+   PATCH 2 — 애니메이션 + 아이콘 컬러 + 이전버튼
+   ================================================================ */
+
+/* 1. live-match-teaser — 회전하는 외곽선 애니메이션 */
+.live-match-teaser {
+    position: relative !important;
+    overflow: hidden !important;
+    border: none !important;
+    background: rgba(255,255,255,.82) !important;
+}
+/* 외곽선 코닉 그라디언트가 빙글빙글 */
+.live-match-teaser::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 18px;
+    background: conic-gradient(
+        from var(--border-angle, 0deg),
+        #6366f1, #a855f7, #ec4899, #6366f1
+    );
+    z-index: 0;
+    animation: borderSpin 3s linear infinite;
+}
+.live-match-teaser::after {
+    content: '';
+    position: absolute;
+    inset: 1.5px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.92);
+    z-index: 1;
+}
+/* teaser 내부 콘텐츠가 ::after 위에 오도록 */
+.live-match-teaser > * {
+    position: relative;
+    z-index: 2;
+}
+@property --border-angle {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+}
+@keyframes borderSpin {
+    to { --border-angle: 360deg; }
+}
+
+/* 2. step-dot — 활성 시 이미지 사라지지 않고 흰색으로 변환 */
+/* 비활성: 회색 필터 */
+.step-dot .step-flaticon {
+    filter: brightness(0) saturate(100%)
+            invert(68%) sepia(8%) saturate(400%)
+            hue-rotate(200deg) !important;
+    transition: filter .35s ease !important;
+}
+/* 활성: 흰색으로 */
+.step-dot.active .step-flaticon {
+    filter: brightness(0) invert(1) !important;
+}
+
+/* 3. choice-card 이모티콘에 컬러 적용 */
+/* 기본: 약한 채도 */
+.card-flaticon {
+    filter: saturate(60%) brightness(1.05) !important;
+    transition: filter .3s ease, transform .3s ease !important;
+}
+/* 무주택 — 인디고 틴트 */
+.choice-card:nth-child(1) .card-flaticon {
+    filter: saturate(80%) hue-rotate(200deg) brightness(1.1) !important;
+}
+/* 생애최초 — 바이올렛 틴트 */
+.choice-card:nth-child(2) .card-flaticon {
+    filter: saturate(80%) hue-rotate(240deg) brightness(1.05) !important;
+}
+/* 임신 중 — 핑크 틴트 */
+.choice-card:nth-child(3) .card-flaticon {
+    filter: saturate(80%) hue-rotate(300deg) brightness(1.05) !important;
+}
+/* 체크 시 — 풀 채도 + 살짝 커짐 */
+.choice-card input:checked + .card-content .card-flaticon {
+    filter: saturate(120%) brightness(1.05) !important;
+    transform: scale(1.15) !important;
+}
+
+/* 4. 이전 버튼 — 흰색 배경 */
+.btn-prev {
+    background: rgba(255,255,255,.92) !important;
+    border: 1.5px solid rgba(99,102,241,.15) !important;
+    color: #64748b !important;
+    backdrop-filter: blur(8px) !important;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06) !important;
+}
+.btn-prev:hover {
+    background: #fff !important;
+    border-color: rgba(99,102,241,.3) !important;
+    color: #4f46e5 !important;
+}
+
+/* ================================================================
+   PATCH 3 — 아이콘 컬러 픽스
+   ================================================================ */
+
+/* 1. step-dot 활성 — 보라색 계열 (인디고) */
+.step-dot.active .step-flaticon {
+    filter:
+        brightness(0) saturate(100%)
+        invert(35%) sepia(80%) saturate(600%)
+        hue-rotate(220deg) brightness(1.1) !important;
+}
+
+/* 2. card-flaticon — 검은색 이미지에 컬러 입히기
+   검은색(#000) → invert(1)로 흰색 → sepia+hue-rotate로 색상 부여 */
+
+/* 기본 상태: 연한 회색 */
+.card-flaticon {
+    filter:
+        brightness(0) saturate(100%)
+        invert(75%) sepia(5%) saturate(200%)
+        hue-rotate(200deg) !important;
+    transition: filter .3s ease, transform .3s ease !important;
+}
+
+/* 무주택 — 인디고 */
+.choice-card:nth-child(1) .card-flaticon {
+    filter:
+        brightness(0) saturate(100%)
+        invert(40%) sepia(60%) saturate(500%)
+        hue-rotate(210deg) brightness(1.1) !important;
+}
+/* 생애최초 — 바이올렛 */
+.choice-card:nth-child(2) .card-flaticon {
+    filter:
+        brightness(0) saturate(100%)
+        invert(35%) sepia(50%) saturate(600%)
+        hue-rotate(260deg) brightness(1.1) !important;
+}
+/* 임신 중 — 핑크 */
+.choice-card:nth-child(3) .card-flaticon {
+    filter:
+        brightness(0) saturate(100%)
+        invert(45%) sepia(60%) saturate(500%)
+        hue-rotate(300deg) brightness(1.1) !important;
+}
+
+/* 체크 시 — 각 색상 더 진하게 + 커짐 */
+.choice-card:nth-child(1) input:checked + .card-content .card-flaticon {
+    filter:
+        brightness(0) saturate(100%)
+        invert(30%) sepia(80%) saturate(700%)
+        hue-rotate(210deg) brightness(1.0) !important;
+    transform: scale(1.15) !important;
+}
+.choice-card:nth-child(2) input:checked + .card-content .card-flaticon {
+    filter:
+        brightness(0) saturate(100%)
+        invert(25%) sepia(80%) saturate(800%)
+        hue-rotate(260deg) brightness(1.0) !important;
+    transform: scale(1.15) !important;
+}
+.choice-card:nth-child(3) input:checked + .card-content .card-flaticon {
+    filter:
+        brightness(0) saturate(100%)
+        invert(35%) sepia(80%) saturate(700%)
+        hue-rotate(300deg) brightness(1.0) !important;
+    transform: scale(1.15) !important;
+}
+
+/* ================================================================
+   PATCH 4 — 폼 영역 간격 조정
+   ================================================================ */
+
+/* teaser 아래 → 스텝 dot 위 간격 */
+.wizard-steps-container {
+    margin-bottom: 0 !important;
+}
+.live-match-teaser {
+    margin-bottom: 70px !important;
+}
+.wizard-steps {
+    margin-bottom: 50px !important;
+}
+
+/* 스텝 제목 위 간격 */
+.step-title {
+    margin-top: 10px !important;
+    margin-bottom: 5px !important;
+}
+.step-desc {
+    margin-bottom: 70px !important;
+}
+
+/* 입력창 그리드 → 카드 사이 간격 */
+.wizard-grid {
+    margin-bottom: 100px !important;
+}
+
+/* 카드 → 버튼 사이 간격 */
+.checkbox-group-modern {
+    margin-bottom: 0 !important;
+}
+.step-actions {
+    margin-top: 150px !important;
+}
+
+/* 버튼 아래 폼 섹션 하단 여백 */
+.form-section-wrap {
+    padding-bottom: 300px !important;
 }
