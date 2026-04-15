@@ -27,46 +27,40 @@ let activeCharts = {
 };
 
 function setView(viewId) {
-    if (viewId === 'hero') {
-        // [STABILITY] Restarting from hero - reset wizard visuals only
-        nextStep(1); 
-    }
-    
-     ['hero', 'matching', 'result', 'recap'].forEach(v => {
-        const el = document.getElementById('view-' + v);
-        if(el) el.classList.add('hidden');
+  const doSwitch = () => {
+    ['hero','matching','result','recap'].forEach(v => {
+      document.getElementById(`view-${v}`)?.classList.add('hidden');
     });
-    const target = document.getElementById('view-' + viewId);
-    if(target) target.classList.remove('hidden');
+    document.getElementById(`view-${viewId}`)?.classList.remove('hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  if (!document.startViewTransition) { doSwitch(); return; }
+  document.startViewTransition(doSwitch);
 }
 
-function nextStep(step) {
+function nextStep(step, dir = 'forward') {
+  const doSwitch = () => {
     [1, 2, 3].forEach(s => {
-        const stepEl = document.getElementById('step-' + s);
-        const dotEl = document.getElementById('dot-' + s);
-        if(stepEl) stepEl.classList.remove('active');
-        if(dotEl) dotEl.classList.remove('active');
+      document.getElementById(`step-${s}`)?.classList.remove('active');
+      document.getElementById(`dot-${s}`)?.classList.remove('active');
     });
+    document.getElementById(`step-${step}`)?.classList.add('active');
+    document.getElementById(`dot-${step}`)?.classList.add('active');
 
-    const targetStep = document.getElementById('step-' + step);
-    const targetDot = document.getElementById('dot-' + step);
-    
-    if(targetStep) targetStep.classList.add('active');
-    if(targetDot) targetDot.classList.add('active');
+    const fill = document.getElementById('progress-fill');
+    if (fill) fill.style.width = (step / 3 * 100) + '%';
 
-    // Progress bar update
-    const progressFill = document.getElementById('progress-fill');
-    if(progressFill) {
-        const pct = (step / 3) * 100;
-        progressFill.style.width = pct + '%';
-    }
+    document.querySelector('.form-panel')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
-    // Procedural adjustment: Ensure the user is looking at the start of the form
-    const formPanel = document.querySelector('.form-panel');
-    if(formPanel) {
-        formPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+  // View Transitions 지원 여부 체크 → 폴백 안전
+  if (!document.startViewTransition) { doSwitch(); return; }
+
+  // 방향 힌트를 data 속성으로 넘겨 CSS가 읽을 수 있게
+  document.documentElement.dataset.vtDir = dir;
+  document.startViewTransition(doSwitch);
 }
 
 function updateSubRegions() {

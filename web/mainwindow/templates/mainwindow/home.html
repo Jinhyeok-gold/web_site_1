@@ -136,7 +136,7 @@
                                     </div>
                                 </div>
                                 <div class="step-actions flex-between">
-                                    <button type="button" class="btn-prev" onclick="nextStep(1)">이전</button>
+                                    <button type="button" class="btn-prev" onclick="nextStep(1, 'back')">이전</button>
                                     <button type="button" class="btn-next" onclick="nextStep(3)">다음 단계로 <i
                                             class="fas fa-arrow-right"></i></button>
                                 </div>
@@ -195,7 +195,7 @@
                                 </div>
 
                                 <div class="step-actions flex-between">
-                                    <button type="button" class="btn-prev" onclick="nextStep(2)">이전</button>
+                                    <button type="button" class="btn-prev" onclick="nextStep(2, 'back')">이전</button>
                                     <button type="button" class="btn-finish" onclick="handleMatch()">정밀 분석 시작하기
                                         🚀</button>
                                 </div>
@@ -299,6 +299,162 @@
             </div>
         </div>
     </main>
+
+    <div id="view-recap" class="hidden fade-in">
+            <div class="recap-shell" id="recap-shell">
+
+                <!-- 상단 진행 바 -->
+                <div class="recap-prog-wrap">
+                    <div class="recap-prog-line" id="recap-prog"></div>
+                </div>
+
+                <!-- ── 카드 1: 종합 적합도 ── -->
+                <div class="recap-card active" data-idx="0">
+                    <div class="rc1-bg"></div>
+                    <div class="recap-cc">
+                        <div class="rc1-inner">
+                            <div class="rc-lbl">종합 정책 적합도</div>
+                            <div class="rc1-sub">사용자님의 프로필과 매칭된 결과예요</div>
+                            <div class="rc1-num" id="recap-score-num">0<sub>%</sub></div>
+                            <div class="rc1-caption">전국 청년·신혼부부 정책 데이터베이스 기준</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── 카드 2: 수혜 밸런스 (레이더) ── -->
+                <div class="recap-card" data-idx="1">
+                    <div class="rc2-bg"></div>
+                    <div class="recap-cc">
+                        <div class="rc2-inner">
+                            <div class="rc2-left">
+                                <div class="rc-lbl">분야별 수혜 밸런스</div>
+                                <div class="rc2-title">6개 분야<br>레이더 분석</div>
+                                <div class="rc2-stat">
+                                    <div class="rc2-stat-label">주거</div>
+                                    <div class="rc2-stat-bar"><div class="rc2-stat-fill" data-w="82"></div></div>
+                                    <div class="rc2-stat-val">82%</div>
+                                </div>
+                                <div class="rc2-stat">
+                                    <div class="rc2-stat-label">금융</div>
+                                    <div class="rc2-stat-bar"><div class="rc2-stat-fill" data-w="74"></div></div>
+                                    <div class="rc2-stat-val">74%</div>
+                                </div>
+                                <div class="rc2-stat">
+                                    <div class="rc2-stat-label">복지</div>
+                                    <div class="rc2-stat-bar"><div class="rc2-stat-fill" data-w="68"></div></div>
+                                    <div class="rc2-stat-val">68%</div>
+                                </div>
+                            </div>
+                            <div class="rc2-radar-wrap">
+                                <canvas id="recap-radar" width="500" height="500"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── 카드 3: 금융 시뮬레이션 ── -->
+                <div class="recap-card" data-idx="2">
+                    <div class="rc3-bg"></div>
+                    <div class="recap-cc">
+                        <div class="rc3-inner">
+                            <div>
+                                <div class="rc-lbl">맞춤 금융 시뮬레이션</div>
+                                <div class="rc3-hero">
+                                    <span id="recap-sim-limit">25,000</span><span> 만원</span>
+                                </div>
+                                <div class="rc3-hero-sub">최대 대출 한도</div>
+                            </div>
+                            <div class="rc3-grid">
+                                <div class="rc3-item">
+                                    <div class="rc3-item-label">예상 이자 (월)</div>
+                                    <div class="rc3-item-val"><span id="recap-sim-interest">52</span><span> 만원</span></div>
+                                </div>
+                                <div class="rc3-item">
+                                    <div class="rc3-item-label">우대 금리</div>
+                                    <div class="rc3-item-val"><span id="recap-sim-rate">1.8</span><span> %</span></div>
+                                </div>
+                                <div class="rc3-item">
+                                    <div class="rc3-item-label">적용 상품 수</div>
+                                    <div class="rc3-item-val">3<span> 개</span></div>
+                                </div>
+                                <div class="rc3-item">
+                                    <div class="rc3-item-label">절감 이자 (연)</div>
+                                    <div class="rc3-item-val">180<span> 만원</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── 카드 4: 주거 정책 ── -->
+                <div class="recap-card" data-idx="3">
+                    <div class="rc4-bg"></div>
+                    <div class="recap-cc" style="flex:1;position:relative">
+                        <div class="rc4-inner">
+                            <div class="rc4-lbl">맞춤형 주거 정책</div>
+                            <div class="rc4-title">적합도 순 추천</div>
+                            <svg class="rc4-bg-shape" width="300" height="280" viewBox="0 0 300 280" fill="none">
+                                <path d="M150 20L280 120L280 260L20 260L20 120Z" fill="white"/>
+                                <rect x="110" y="180" width="80" height="80" fill="white" opacity=".6"/>
+                                <rect x="60" y="140" width="50" height="50" rx="4" fill="white" opacity=".5"/>
+                                <rect x="190" y="140" width="50" height="50" rx="4" fill="white" opacity=".5"/>
+                                <path d="M150 20L20 120L280 120Z" fill="white" opacity=".4"/>
+                            </svg>
+                            <div class="rc4-list" id="recap-housing-list">
+                                <!-- JS renderRecap()으로 동적 주입 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── 카드 5: 금융 대출 ── -->
+                <div class="recap-card" data-idx="4">
+                    <div class="rc5-bg"></div>
+                    <div class="recap-cc">
+                        <div class="rc5-inner">
+                            <div class="rc-lbl">금융 및 대출 지원</div>
+                            <div class="rc-card-title">금리 우대<br>대출 상품</div>
+                            <div id="recap-finance-list">
+                                <!-- JS renderRecap()으로 동적 주입 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── 카드 6: 복지 혜택 ── -->
+                <div class="recap-card" data-idx="5">
+                    <div class="rc6-bg"></div>
+                    <div class="recap-cc">
+                        <div class="rc6-inner">
+                            <div class="rc-lbl">맞춤 복지 및 혜택</div>
+                            <div class="rc-card-title">놓치기 쉬운<br>혜택 6선</div>
+                            <div class="rc6-bento" id="recap-bento">
+                                <!-- JS renderRecap()으로 동적 주입 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── 고정 하단 네비게이션 ── -->
+                <div class="recap-nav">
+                    <div class="recap-nav-inner">
+                        <div class="recap-dots" id="recap-dots">
+                            <div class="recap-dot on"></div>
+                            <div class="recap-dot"></div>
+                            <div class="recap-dot"></div>
+                            <div class="recap-dot"></div>
+                            <div class="recap-dot"></div>
+                            <div class="recap-dot"></div>
+                        </div>
+                        <div class="recap-btn-row">
+                            <button class="recap-btn" id="recap-btn-prev">← 이전</button>
+                            <button class="recap-btn hi" id="recap-btn-next">다음 →</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
 </div>
 {% endblock %}
 

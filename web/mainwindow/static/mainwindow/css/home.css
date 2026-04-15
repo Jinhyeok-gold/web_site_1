@@ -1,3 +1,7 @@
+@property --aura-h1 { syntax: '<angle>'; inherits: false; initial-value: 240deg; }
+@property --aura-h2 { syntax: '<angle>'; inherits: false; initial-value: 270deg; }
+@property --aura-a  { syntax: '<number>'; inherits: false; initial-value: 0.12; }
+
 :root {
     --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
     --secondary-gradient: linear-gradient(135deg, #f43f5e 0%, #fb923c 100%);
@@ -9,14 +13,22 @@
 }
 
 .hub-container {
-    min-height: 90vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 80px 0;
-    position: relative;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    background-size: cover;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% -5%,
+      hsl(var(--aura-h1), 75%, 70%, var(--aura-a)),
+      transparent 68%),
+    radial-gradient(ellipse 35% 35% at 88% 92%,
+      hsl(var(--aura-h2), 70%, 68%, 0.08),
+      transparent 65%),
+    linear-gradient(160deg, #fafbff 0%, #f4f3ff 50%, #fdf4ff 100%);
+  animation: auraFloat 9s ease-in-out infinite alternate;
+}
+
+/* @property 덕분에 hsl angle이 숫자처럼 보간됨 */
+@keyframes auraFloat {
+  0%   { --aura-h1: 240deg; --aura-h2: 280deg; --aura-a: 0.10; }
+  40%  { --aura-h1: 258deg; --aura-h2: 305deg; --aura-a: 0.16; }
+  100% { --aura-h1: 228deg; --aura-h2: 265deg; --aura-a: 0.09; }
 }
 
 .hub-container::before {
@@ -683,4 +695,59 @@
     animation: fadeInUp 0.6s ease-out;
 }
 
+/* View Transition — 스텝 콘텐츠에 이름 부여 */
+.wizard-step.active {
+  view-transition-name: wizard-step;
+}
+
+/* forward: 오른쪽에서 진입, 왼쪽으로 퇴장 */
+::view-transition-old(wizard-step) {
+  animation: vtSlideOut 0.28s cubic-bezier(.4,0,1,1) both;
+}
+::view-transition-new(wizard-step) {
+  animation: vtSlideIn 0.32s cubic-bezier(.22,1,.36,1) both;
+}
+/* backward: 방향 반전 */
+[data-vt-dir="back"] ::view-transition-old(wizard-step) {
+  animation-name: vtSlideOutRev;
+}
+[data-vt-dir="back"] ::view-transition-new(wizard-step) {
+  animation-name: vtSlideInRev;
+}
+
+@keyframes vtSlideOut    { to   { opacity:0; transform:translateX(-40px); } }
+@keyframes vtSlideIn     { from { opacity:0; transform:translateX( 40px); } }
+@keyframes vtSlideOutRev { to   { opacity:0; transform:translateX( 40px); } }
+@keyframes vtSlideInRev  { from { opacity:0; transform:translateX(-40px); } }
+
+/* 스탯 카드 4개 — 뷰포트 진입 시 순차 등장 */
+.hero-stat {
+  animation: sdReveal linear both;
+  animation-timeline: view();
+  animation-range: entry 15% entry 45%;
+}
+/* nth-child로 딜레이 없이 range만 조금씩 밀기 */
+.hero-stat:nth-child(2) { animation-range: entry 20% entry 50%; }
+.hero-stat:nth-child(3) { animation-range: entry 25% entry 55%; }
+.hero-stat:nth-child(4) { animation-range: entry 30% entry 60%; }
+
+/* 폼 패널 전체 — 스크롤 내리면 올라오며 등장 */
+.form-panel.glass-morphism {
+  animation: sdReveal linear both;
+  animation-timeline: view();
+  animation-range: entry 0% entry 30%;
+}
+
+@keyframes sdReveal {
+  from { opacity: 0; transform: translateY(28px) scale(.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);   }
+}
+
+/* 미지원 브라우저 폴백 — 항상 보이게 */
+@supports not (animation-timeline: view()) {
+  .hero-stat, .form-panel.glass-morphism {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }
