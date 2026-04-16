@@ -12,7 +12,7 @@
 {% block content %}
 <div class="mr-page">
 
-  <!-- ── 상단 헤더 ── -->
+  <!-- 헤더 -->
   <div class="mr-header">
     <div class="mr-header-left">
       <div class="mr-title-group">
@@ -39,14 +39,14 @@
     </div>
   </div>
 
-  <!-- ── 편집 모드 안내 배너 ── -->
+  <!-- 편집 배너 -->
   <div class="mr-edit-banner hidden" id="mr-edit-banner">
     <i class="fas fa-info-circle"></i>
-    위젯을 드래그해서 원하는 위치로 이동할 수 있어요.
+    위젯을 드래그해서 순서를 바꾸고, 카드 우측 핸들로 카드 개수를 조절할 수 있어요.
     <button onclick="toggleEditMode()">편집 완료 <i class="fas fa-check"></i></button>
   </div>
 
-  <!-- ── 저장 데이터 없을 때 ── -->
+  <!-- 빈 상태 -->
   <div class="mr-empty" id="mr-empty">
     <div class="mr-empty-icon"><i class="fas fa-chart-bar"></i></div>
     <h3>아직 리포트가 없어요</h3>
@@ -54,89 +54,102 @@
     <a href="/" class="mr-btn-go">지금 진단 시작하기 <i class="fas fa-arrow-right"></i></a>
   </div>
 
-  <!-- ── 위젯 그리드 ── -->
+  <!-- 위젯 그리드 — 12칸: [3][3][3][3] -->
   <div class="mr-grid hidden" id="mr-grid">
 
-    <!-- 위젯 1: 종합 적합도 -->
-    <div class="mr-widget mr-w-small" data-widget-id="gauge">
+    <!-- 위젯 1: 종합 적합도 — SVG 게이지 -->
+    <div class="mr-widget mr-w-3 mr-bento-stat mr-bento-violet" data-widget-id="gauge">
       <div class="mr-widget-handle"><i class="fas fa-grip-vertical"></i></div>
       <div class="mr-widget-inner">
-        <div class="mr-widget-label">종합 적합도</div>
-        <div class="mr-gauge-wrap">
-          <div class="gauge-container">
-            <canvas id="scoreGaugeCanvas"></canvas>
-            <div class="gauge-center">
-              <span id="gauge-score-val">0</span>
-              <span class="unit-pct">%</span>
-            </div>
+        <div class="mr-bento-label">종합 적합도</div>
+        <div class="mr-gauge-bento">
+          <!-- SVG 도넛 게이지 -->
+          <svg class="mr-gauge-svg" viewBox="0 0 120 120">
+            <circle class="mr-gauge-track" cx="60" cy="60" r="48" />
+            <circle class="mr-gauge-fill" id="mr-gauge-arc" cx="60" cy="60" r="48"
+              stroke-dasharray="0 302" stroke-dashoffset="75.5" />
+          </svg>
+          <div class="mr-gauge-center-text">
+            <span id="gauge-score-val" class="mr-bento-num">0</span>
+            <span class="mr-bento-unit">%</span>
           </div>
         </div>
-        <p class="mr-gauge-desc">100%에 가까울수록 강력 추천 정책입니다</p>
+        <div class="mr-bento-sub">전국 정책 매칭 기준</div>
+        <!-- form.js 호환용 숨김 캔버스 -->
+        <div style="display:none"><canvas id="scoreGaugeCanvas"></canvas></div>
       </div>
     </div>
 
-    <!-- 위젯 2: 레이더 차트 -->
-    <div class="mr-widget mr-w-medium" data-widget-id="radar">
+    <!-- 위젯 2: 최대 대출 한도 -->
+    <div class="mr-widget mr-w-3 mr-bento-stat mr-bento-dark" data-widget-id="sim-limit">
       <div class="mr-widget-handle"><i class="fas fa-grip-vertical"></i></div>
       <div class="mr-widget-inner">
-        <div class="mr-widget-label">분야별 수혜 밸런스</div>
-        <div class="chart-container" style="height:240px">
+        <div class="mr-bento-label">최대 대출 한도</div>
+        <div class="mr-bento-big">
+          <span id="sim-limit-val" class="mr-bento-num">0</span>
+          <span class="mr-bento-unit">만원</span>
+        </div>
+        <div class="mr-bento-sub">금융 시뮬레이션 기준</div>
+      </div>
+    </div>
+
+    <!-- 위젯 3: 예상 이자 -->
+    <div class="mr-widget mr-w-3 mr-bento-stat mr-bento-teal" data-widget-id="sim-interest">
+      <div class="mr-widget-handle"><i class="fas fa-grip-vertical"></i></div>
+      <div class="mr-widget-inner">
+        <div class="mr-bento-label">예상 이자 (월)</div>
+        <div class="mr-bento-big">
+          <span id="sim-interest-val" class="mr-bento-num">0</span>
+          <span class="mr-bento-unit">만원</span>
+        </div>
+        <div class="mr-bento-sub">우대 금리 적용 기준</div>
+      </div>
+    </div>
+
+    <!-- 위젯 4: 레이더 차트 — span 3으로 맞춰 빈공간 제거 -->
+    <div class="mr-widget mr-w-3 mr-bento-radar" data-widget-id="radar">
+      <div class="mr-widget-handle"><i class="fas fa-grip-vertical"></i></div>
+      <div class="mr-widget-inner">
+        <div class="mr-bento-label">분야별 수혜 밸런스</div>
+        <div class="chart-container" style="flex:1; min-height:170px; position:relative;">
           <canvas id="radarChartCanvas"></canvas>
         </div>
       </div>
     </div>
 
-    <!-- 위젯 3: 금융 시뮬레이션 -->
-    <div class="mr-widget mr-w-small" data-widget-id="simulation">
-      <div class="mr-widget-handle"><i class="fas fa-grip-vertical"></i></div>
-      <div class="mr-widget-inner">
-        <div class="mr-widget-label">맞춤 금융 시뮬레이션</div>
-        <div class="mr-sim-grid">
-          <div class="mr-sim-card mr-sim-primary">
-            <div class="mr-sim-label">최대 대출 한도</div>
-            <div class="mr-sim-value"><strong id="sim-limit-val">0</strong><span>만원</span></div>
-          </div>
-          <div class="mr-sim-card">
-            <div class="mr-sim-label">예상 이자 (월)</div>
-            <div class="mr-sim-value"><strong id="sim-interest-val">0</strong><span>만원</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 위젯 4: 주거 정책 -->
+    <!-- 위젯 5: 주거 정책 -->
     <div class="mr-widget mr-w-full mr-resizable" data-widget-id="housing">
       <div class="mr-widget-handle"><i class="fas fa-grip-vertical"></i></div>
       <div class="mr-resize-handle" title="드래그로 카드 개수 조절"><i class="fas fa-arrows-left-right"></i></div>
       <div class="mr-widget-inner">
-        <div class="mr-widget-label"><span class="mr-widget-icon"></span> 맞춤형 주거 정책</div>
+        <div class="mr-widget-label"><span class="mr-widget-icon">🏠</span> 맞춤형 주거 정책</div>
         <div id="mr-housing-container" class="mr-cards-container"></div>
       </div>
     </div>
 
-    <!-- 위젯 5: 금융 대출 -->
+    <!-- 위젯 6: 금융 대출 -->
     <div class="mr-widget mr-w-full mr-resizable" data-widget-id="finance">
       <div class="mr-widget-handle"><i class="fas fa-grip-vertical"></i></div>
       <div class="mr-resize-handle" title="드래그로 카드 개수 조절"><i class="fas fa-arrows-left-right"></i></div>
       <div class="mr-widget-inner">
-        <div class="mr-widget-label"><span class="mr-widget-icon"></span> 금융 및 대출 지원</div>
+        <div class="mr-widget-label"><span class="mr-widget-icon">💰</span> 금융 및 대출 지원</div>
         <div id="mr-finance-container" class="mr-cards-container"></div>
       </div>
     </div>
 
-    <!-- 위젯 6: 복지 혜택 -->
+    <!-- 위젯 7: 복지 혜택 -->
     <div class="mr-widget mr-w-full mr-resizable" data-widget-id="welfare">
       <div class="mr-widget-handle"><i class="fas fa-grip-vertical"></i></div>
       <div class="mr-resize-handle" title="드래그로 카드 개수 조절"><i class="fas fa-arrows-left-right"></i></div>
       <div class="mr-widget-inner">
-        <div class="mr-widget-label"><span class="mr-widget-icon"></span> 맞춤 복지 및 혜택</div>
+        <div class="mr-widget-label"><span class="mr-widget-icon">🎁</span> 맞춤 복지 및 혜택</div>
         <div id="mr-welfare-container" class="mr-cards-container"></div>
       </div>
     </div>
 
   </div>
 
-  <!-- ── 리캡 모달 ── -->
+  <!-- 리캡 모달 -->
   <div id="recap-modal" class="recap-modal-overlay hidden">
     <div class="recap-modal-inner">
       {% include 'mainwindow/recap_view.html' %}
