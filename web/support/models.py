@@ -63,3 +63,41 @@ class Inquiry(models.Model):
 
     def __str__(self):
         return f"[{self.get_status_display()}] {self.title}"
+
+class ChatRoom(models.Model):
+    """실시간 상담 채팅방"""
+    STATUS_CHOICES = [
+        ('PENDING', '상담 대기'),
+        ('ACTIVE', '상담 중'),
+        ('CLOSED', '상담 종료'),
+    ]
+    customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_rooms_as_customer', verbose_name="고객")
+    counselor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='chat_rooms_as_counselor', verbose_name="상담사")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING', verbose_name="상담 상태")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="생성일")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="최종 활동")
+
+    class Meta:
+        verbose_name = "채팅 상담방"
+        verbose_name_plural = "채팅 상담방 목록"
+        ordering = ['-updated_at']
+
+    def __str__(self):
+        counselor_name = self.counselor.username if self.counselor else "미배정"
+        return f"[{self.get_status_display()}] {self.customer.username}님 상담 ({counselor_name})"
+
+class ChatMessage(models.Model):
+    """채팅 메시지 내역"""
+    room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages', verbose_name="채팅방")
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="발신자")
+    message = models.TextField(verbose_name="메시지 내용")
+    timestamp = models.DateTimeField(auto_now_add=True, verbose_name="전송 시간")
+    is_read = models.BooleanField(default=False, verbose_name="읽음 여부")
+
+    class Meta:
+        verbose_name = "채팅 메시지"
+        verbose_name_plural = "채팅 메시지 목록"
+        ordering = ['timestamp']
+
+    def __str__(self):
+        return f"[{self.sender.username}] {self.message[:20]}"

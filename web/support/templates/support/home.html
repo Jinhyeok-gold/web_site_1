@@ -89,6 +89,39 @@
     @media (max-width: 900px) {
         .support-grid { grid-template-columns: 1fr; }
     }
+
+    /* Notice Vertical Scroll Styling */
+    .notice-vertical-scroll {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        overflow-y: auto;
+        max-height: 550px;
+        padding-right: 15px;
+        scroll-behavior: smooth;
+    }
+    .notice-vertical-scroll::-webkit-scrollbar { width: 6px; }
+    .notice-vertical-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    .notice-vertical-scroll::-webkit-scrollbar-track { background: transparent; }
+    
+    .notice-card {
+        background: #fdfdfd;
+        border: 1px solid #f1f5f9;
+        border-radius: 20px;
+        padding: 25px;
+        text-decoration: none;
+        transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+    }
+    .notice-card:hover { transform: translateX(5px); border-color: #1a4f8b; box-shadow: 0 10px 20px rgba(26, 79, 139, 0.05); }
+    
+    .notice-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .notice-date { font-size: 0.8rem; color: #94a3b8; }
+    
+    .notice-card-body { flex-grow: 1; }
+    .notice-card-title { font-size: 1.1rem; font-weight: 700; color: #1e293b; margin-bottom: 8px; line-height: 1.4; }
+    .notice-card-teaser { font-size: 0.9rem; color: #64748b; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 {% endblock %}
@@ -101,28 +134,41 @@
     </div>
 
     <div class="support-grid">
-        <!-- 공지사항 카드 -->
-        <div class="glass-card fade-in" style="animation-delay: 0.1s;">
-            <div class="card-icon"><i class="fas fa-bullhorn" style="color: #ff4757;"></i></div>
-            <div class="card-title">중요 공지사항</div>
-            <div class="notice-list">
+        <!-- 공지사항 카드 (Horizontal Slider 적용) -->
+        <div class="glass-card fade-in" style="animation-delay: 0.1s; grid-column: 1 / -1;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div class="card-icon" style="margin: 0;"><i class="fas fa-bullhorn" style="color: #ff4757;"></i></div>
+                    <div class="card-title" style="margin: 0;">중요 공지사항 & 실시간 정책</div>
+                </div>
+                <a href="{% url 'support:notice_list' %}" class="btn-support" style="margin: 0; padding: 8px 15px; font-size: 0.85rem; background: rgba(26,79,139,0.1); color: #1a4f8b;">전체 공지 보기</a>
+            </div>
+
+            <!-- Vertical Scroll Container -->
+            <div class="notice-vertical-scroll">
                 {% for notice in notices %}
-                <a href="{% url 'support:notice_detail' notice.pk %}" class="list-item">
-                    <span>
-                        {% if notice.is_important %}<span class="item-tag" style="background: #fee2e2; color: #ef4444;">중요</span>{% endif %}
-                        {{ notice.title }}
-                    </span>
-                    <small>{{ notice.created_at|date:"Y.m.d" }}</small>
+                <a href="{% url 'support:notice_detail' notice.pk %}" class="notice-card">
+                    <div class="notice-card-header">
+                        {% if notice.is_important %}
+                        <span class="item-tag" style="background: #fee2e2; color: #ef4444;">중요</span>
+                        {% endif %}
+                        <span class="notice-date">{{ notice.created_at|date:"Y.m.d" }}</span>
+                    </div>
+                    <div class="notice-card-body">
+                        <div class="notice-card-title">{{ notice.title }}</div>
+                        <div class="notice-card-teaser">
+                            {{ notice.content|truncatechars:60 }}
+                        </div>
+                    </div>
                 </a>
                 {% empty %}
-                <p style="color: #94a3b8;">등록된 공지사항이 없습니다.</p>
+                <div style="width: 100%; text-align: center; padding: 40px; color: #94a3b8;">등록된 공지사항이 없습니다.</div>
                 {% endfor %}
             </div>
-            <a href="#" class="btn-support" style="background: rgba(26,79,139,0.1); color: #1a4f8b;">전체 공지 보기</a>
         </div>
 
-        <!-- 1:1 문의 카드 -->
-        <div class="glass-card fade-in" style="animation-delay: 0.2s;">
+        <!-- 1:1 문의 카드 (기능 유지) -->
+        <div class="glass-card fade-in" style="animation-delay: 0.2s; grid-column: 1 / -1;">
             <div class="card-icon"><i class="fas fa-headset" style="color: #2ed573;"></i></div>
             <div class="card-title">1:1 전문가 맞춤 상담</div>
             <p style="color: #64748b; line-height: 1.6; margin-bottom: 20px;">
@@ -130,17 +176,22 @@
                 사용자님의 진단 데이터를 기반으로 가장 정확한 답변을 드립니다.
             </p>
             <div style="display: flex; gap: 10px;">
-                <a href="#" onclick="openCounselorChat(); return false;" class="btn-support" style="width: 100%; text-align: center;">상담사 연결하기</a>
+                <a href="{% url 'support:chat_room' %}" class="btn-support" style="width: 100%; text-align: center;">상담사 연결하기</a>
             </div>
+            {% if user.is_staff %}
+            <div style="margin-top: 15px; text-align: center;">
+                <a href="{% url 'support:admin_chat_list' %}" style="font-size: 13px; color: #64748b; text-decoration: underline;">관리자: 상담 대기열 보기</a>
+            </div>
+            {% endif %}
         </div>
     </div>
 
     <!-- 자주 묻는 질문(FAQ) -->
-    <div class="glass-card fade-in" style="margin-bottom: 80px; animation-delay: 0.3s;">
+    <div id="faq-section" class="glass-card fade-in" style="margin-bottom: 80px; animation-delay: 0.3s;">
         <div class="card-title" style="text-align: center; margin-bottom: 30px;">자주 묻는 질문 (FAQ)</div>
         <div class="faq-accordion">
             {% for faq in faqs %}
-            <div class="faq-item" onclick="this.classList.toggle('active')">
+            <div class="faq-item" onclick="this.classList.toggle('active');">
                 <div class="faq-question">
                     <span><span class="item-tag">{{ faq.get_category_display }}</span> {{ faq.question }}</span>
                     <i class="fas fa-chevron-down"></i>

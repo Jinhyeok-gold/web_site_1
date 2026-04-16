@@ -80,6 +80,8 @@ def id_login_view(request):
         user = authenticate(request, username=uid, password=upw)
         if user:
             login(request, user)
+            if user.is_staff:
+                return redirect('support:admin_chat_list')
             return redirect('policy:index')
     return render(request, 'policyapp/id_login.html')
 

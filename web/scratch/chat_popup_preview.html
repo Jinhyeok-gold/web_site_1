@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>중앙 팝업 채팅 미리보기</title>
+    <style>
+        body { font-family: 'Pretendard', sans-serif; background: #eaeff5; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        
+        .btn-open { position: absolute; padding: 18px 40px; background: #1a4f8b; color: white; border: none; border-radius: 50px; font-weight: 800; cursor: pointer; font-size: 1.1rem; box-shadow: 0 10px 25px rgba(26, 79, 139, 0.3); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .btn-open:hover { transform: scale(1.05); background: #0f3661; }
+
+        /* Full Screen Overlay */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px);
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; transition: 0.4s ease; z-index: 10000;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        /* Centered Chat Popup */
+        .chat-popup {
+            width: 500px; max-width: 90vw; height: 750px; max-height: 85vh;
+            background: rgba(255, 255, 255, 0.95); border-radius: 32px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            display: flex; flex-direction: column; overflow: hidden;
+            transform: scale(0.9) translateY(30px); transition: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .modal-overlay.active .chat-popup { transform: scale(1) translateY(0); }
+
+        .popup-header {
+            padding: 25px 30px; background: #1a4f8b; color: white;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .counselor-info { display: flex; align-items: center; gap: 15px; }
+        .avatar { width: 48px; height: 48px; border-radius: 50%; background: #fff; border: 2px solid rgba(255,255,255,0.3); overflow: hidden; }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .header-text h3 { margin: 0; font-size: 18px; font-weight: 800; }
+        .header-text p { margin: 2px 0 0; font-size: 12px; opacity: 0.8; }
+
+        .chat-body { flex: 1; padding: 30px; overflow-y: auto; background: #f8fafc; display: flex; flex-direction: column; gap: 20px; }
+        
+        .msg-bubble { max-width: 80%; padding: 16px 20px; border-radius: 20px; font-size: 15px; line-height: 1.6; position: relative; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .bot-msg { background: white; align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); color: #1e293b; }
+        .user-msg { background: #1a4f8b; color: white; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 10px 20px rgba(26, 79, 139, 0.2); }
+
+        .input-footer { padding: 25px 30px; background: white; border-top: 1px solid #f1f5f9; display: flex; gap: 15px; align-items: center; }
+        .message-input { flex: 1; border: 2px solid #f1f5f9; border-radius: 16px; padding: 14px 20px; font-size: 15px; outline: none; transition: 0.3s; background: #f8fafc; }
+        .message-input:focus { border-color: #1a4f8b; background: white; }
+        .send-btn { width: 50px; height: 50px; background: #1a4f8b; color: white; border: none; border-radius: 16px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
+        .send-btn:hover { background: #0f3661; transform: rotate(10deg); }
+        .close-icon { font-size: 24px; cursor: pointer; color: rgba(255,255,255,0.7); transition: 0.2s; }
+        .close-icon:hover { color: white; transform: rotate(90deg); }
+    </style>
+</head>
+<body>
+
+    <button class="btn-open" onclick="document.getElementById('chatModal').classList.add('active')">상담원 연결하기 (팝업)</button>
+
+    <div class="modal-overlay" id="chatModal" onclick="if(event.target === this) this.classList.remove('active')">
+        <div class="chat-popup">
+            <div class="popup-header">
+                <div class="counselor-info">
+                    <div class="avatar">
+                        <img src="https://ui-avatars.com/api/?name=Pro&background=007AFF&color=fff" alt="Counselor">
+                    </div>
+                    <div class="header-text">
+                        <h3>전문 정책 상담사 하이(Hi)</h3>
+                        <p>● 실시간 상담 대기 중</p>
+                    </div>
+                </div>
+                <div class="close-icon" onclick="document.getElementById('chatModal').classList.remove('active')">✕</div>
+            </div>
+            
+            <div class="chat-body" id="chatBody">
+                <div class="msg-bubble bot-msg">
+                    반갑습니다! <b>{{ user.name|default:"사용자" }}</b>님. <br> 
+                    어떤 정책이나 주거 지원 정보가 궁금하신가요? 지금 바로 말씀해 주세요!
+                </div>
+                <div class="msg-bubble user-msg">
+                    서울 지역 신혼부부 전세임대 주택 신청 방법이 궁금합니다.
+                </div>
+                <div class="msg-bubble bot-msg">
+                    네, 서울 지역의 경우 현재 <b>공공임대 수시모집</b>이 진행 중입니다. <br>
+                    사용자님의 진단 데이터를 보니 <u>소득 기준(7,500만원)</u>에 부합하시네요. 구체적인 서류 준비부터 도와드릴까요?
+                </div>
+            </div>
+
+            <div class="input-footer">
+                <input type="text" class="message-input" placeholder="전문가에게 질문하기..." onkeypress="if(event.key === 'Enter') sendMessage()">
+                <button class="send-btn" onclick="sendMessage()">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const input = document.querySelector('.message-input');
+            const chatBody = document.getElementById('chatBody');
+            if (!input.value.trim()) return;
+
+            const userMsg = document.createElement('div');
+            userMsg.className = 'msg-bubble user-msg';
+            userMsg.textContent = input.value;
+            chatBody.appendChild(userMsg);
+            
+            input.value = '';
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+            // Fake Bot Reply
+            setTimeout(() => {
+                const botMsg = document.createElement('div');
+                botMsg.className = 'msg-bubble bot-msg';
+                botMsg.innerHTML = "말씀하신 내용을 바탕으로 전문가가 확인 중입니다. 잠시만 기다려 주세요! 👋";
+                chatBody.appendChild(botMsg);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

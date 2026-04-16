@@ -1,10 +1,13 @@
 import os
+import sys
 import socket
 import requests
 import json
 from dotenv import load_dotenv
 
-load_dotenv(override=True)
+# Add project root to sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env'), override=True)
 
 def deep_diagnose():
     google_key = os.getenv('GOOGLE_API_KEY', '').strip()

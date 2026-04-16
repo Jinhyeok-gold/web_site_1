@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아코디언 확장형 채팅 미리보기</title>
+    <style>
+        body { font-family: 'Pretendard', sans-serif; background: #eaeff5; display: flex; justify-content: center; align-items: flex-start; padding-top: 50px; height: 100vh; margin: 0; }
+        
+        .card { 
+            width: 600px; background: white; border-radius: 24px; padding: 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-header { position: relative; }
+        .card-icon { font-size: 2.5rem; margin-bottom: 20px; color: #2ed573; }
+        .card-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 15px; color: #1e293b; }
+        .card-desc { color: #64748b; line-height: 1.6; margin-bottom: 20px; }
+
+        .btn-toggle { 
+            width: 100%; padding: 12px; background: #1a4f8b; color: white; border: none;
+            border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s;
+        }
+
+        /* Expandable Chat Area */
+        .chat-expand-area {
+            max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out, margin-top 0.5s;
+            background: #f8fafc; border-radius: 16px; margin-top: 0;
+        }
+        .chat-expand-area.active {
+            max-height: 500px; margin-top: 25px; border: 1px solid #e2e8f0;
+        }
+
+        .chat-inner { padding: 20px; display: flex; flex-direction: column; height: 350px; }
+        .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; padding-right: 5px; }
+        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        .bubble { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; }
+        .bot { background: white; align-self: flex-start; color: #334155; border: 1px solid #e2e8f0; }
+        .user { background: #1a4f8b; color: white; align-self: flex-end; }
+
+        .chat-input-row { display: flex; gap: 10px; }
+        .chat-input { flex: 1; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; outline: none; }
+        .btn-send { background: #1a4f8b; color: white; border: none; border-radius: 8px; padding: 0 15px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="consultCard">
+        <div class="card-header">
+            <div class="card-icon">🎧</div>
+            <div class="card-title">1:1 전문가 맞춤 상담</div>
+            <p class="card-desc">
+                전문 상담사와 즉시 대화를 시작해 보세요. <br>
+                현재 대기 중인 상담사가 있습니다.
+            </p>
+            <button class="btn-toggle" id="toggleBtn" onclick="toggleChat()">상담 시작하기</button>
+        </div>
+
+        <div class="chat-expand-area" id="chatArea">
+            <div class="chat-inner">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="bubble bot">안녕하세요! 상담사 하이(Hi)입니다. 무엇을 도와드릴까요?</div>
+                    <div class="bubble user">신혼부부 정책 관련해서 질문이 있어요.</div>
+                    <div class="bubble bot">네, 현재 진단 결과에 맞춘 최적의 정보를 바로 안내해 드리겠습니다.</div>
+                </div>
+                <div class="chat-input-row">
+                    <input type="text" class="chat-input" placeholder="메시지를 입력하세요..." onkeypress="if(event.key === 'Enter') send()">
+                    <button class="btn-send" onclick="send()">전송</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleChat() {
+            const area = document.getElementById('chatArea');
+            const btn = document.getElementById('toggleBtn');
+            const isActive = area.classList.toggle('active');
+            
+            btn.textContent = isActive ? "상담 종료하기" : "상담 시작하기";
+            btn.style.background = isActive ? "#ef4444" : "#1a4f8b";
+        }
+
+        function send() {
+            const input = document.querySelector('.chat-input');
+            const msgs = document.getElementById('chatMessages');
+            if (!input.value.trim()) return;
+
+            const u = document.createElement('div');
+            u.className = 'bubble user';
+            u.textContent = input.value;
+            msgs.appendChild(u);
+            input.value = '';
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+    </script>
+</body>
+</html>

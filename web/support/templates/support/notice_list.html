@@ -1,0 +1,62 @@
+{% extends 'mainwindow/base.html' %}
+{% load static %}
+
+{% block title %}전체 공지사항 - 딱맞춤{% endblock %}
+
+{% block extra_css %}
+<style>
+    .list-container { max-width: 1000px; margin: 60px auto; padding: 40px; background: white; border-radius: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); }
+    .list-header { text-align: center; margin-bottom: 50px; }
+    .list-header h1 { font-size: 2.2rem; font-weight: 800; color: #1e293b; }
+    
+    .notice-table { width: 100%; border-collapse: separate; border-spacing: 0 15px; }
+    .notice-row { background: #f8fafc; transition: 0.3s; cursor: pointer; border-radius: 12px; }
+    .notice-row:hover { background: #f1f5f9; transform: scale(1.01); }
+    .notice-cell { padding: 20px; border: none; }
+    .notice-cell:first-child { border-radius: 12px 0 0 12px; }
+    .notice-cell:last-child { border-radius: 0 12px 12px 0; text-align: right; color: #94a3b8; font-size: 0.9rem; }
+    
+    .badge-important { background: #fee2e2; color: #ef4444; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 11px; margin-right: 10px; vertical-align: middle; }
+    .notice-title { font-weight: 600; color: #1e293b; text-decoration: none; }
+    
+    .empty-state { text-align: center; padding: 100px 0; color: #94a3b8; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="list-container fade-in">
+    <div class="list-header">
+        <h1>전체 공지사항</h1>
+        <p>청년·신혼부부 맞춤 소식을 모두 확인하세요.</p>
+    </div>
+
+    {% if all_notices %}
+    <table class="notice-table">
+        <tbody>
+            {% for notice in all_notices %}
+            <tr class="notice-row" onclick="location.href='{% url 'support:notice_detail' notice.pk %}';">
+                <td class="notice-cell">
+                    {% if notice.is_important %}
+                    <span class="badge-important">중요</span>
+                    {% endif %}
+                    <span class="notice-title">{{ notice.title }}</span>
+                </td>
+                <td class="notice-cell">
+                    {{ notice.created_at|date:"Y.m.d" }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-box-open fa-3x" style="margin-bottom: 20px; opacity: 0.3;"></i>
+        <p>등록된 공지사항이 없습니다.</p>
+    </div>
+    {% endif %}
+
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="{% url 'support:support_home' %}" style="color: #1a4f8b; font-weight: 700; text-decoration: none;"><i class="fas fa-arrow-left"></i> 고객센터 메인으로</a>
+    </div>
+</div>
+{% endblock %}

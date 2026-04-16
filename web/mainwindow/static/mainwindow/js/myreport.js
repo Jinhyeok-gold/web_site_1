@@ -40,6 +40,24 @@ function renderResultsForMyReport(report) {
   } = report;
 
   renderVisuals(chart_data, financial_simulation);
+
+  // 마이리포트 전용 — 게이지/레이더 컬러를 틸로 오버라이드
+  requestAnimationFrame(() => {
+    // 게이지 색상 교체
+    if (window.activeCharts?.gauge) {
+      const gauge = window.activeCharts.gauge;
+      gauge.data.datasets[0].backgroundColor[0] = '#00c2a8';
+      gauge.update('none');
+    }
+    // 레이더 색상 교체
+    if (window.activeCharts?.radar) {
+      const radar = window.activeCharts.radar;
+      radar.data.datasets[0].backgroundColor = 'rgba(0,194,168,.15)';
+      radar.data.datasets[0].borderColor      = '#00c2a8';
+      radar.data.datasets[0].pointBackgroundColor = '#00c2a8';
+      radar.update('none');
+    }
+  });
   renderWidgetCards('mr-housing-container', housing, 'Housing');
   renderWidgetCards('mr-finance-container', finance,  'Finance');
   renderWidgetCards('mr-welfare-container', welfare,  'Welfare');

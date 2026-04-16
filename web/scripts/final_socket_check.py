@@ -1,10 +1,13 @@
 import os
+import sys
 import socket
 import ssl
 import xml.etree.ElementTree as ET
 from dotenv import load_dotenv
 
-load_dotenv(override=True)
+# Add project root to sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env'), override=True)
 
 def final_socket_test():
     api_key = os.getenv('YOUTH_CENTER_KEY', '').strip()

@@ -1,10 +1,13 @@
 import os
+import sys
 import requests
 import xml.etree.ElementTree as ET
 from urllib.parse import unquote
 from dotenv import load_dotenv
 
-load_dotenv()
+# Add project root to sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env'), override=True)
 
 def test_api():
     raw_key = os.getenv('DATA_PORTAL_KEY')

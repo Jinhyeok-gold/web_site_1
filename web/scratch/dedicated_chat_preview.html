@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전문 상담 상설 창구 - 딱맞춤</title>
+    <style>
+        body { font-family: 'Pretendard', sans-serif; background: #f1f5f9; margin: 0; display: flex; height: 100vh; color: #1e293b; }
+        
+        /* Sidebar: Consultation Info */
+        .chat-sidebar {
+            width: 320px; background: white; border-right: 1px solid #e2e8f0;
+            display: flex; flex-direction: column; padding: 40px 30px;
+        }
+        .sidebar-header { margin-bottom: 40px; }
+        .sidebar-logo { font-size: 22px; font-weight: 900; color: #1a4f8b; margin-bottom: 10px; }
+        .sidebar-tag { font-size: 12px; color: #64748b; font-weight: 600; }
+
+        .consultant-card {
+            background: #f8fafc; border-radius: 20px; padding: 25px;
+            text-align: center; margin-bottom: 30px;
+        }
+        .sidebar-avatar { width: 80px; height: 80px; border-radius: 50%; background: #1a4f8b; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; font-weight: 800; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .consultant-name { font-size: 18px; font-weight: 800; margin-bottom: 5px; }
+        .consultant-role { font-size: 13px; color: #1a4f8b; font-weight: 700; }
+
+        .user-diagnose-summary {
+            flex: 1; border-top: 1px dashed #cbd5e1; padding-top: 30px;
+        }
+        .summary-title { font-size: 14px; font-weight: 800; margin-bottom: 15px; color: #475569; }
+        .summary-item { font-size: 13px; color: #64748b; margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .summary-item b { color: #1e293b; }
+
+        /* Main Chat Area */
+        .chat-main { flex: 1; display: flex; flex-direction: column; background: #fdfdfd; }
+        .chat-header {
+            height: 80px; background: white; border-bottom: 1px solid #e2e8f0;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 40px;
+        }
+        .chat-status { display: flex; align-items: center; gap: 10px; font-weight: 700; color: #1a4f8b; }
+        .status-dot { width: 10px; height: 10px; background: #2ed573; border-radius: 50%; box-shadow: 0 0 10px rgba(46, 213, 115, 0.5); }
+
+        .chat-history { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 25px; }
+        .message-row { display: flex; flex-direction: column; max-width: 70%; }
+        .bot-row { align-self: flex-start; }
+        .user-row { align-self: flex-end; align-items: flex-end; }
+
+        .bubble {
+            padding: 16px 20px; border-radius: 20px; font-size: 15px; line-height: 1.6;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+        .bot .bubble { background: white; border-bottom-left-radius: 4px; border: 1px solid #f1f5f9; }
+        .user .bubble { background: #1a4f8b; color: white; border-bottom-right-radius: 4px; }
+        .time { font-size: 11px; color: #94a3b8; margin-top: 5px; }
+
+        .chat-footer { padding: 30px 40px; background: white; border-top: 1px solid #e2e8f0; }
+        .input-container {
+            display: flex; gap: 15px; background: #f8fafc; border: 1px solid #e2e8f0;
+            border-radius: 16px; padding: 10px 15px; align-items: center;
+        }
+        .message-input { flex: 1; border: none; background: transparent; padding: 10px; outline: none; font-size: 15px; }
+        .btn-send { background: #1a4f8b; color: white; border: none; border-radius: 12px; padding: 12px 25px; font-weight: 800; cursor: pointer; transition: 0.2s; }
+        .btn-send:hover { background: #0f3661; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+    <aside class="chat-sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">딱맞춤</div>
+            <div class="sidebar-tag">1:1 전문 상담 서비스</div>
+        </div>
+
+        <div class="consultant-card">
+            <div class="sidebar-avatar">H</div>
+            <div class="consultant-name">상담사 하이(Hi)</div>
+            <div class="consultant-role">청년·신혼부부 정책 전문가</div>
+        </div>
+
+        <div class="user-diagnose-summary">
+            <div class="summary-title">나의 진단 요약</div>
+            <div class="summary-item">나이: <b>32세</b></div>
+            <div class="summary-item">혼인 상태: <b>신혼부부 (1년차)</b></div>
+            <div class="summary-item">연소득: <b>7,500만원</b></div>
+            <div class="summary-item">관심 분야: <b>주거, 금융</b></div>
+        </div>
+        
+        <div style="margin-top:auto;">
+            <button style="width:100%; padding:12px; border:1px solid #e2e8f0; background:none; border-radius:10px; cursor:pointer; color:#94a3b8; font-size:13px;" onclick="location.href='/support/'">상담실 나가기</button>
+        </div>
+    </aside>
+
+    <main class="chat-main">
+        <header class="chat-header">
+            <div class="chat-status">
+                <span class="status-dot"></span>
+                실시간 상담 진행 중
+            </div>
+            <div style="font-size:13px; color:#64748b;">상담 번호: #0416-2026</div>
+        </header>
+
+        <div class="chat-history">
+            <div class="message-row bot-row bot">
+                <div class="bubble">안녕하세요! 사용자님의 진단 데이터를 기반으로 전문 상담을 시작합니다. 궁금하신 정책이나 지원 사업에 대해 편하게 말씀해 주세요.</div>
+                <div class="time">오전 11:52</div>
+            </div>
+            <div class="message-row user-row user">
+                <div class="bubble">현재 보증금 2억 대 전세를 찾고 있는데, 제가 받을 수 있는 최저 금리 대출이 무엇인가요?</div>
+                <div class="time">오전 11:53</div>
+            </div>
+            <div class="message-row bot-row bot">
+                <div class="bubble">사용자님의 소득과 자녀 계획 유무에 따라 다르지만, 가장 추천드리는 것은 <b>'신생아 특례 대출'</b>입니다. 연 1.6%~3.3% 수준의 파격적인 금리가 적용됩니다. 신생아 계획이 없으시다면...</div>
+                <div class="time">오전 11:54</div>
+            </div>
+        </div>
+
+        <footer class="chat-footer">
+            <div class="input-container">
+                <input type="text" class="message-input" placeholder="전문가와 대화를 시작하세요...">
+                <button class="btn-send">보내기</button>
+            </div>
+        </footer>
+    </main>
+
+</body>
+</html>

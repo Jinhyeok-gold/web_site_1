@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상담사 통합 대시보드 - 딱맞춤</title>
+    <link rel="stylesheet" href="{% static 'mainwindow/css/base.css' %}">
+    <style>
+        body { font-family: 'Pretendard', sans-serif; background: #f8fafc; margin: 0; padding: 40px; color: #1e293b; }
+        .dashboard-container { max-width: 1200px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .header h1 { font-size: 28px; font-weight: 900; color: #1a4f8b; margin: 0; }
+        .header .user-info { font-weight: 700; color: #64748b; }
+
+        .section-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .badge { background: #ff4757; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
+        .badge.active { background: #1a4f8b; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; margin-bottom: 50px; }
+        
+        .chat-card {
+            background: white; border-radius: 20px; padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0; transition: 0.3s;
+            display: flex; flex-direction: column; gap: 15px;
+        }
+        .chat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-color: #1a4f8b; }
+
+        .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+        .user-meta h3 { margin: 0; font-size: 18px; font-weight: 800; }
+        .user-meta p { margin: 5px 0 0; font-size: 13px; color: #94a3b8; }
+
+        .status-pill { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; background: #f1f5f9; color: #64748b; }
+        .status-pill.pending { background: #fff5f5; color: #ff4757; }
+        .status-pill.active { background: #f0f7ff; color: #1a4f8b; }
+
+        .card-body { font-size: 14px; color: #475569; line-height: 1.5; }
+        .card-footer { margin-top: auto; }
+
+        .btn-join { 
+            display: block; width: 100%; padding: 12px; text-align: center;
+            background: #1a4f8b; color: white; text-decoration: none;
+            border-radius: 12px; font-weight: 700; transition: 0.2s;
+        }
+        .btn-join:hover { background: #0f3661; }
+
+        .empty-state { padding: 40px; text-align: center; background: white; border-radius: 20px; color: #94a3b8; border: 2px dashed #e2e8f0; }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <div class="header">
+            <div onclick="location.href='/';" style="cursor:pointer">
+                <h1>상담사 관리 센터</h1>
+            </div>
+            <div class="user-info">
+                {{ user.last_name|default:user.username }} 상담사님 환영합니다.
+                <a href="{% url 'policy:logout' %}" style="margin-left:15px; font-size:13px; color:#ff4757;">로그아웃</a>
+            </div>
+        </div>
+
+        <section>
+            <div class="section-title">
+                대기 중인 상담 <span class="badge">{{ pending_rooms.count }}</span>
+            </div>
+            {% if pending_rooms %}
+            <div class="grid">
+                {% for room in pending_rooms %}
+                <div class="chat-card">
+                    <div class="card-top">
+                        <div class="user-meta">
+                            <h3>{{ room.customer.username }}님</h3>
+                            <p>요청 시간: {{ room.created_at|date:"H:i" }}</p>
+                        </div>
+                        <span class="status-pill pending">배정 대기</span>
+                    </div>
+                    <div class="card-body">
+                        가장 최근 활동: {{ room.updated_at|timesince }} 전
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'support:admin_chat_detail' room.id %}" class="btn-join">상담 수락 및 연결</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">현재 대기 중인 상담 요청이 없습니다.</div>
+            {% endif %}
+        </section>
+
+        <section style="margin-top: 50px;">
+            <div class="section-title">
+                내가 답변 중인 상담 <span class="badge active">{{ active_rooms.count }}</span>
+            </div>
+            {% if active_rooms %}
+            <div class="grid">
+                {% for room in active_rooms %}
+                <div class="chat-card">
+                    <div class="card-top">
+                        <div class="user-meta">
+                            <h3>{{ room.customer.username }}님</h3>
+                            <p>마지막 대화: {{ room.updated_at|date:"H:i" }}</p>
+                        </div>
+                        <span class="status-pill active">상담 중</span>
+                    </div>
+                    <div class="card-body">
+                        참여 상담사: 나 ({{ user.username }})
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'support:admin_chat_detail' room.id %}" class="btn-join">상담실 다시 입장</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">진행 중인 상담이 없습니다.</div>
+            {% endif %}
+        </section>
+    </div>
+
+</body>
+</html>
