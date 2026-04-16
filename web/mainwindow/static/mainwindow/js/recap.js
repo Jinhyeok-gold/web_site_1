@@ -123,6 +123,11 @@ const Recap = (() => {
 
         // 마지막 카드에서 다음 → 전체 리포트
         if (next >= TOTAL) {
+            try {
+                localStorage.setItem('myreport_data', JSON.stringify(data));
+                localStorage.setItem('myreport_saved_at', new Date().toISOString());
+            } catch(e) {}
+
             setView('result');
             return;
         }
