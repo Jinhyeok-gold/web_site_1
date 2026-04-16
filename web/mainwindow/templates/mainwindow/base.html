@@ -34,7 +34,7 @@
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
-                <a href="#" class="qna-btn" onclick="showCustomerService(); return false;">고객센터</a>
+                <a href="{% url 'support:support_home' %}" class="qna-btn">고객센터</a>
                 {% if user.is_authenticated %}
                     <span style="color: #475569; font-weight: 600; font-size: 14px;">{{ user.last_name|default:user.username }}님</span>
                     <a href="{% url 'policy:logout' %}" class="join-btn">로그아웃</a>

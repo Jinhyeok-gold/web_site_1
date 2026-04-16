@@ -1,0 +1,88 @@
+{% extends 'mainwindow/base.html' %}
+{% load static %}
+
+{% block title %}나의 문의 내역 - 딱맞춤{% endblock %}
+
+{% block extra_css %}
+<style>
+    .support-container { padding: 40px 0; max-width: 1000px; margin: 0 auto; }
+    .page-title { font-size: 2rem; font-weight: 800; color: #1e293b; margin-bottom: 30px; }
+    
+    .inquiry-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+    .inquiry-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+    .inquiry-status {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+    .status-pending { background: #fef3c7; color: #d97706; }
+    .status-answered { background: #dcfce7; color: #16a34a; }
+    
+    .inquiry-q { margin-bottom: 20px; }
+    .inquiry-q h3 { font-size: 1.25rem; margin-bottom: 10px; color: #1e293b; }
+    .inquiry-q p { color: #475569; line-height: 1.6; }
+    
+    .admin-answer-box {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 20px;
+        border-left: 4px solid #1a4f8b;
+    }
+    .admin-answer-box strong { display: block; margin-bottom: 10px; color: #1a4f8b; }
+    .admin-answer-box p { margin: 0; color: #334155; }
+    
+    .btn-new {
+        background: #1a4f8b;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 700;
+        display: inline-block;
+        margin-bottom: 30px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="support-container wide">
+    <div class="page-title">✉️ 나의 1:1 문의 내역</div>
+    
+    <a href="{% url 'support:inquiry_create' %}" class="btn-new">+ 새 문의 작성하기</a>
+
+    {% for inquiry in inquiries %}
+    <div class="inquiry-card fade-in">
+        <div class="inquiry-header">
+            <span class="inquiry-status {% if inquiry.status == 'PENDING' %}status-pending{% else %}status-answered{% endif %}">
+                {{ inquiry.get_status_display }}
+            </span>
+            <small style="color: #94a3b8;">{{ inquiry.created_at|date:"Y.m.d H:i" }}</small>
+        </div>
+        <div class="inquiry-q">
+            <h3>{{ inquiry.title }}</h3>
+            <p>{{ inquiry.content|linebreaks }}</p>
+        </div>
+        
+        {% if inquiry.admin_answer %}
+        <div class="admin-answer-box">
+            <strong>🏠 정책 어드바이저 답변</strong>
+            <p>{{ inquiry.admin_answer|linebreaks }}</p>
+            <small style="display:block; margin-top:10px; color:#94a3b8;">답변일: {{ inquiry.answered_at|date:"Y.m.d" }}</small>
+        </div>
+        {% endif %}
+    </div>
+    {% empty %}
+    <div class="inquiry-card" style="text-align: center; padding: 60px;">
+        <p style="color: #64748b; font-size: 1.1rem;">아직 작성된 문의가 없습니다.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

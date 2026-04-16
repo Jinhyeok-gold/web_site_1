@@ -30,6 +30,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('myreport/', views.myreport, name='myreport'),
     path('welfare_map/', views.welfare_map, name='welfare_map'),
+    path('support/', include('support.urls', namespace='support')),
 ]
 
 if settings.DEBUG:
