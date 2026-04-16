@@ -63,13 +63,16 @@ function renderWidgetCards(containerId, data, type) {
 let editMode  = false;
 let dragSrc   = null;
 let placeholder = null;
+let dropped   = false;
 
 /* placeholder 생성 */
 function createPlaceholder(ref) {
   const ph = document.createElement('div');
   ph.className = 'mr-placeholder';
-  // 동일한 grid 사이즈 클래스 복사
+  // grid 사이즈 클래스 복사
   ref.classList.forEach(c => { if (c.startsWith('mr-w-')) ph.classList.add(c); });
+  // span이 직접 설정된 경우(리사이즈된 카드 위젯) gridColumn도 복사
+  if (ref.style.gridColumn) ph.style.gridColumn = ref.style.gridColumn;
   ph.style.height = ref.offsetHeight + 'px';
   return ph;
 }
@@ -174,7 +177,7 @@ function attachPlaceholderEvents(ph) {
   ph.addEventListener('drop', e => {
     if (!editMode || !dragSrc) return;
     e.preventDefault();
-    // placeholder 바로 앞 위치에 dragSrc 삽입
+    dropped = true;
     const playFlip = flipAnimate();
     const parent = ph.parentNode;
     parent.insertBefore(dragSrc, ph);
@@ -213,6 +216,7 @@ function initDrag() {
     widget.addEventListener('dragstart', e => {
       if (!editMode) { e.preventDefault(); return; }
       dragSrc = widget;
+      dropped = false;
       e.dataTransfer.effectAllowed = 'move';
       e.dataTransfer.setData('text/plain', '');
 
@@ -228,9 +232,11 @@ function initDrag() {
     widget.addEventListener('dragend', () => {
       widget.setAttribute('draggable', 'false');
       widget.classList.remove('mr-dragging');
-      cleanupPlaceholder();
+      // drop이 성공적으로 일어났으면 cleanup은 drop에서 이미 처리됨
+      if (!dropped) cleanupPlaceholder();
       stopAutoScroll();
       dragSrc = null;
+      dropped = false;
       document.querySelectorAll('.mr-widget').forEach(w => w.classList.remove('mr-drag-over'));
     });
 
@@ -239,7 +245,6 @@ function initDrag() {
       e.preventDefault();
       e.dataTransfer.dropEffect = 'move';
 
-      // 자동 스크롤
       startAutoScroll(e.clientY);
 
       document.querySelectorAll('.mr-widget').forEach(w => w.classList.remove('mr-drag-over'));
@@ -250,8 +255,10 @@ function initDrag() {
     widget.addEventListener('drop', e => {
       if (!editMode || !dragSrc || dragSrc === widget) return;
       e.preventDefault();
+      e.stopPropagation();
       widget.classList.remove('mr-drag-over');
       stopAutoScroll();
+      dropped = true;
 
       const all    = [...grid.querySelectorAll('.mr-widget')];
       const srcIdx = all.indexOf(dragSrc);
