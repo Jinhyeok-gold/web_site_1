@@ -4,12 +4,13 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'mainwindow/css/myreport.css' %}">
+<link rel="stylesheet" href="{% static 'mainwindow/css/recap.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="myreport-wrap">
 
-  <!-- 상단: 리캡으로 보기 버튼 -->
+  <!-- 상단 헤더 -->
   <div class="myreport-header">
     <h2>📋 마이리포트</h2>
     <button id="btn-view-recap" class="btn-recap-view" onclick="openRecapModal()">
@@ -17,42 +18,47 @@
     </button>
   </div>
 
-  <!-- 전체 리포트 영역 (기존 view-result 내용을 여기에 클론) -->
+  <!-- 전체 리포트 영역 -->
   <div id="myreport-content">
-    <p class="no-data-msg">저장된 리포트가 없어요. 먼저 진단을 완료해주세요!</p>
+    <p class="no-data-msg" id="no-data-msg">저장된 리포트가 없어요. 먼저 진단을 완료해주세요!</p>
+    <div id="matching-results-container"></div>
   </div>
 
   <!-- 리캡 모달 -->
   <div id="recap-modal" class="recap-modal-overlay hidden">
     <div class="recap-modal-inner">
-      <!-- recap_view.html 내용을 여기에 include -->
       {% include 'mainwindow/recap_view.html' %}
       <button class="recap-modal-close" onclick="closeRecapModal()">✕ 닫기</button>
     </div>
   </div>
 
 </div>
+{% endblock %}
 
+{% block extra_js %}
+<script src="{% static 'mainwindow/js/form.js' %}"></script>
+<script src="{% static 'mainwindow/js/recap.js' %}"></script>
 <script>
 const saved = localStorage.getItem('myreport_data');
 const savedAt = localStorage.getItem('myreport_saved_at');
 
 if (saved) {
-    const report = JSON.parse(saved);
-    // 전체 리포트 렌더링 (기존 renderFullReport 함수 재사용)
-    renderFullReport(report);  // home.js의 기존 함수
+    document.getElementById('no-data-msg')?.remove();
+    currentReport = JSON.parse(saved);
+    renderResults();
+
     if (savedAt) {
         const d = new Date(savedAt);
         document.querySelector('.myreport-header h2').innerHTML +=
-            `<span class="saved-at">${d.toLocaleDateString('ko-KR')} 저장</span>`;
+            ` <span class="saved-at">${d.toLocaleDateString('ko-KR')} 저장</span>`;
     }
 }
 
 function openRecapModal() {
     if (!saved) return alert('저장된 리포트가 없어요.');
     document.getElementById('recap-modal').classList.remove('hidden');
-    renderRecap(JSON.parse(saved));  // 기존 recap.js 함수
-    RecapPlayer.init(JSON.parse(saved));
+    renderRecap(JSON.parse(saved));
+    Recap.init(JSON.parse(saved));
 }
 
 function closeRecapModal() {
