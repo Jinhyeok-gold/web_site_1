@@ -506,6 +506,16 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'mainwindow/js/form.js' %}"></script>
-<script src="{% static 'mainwindow/js/recap.js' %}"></script>
+    <script src="{% static 'mainwindow/js/form.js' %}"></script>
+    <script src="{% static 'mainwindow/js/recap.js' %}"></script>
+
+    <script>
+        // URL에 #form-anchor 해시가 있으면 스크롤
+        if (window.location.hash === '#form-anchor') {
+            // setView의 scrollTo(top:0)이 끝난 뒤 스크롤하도록 충분히 대기
+            setTimeout(() => {
+                document.getElementById('form-anchor')?.scrollIntoView({ behavior: 'smooth' });
+            }, 600);
+        }
+    </script>
 {% endblock %}

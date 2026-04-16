@@ -10,76 +10,133 @@
 {% endblock %}
 
 {% block content %}
-<div class="myreport-wrap container wide">
+<div class="mr-page">
 
-  <!-- 상단 헤더 -->
-  <div class="myreport-header">
-    <h2>📋 마이리포트</h2>
-    <button id="btn-view-recap" class="btn-recap-view" onclick="openRecapModal()">
-      ✨ 리캡으로 보기
-    </button>
+  <!-- ── 상단 헤더 ── -->
+  <div class="mr-header">
+    <div class="mr-header-left">
+      <div class="mr-title-group">
+        <span class="mr-eyebrow">POLICY DASHBOARD</span>
+        <h1 class="mr-title">마이리포트</h1>
+      </div>
+      <div class="mr-meta" id="mr-meta-date" style="display:none">
+        <i class="fas fa-clock"></i>
+        <span id="mr-saved-date"></span>
+      </div>
+    </div>
+    <div class="mr-header-right">
+      <div class="mr-edit-toggle">
+        <button class="mr-btn-edit" id="btn-edit-mode" onclick="toggleEditMode()">
+          <i class="fas fa-th-large"></i> 레이아웃 편집
+        </button>
+        <button class="mr-btn-reset" id="btn-reset-layout" onclick="resetLayout()" style="display:none">
+          <i class="fas fa-undo"></i> 초기화
+        </button>
+      </div>
+      <button class="mr-btn-recap" onclick="openRecapModal()">
+        <i class="fas fa-play-circle"></i> 리캡으로 보기
+      </button>
+    </div>
   </div>
 
-  <!-- 저장된 데이터 없을 때 -->
-  <p class="no-data-msg" id="no-data-msg">저장된 리포트가 없어요. 먼저 진단을 완료해주세요!</p>
+  <!-- ── 편집 모드 안내 배너 ── -->
+  <div class="mr-edit-banner hidden" id="mr-edit-banner">
+    <i class="fas fa-info-circle"></i>
+    위젯을 드래그해서 원하는 위치로 이동할 수 있어요.
+    <button onclick="toggleEditMode()">편집 완료 <i class="fas fa-check"></i></button>
+  </div>
 
-  <!-- 전체 리포트 영역 (home.html의 view-result와 동일 구조) -->
-  <div id="myreport-content" class="hidden fade-in results-view">
+  <!-- ── 저장 데이터 없을 때 ── -->
+  <div class="mr-empty" id="mr-empty">
+    <div class="mr-empty-icon"><i class="fas fa-chart-bar"></i></div>
+    <h3>아직 리포트가 없어요</h3>
+    <p>자가진단을 완료하면 여기서 결과를 바로 확인할 수 있어요.</p>
+    <a href="/" class="mr-btn-go">지금 진단 시작하기 <i class="fas fa-arrow-right"></i></a>
+  </div>
 
-    <div class="result-header">
-      <div class="header-badge">PREMIUM ANALYSIS REPORT</div>
-      <h2>사용자 정보 기반 <span class="gradient-text">정책 분석 대시보드</span></h2>
-      <p>전국 정책 데이터와 금융 시뮬레이션을 결합한 최적의 로드맵입니다.</p>
-    </div>
+  <!-- ── 위젯 그리드 ── -->
+  <div class="mr-grid hidden" id="mr-grid">
 
-    <!-- Visualization Dashboard Grid -->
-    <div class="dashboard-grid">
-      <!-- Unit 1: Overall Matching Gauge -->
-      <div class="dashboard-unit score-gauge-unit">
-        <div class="unit-title">종합 정책 적합도</div>
-        <div class="gauge-container">
-          <canvas id="scoreGaugeCanvas"></canvas>
-          <div class="gauge-center">
-            <span id="gauge-score-val">0</span>
-            <span class="unit-pct">%</span>
+    <!-- 위젯 1: 종합 적합도 -->
+    <div class="mr-widget mr-w-small" data-widget-id="gauge">
+      <div class="mr-widget-handle"><i class="fas fa-grip-vertical"></i></div>
+      <div class="mr-widget-inner">
+        <div class="mr-widget-label">종합 적합도</div>
+        <div class="mr-gauge-wrap">
+          <div class="gauge-container">
+            <canvas id="scoreGaugeCanvas"></canvas>
+            <div class="gauge-center">
+              <span id="gauge-score-val">0</span>
+              <span class="unit-pct">%</span>
+            </div>
           </div>
         </div>
-        <div class="gauge-desc">사용자님의 프로필과 100%에 가까울수록 강력 추천되는 정책입니다.</div>
+        <p class="mr-gauge-desc">100%에 가까울수록 강력 추천 정책입니다</p>
       </div>
+    </div>
 
-      <!-- Unit 2: Spider Chart -->
-      <div class="dashboard-unit radar-unit">
-        <div class="unit-title">분야별 수혜 밸런스</div>
-        <div class="chart-container">
+    <!-- 위젯 2: 레이더 차트 -->
+    <div class="mr-widget mr-w-medium" data-widget-id="radar">
+      <div class="mr-widget-handle"><i class="fas fa-grip-vertical"></i></div>
+      <div class="mr-widget-inner">
+        <div class="mr-widget-label">분야별 수혜 밸런스</div>
+        <div class="chart-container" style="height:240px">
           <canvas id="radarChartCanvas"></canvas>
         </div>
       </div>
+    </div>
 
-      <!-- Unit 3: Financial Simulation -->
-      <div class="dashboard-unit simulation-unit">
-        <div class="unit-title">📊 맞춤 금융 시뮬레이션</div>
-        <div class="sim-dashboard">
-          <div class="sim-pill">
-            <span class="pill-label">최대 대출 한도</span>
-            <strong id="sim-limit-val">0</strong><span class="pill-unit">만원</span>
+    <!-- 위젯 3: 금융 시뮬레이션 -->
+    <div class="mr-widget mr-w-small" data-widget-id="simulation">
+      <div class="mr-widget-handle"><i class="fas fa-grip-vertical"></i></div>
+      <div class="mr-widget-inner">
+        <div class="mr-widget-label">맞춤 금융 시뮬레이션</div>
+        <div class="mr-sim-grid">
+          <div class="mr-sim-card mr-sim-primary">
+            <div class="mr-sim-label">최대 대출 한도</div>
+            <div class="mr-sim-value"><strong id="sim-limit-val">0</strong><span>만원</span></div>
           </div>
-          <div class="sim-pill">
-            <span class="pill-label">예상 이자 (월)</span>
-            <strong id="sim-interest-val">0</strong><span class="pill-unit">만원</span>
+          <div class="mr-sim-card">
+            <div class="mr-sim-label">예상 이자 (월)</div>
+            <div class="mr-sim-value"><strong id="sim-interest-val">0</strong><span>만원</span></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 분야별 추천 상세 목록 -->
-    <div class="results-sub-title">
-      <i class="fas fa-list-ul"></i> 분야별 추천 상세 목록
+    <!-- 위젯 4: 주거 정책 -->
+    <div class="mr-widget mr-w-full mr-resizable" data-widget-id="housing">
+      <div class="mr-widget-handle"><i class="fas fa-grip-vertical"></i></div>
+      <div class="mr-resize-handle" title="드래그로 카드 개수 조절"><i class="fas fa-arrows-left-right"></i></div>
+      <div class="mr-widget-inner">
+        <div class="mr-widget-label"><span class="mr-widget-icon">🏠</span> 맞춤형 주거 정책</div>
+        <div id="mr-housing-container" class="mr-cards-container"></div>
+      </div>
     </div>
-    <div id="matching-results-container" class="matching-results-container"></div>
+
+    <!-- 위젯 5: 금융 대출 -->
+    <div class="mr-widget mr-w-full mr-resizable" data-widget-id="finance">
+      <div class="mr-widget-handle"><i class="fas fa-grip-vertical"></i></div>
+      <div class="mr-resize-handle" title="드래그로 카드 개수 조절"><i class="fas fa-arrows-left-right"></i></div>
+      <div class="mr-widget-inner">
+        <div class="mr-widget-label"><span class="mr-widget-icon">💰</span> 금융 및 대출 지원</div>
+        <div id="mr-finance-container" class="mr-cards-container"></div>
+      </div>
+    </div>
+
+    <!-- 위젯 6: 복지 혜택 -->
+    <div class="mr-widget mr-w-full mr-resizable" data-widget-id="welfare">
+      <div class="mr-widget-handle"><i class="fas fa-grip-vertical"></i></div>
+      <div class="mr-resize-handle" title="드래그로 카드 개수 조절"><i class="fas fa-arrows-left-right"></i></div>
+      <div class="mr-widget-inner">
+        <div class="mr-widget-label"><span class="mr-widget-icon">🎁</span> 맞춤 복지 및 혜택</div>
+        <div id="mr-welfare-container" class="mr-cards-container"></div>
+      </div>
+    </div>
 
   </div>
 
-  <!-- 리캡 모달 -->
+  <!-- ── 리캡 모달 ── -->
   <div id="recap-modal" class="recap-modal-overlay hidden">
     <div class="recap-modal-inner">
       {% include 'mainwindow/recap_view.html' %}
@@ -93,34 +150,5 @@
 {% block extra_js %}
 <script src="{% static 'mainwindow/js/form.js' %}"></script>
 <script src="{% static 'mainwindow/js/recap.js' %}"></script>
-<script>
-const saved = localStorage.getItem('myreport_data');
-const savedAt = localStorage.getItem('myreport_saved_at');
-
-if (saved) {
-    document.getElementById('no-data-msg').style.display = 'none';
-    const content = document.getElementById('myreport-content');
-    content.classList.remove('hidden');
-
-    currentReport = JSON.parse(saved);
-    renderResults();
-
-    if (savedAt) {
-        const d = new Date(savedAt);
-        document.querySelector('.myreport-header h2').innerHTML +=
-            ` <span class="saved-at">${d.toLocaleDateString('ko-KR')} 저장</span>`;
-    }
-}
-
-function openRecapModal() {
-    if (!saved) return alert('저장된 리포트가 없어요.');
-    document.getElementById('recap-modal').classList.remove('hidden');
-    renderRecap(JSON.parse(saved));
-    Recap.init(JSON.parse(saved));
-}
-
-function closeRecapModal() {
-    document.getElementById('recap-modal').classList.add('hidden');
-}
-</script>
+<script src="{% static 'mainwindow/js/myreport.js' %}"></script>
 {% endblock %}
