@@ -123,11 +123,6 @@ const Recap = (() => {
 
         // 마지막 카드에서 다음 → 전체 리포트
         if (next >= TOTAL) {
-            try {
-                localStorage.setItem('myreport_data', JSON.stringify(data));
-                localStorage.setItem('myreport_saved_at', new Date().toISOString());
-            } catch(e) {}
-
             setView('result');
             return;
         }
@@ -259,6 +254,12 @@ function renderRecap(report) {
     const score = Math.round(Object.values(radar).reduce((a, b) => a + b, 0) / Object.values(radar).length);
     const scoreEl = document.getElementById('recap-score-num');
     if (scoreEl) scoreEl.innerHTML = '0<sub>%</sub>';
+
+    /* ── localStorage 저장 (리캡 시작 시점에 바로 저장) ── */
+    try {
+        localStorage.setItem('myreport_data', JSON.stringify(report));
+        localStorage.setItem('myreport_saved_at', new Date().toISOString());
+    } catch(e) {}
 
     /* ── Recap 뷰 전환 후 초기화 ── */
     setView('recap');

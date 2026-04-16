@@ -5,10 +5,11 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'mainwindow/css/myreport.css' %}">
 <link rel="stylesheet" href="{% static 'mainwindow/css/recap.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 {% endblock %}
 
 {% block content %}
-<div class="myreport-wrap">
+<div class="myreport-wrap container wide">
 
   <!-- 상단 헤더 -->
   <div class="myreport-header">
@@ -18,10 +19,63 @@
     </button>
   </div>
 
-  <!-- 전체 리포트 영역 -->
-  <div id="myreport-content">
-    <p class="no-data-msg" id="no-data-msg">저장된 리포트가 없어요. 먼저 진단을 완료해주세요!</p>
-    <div id="matching-results-container"></div>
+  <!-- 저장된 데이터 없을 때 -->
+  <p class="no-data-msg" id="no-data-msg">저장된 리포트가 없어요. 먼저 진단을 완료해주세요!</p>
+
+  <!-- 전체 리포트 영역 (home.html의 view-result와 동일 구조) -->
+  <div id="myreport-content" class="hidden fade-in results-view">
+
+    <div class="result-header">
+      <div class="header-badge">PREMIUM ANALYSIS REPORT</div>
+      <h2>사용자 정보 기반 <span class="gradient-text">정책 분석 대시보드</span></h2>
+      <p>전국 정책 데이터와 금융 시뮬레이션을 결합한 최적의 로드맵입니다.</p>
+    </div>
+
+    <!-- Visualization Dashboard Grid -->
+    <div class="dashboard-grid">
+      <!-- Unit 1: Overall Matching Gauge -->
+      <div class="dashboard-unit score-gauge-unit">
+        <div class="unit-title">종합 정책 적합도</div>
+        <div class="gauge-container">
+          <canvas id="scoreGaugeCanvas"></canvas>
+          <div class="gauge-center">
+            <span id="gauge-score-val">0</span>
+            <span class="unit-pct">%</span>
+          </div>
+        </div>
+        <div class="gauge-desc">사용자님의 프로필과 100%에 가까울수록 강력 추천되는 정책입니다.</div>
+      </div>
+
+      <!-- Unit 2: Spider Chart -->
+      <div class="dashboard-unit radar-unit">
+        <div class="unit-title">분야별 수혜 밸런스</div>
+        <div class="chart-container">
+          <canvas id="radarChartCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- Unit 3: Financial Simulation -->
+      <div class="dashboard-unit simulation-unit">
+        <div class="unit-title">📊 맞춤 금융 시뮬레이션</div>
+        <div class="sim-dashboard">
+          <div class="sim-pill">
+            <span class="pill-label">최대 대출 한도</span>
+            <strong id="sim-limit-val">0</strong><span class="pill-unit">만원</span>
+          </div>
+          <div class="sim-pill">
+            <span class="pill-label">예상 이자 (월)</span>
+            <strong id="sim-interest-val">0</strong><span class="pill-unit">만원</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 분야별 추천 상세 목록 -->
+    <div class="results-sub-title">
+      <i class="fas fa-list-ul"></i> 분야별 추천 상세 목록
+    </div>
+    <div id="matching-results-container" class="matching-results-container"></div>
+
   </div>
 
   <!-- 리캡 모달 -->
@@ -43,7 +97,10 @@ const saved = localStorage.getItem('myreport_data');
 const savedAt = localStorage.getItem('myreport_saved_at');
 
 if (saved) {
-    document.getElementById('no-data-msg')?.remove();
+    document.getElementById('no-data-msg').style.display = 'none';
+    const content = document.getElementById('myreport-content');
+    content.classList.remove('hidden');
+
     currentReport = JSON.parse(saved);
     renderResults();
 
