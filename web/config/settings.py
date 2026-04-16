@@ -16,6 +16,12 @@ import environ
 from datetime import timedelta
 
 # Initialize environ
+from dotenv import load_dotenv
+
+# --- [CRITICAL v20] Force Bypass all network interference and Fix Environment Overrides ---
+os.environ['NO_PROXY'] = 'www.youthcenter.go.kr,generativelanguage.googleapis.com,apis.data.go.kr,finlife.fss.or.kr'
+load_dotenv(override=True)
+
 env = environ.Env(
     DEBUG=(bool, False)
 )
@@ -51,13 +57,13 @@ INSTALLED_APPS = [
     'youth_road',
     'chatbot.core',
     'policyapp',
-    'support',
 
     # Allauth & Sites
     'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'support',
 ]
 
 MIDDLEWARE = [
@@ -78,7 +84,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'support' / 'templates'],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

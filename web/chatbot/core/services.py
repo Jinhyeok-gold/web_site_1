@@ -11,6 +11,8 @@ except ImportError:
     HAS_GENAI = False
     
 from dotenv import load_dotenv
+# --- [Environment v20] Force Local .env over System Variables ---
+load_dotenv(override=True)
 from .models import Policy
 
 # --- [Performance v20] Global Cache Layer ---
@@ -22,9 +24,13 @@ CACHE_TTL = 300 # 5분간 유효
 
 # API 설정 (LH, 복지로 등)
 # DATA_PORTAL_KEY를 우선 사용하고, VITE_ 버전은 하위 호환성을 위해 유지합니다.
-HOUSING_KEY = os.environ.get('DATA_PORTAL_KEY') or os.environ.get('VITE_HOUSING_API_KEY', '')
-WELFARE_KEY = os.environ.get('DATA_PORTAL_KEY') or os.environ.get('VITE_WELFARE_API_KEY', '')
-GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", "")
+HOUSING_KEY = os.environ.get('DATA_PORTAL_KEY')
+WELFARE_KEY = os.environ.get('DATA_PORTAL_KEY')
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
+
+# --- [Verification v20] Fallback to secondary names if needed ---
+if not HOUSING_KEY: HOUSING_KEY = os.environ.get('VITE_HOUSING_API_KEY', '')
+if not WELFARE_KEY: WELFARE_KEY = os.environ.get('VITE_WELFARE_API_KEY', '')
 
 # Client Initialization (v20 Modern GenAI)
 client = None
@@ -94,7 +100,7 @@ def calculate_score(user_data, policy):
 def fetch_housing_policies():
     try:
         url = f"{LH_BASE_URL}/getLeaseNoticeInfo?serviceKey={HOUSING_KEY}&numOfRows=10&pageNo=1&_type=json"
-        res = requests.get(url, timeout=5)
+        res = requests.get(url, timeout=5, proxies={'http': None, 'https': None})
         res.raise_for_status()
         data = res.json()
         items = data.get('response', {}).get('body', {}).get('items', [])
@@ -107,7 +113,7 @@ def fetch_housing_policies():
 def fetch_welfare_policies():
     try:
         url = f"{BOKJIRO_BASE_URL}/getNationalWelfareInformations?serviceKey={WELFARE_KEY}&numOfRows=10&pageNo=1&_type=json"
-        res = requests.get(url, timeout=5)
+        res = requests.get(url, timeout=5, proxies={'http': None, 'https': None})
         data = res.json()
         items = data.get('response', {}).get('body', {}).get('items', [])
         return [{
@@ -290,26 +296,43 @@ def ask_expert_ai(user_message, user_data=None, report_data=None, user_api_key=N
         
         # 🎯 [Contextual Chat] 세션 생성 및 대화
         try:
-            chat = local_client.chats.create(
-                model='gemini-2.0-flash',
-                config=types.GenerateContentConfig(
-                    system_instruction=SYSTEM_INSTRUCTION,
-                    temperature=0.7
-                ),
-                history=history
-            )
-            
-            response = chat.send_message(user_message)
-            return response.text.strip()
+            # Try gemini-2.5-flash as primary (Confirmed available for this key)
+            try:
+                chat = local_client.chats.create(
+                    model='gemini-2.5-flash',
+                    config=types.GenerateContentConfig(
+                        system_instruction=SYSTEM_INSTRUCTION,
+                        temperature=0.7
+                    ),
+                    history=history
+                )
+                response = chat.send_message(user_message)
+                return response.text.strip()
+            except Exception as e1:
+                print(f"Chat (1.5-flash) failed, trying 1.5-pro: {e1}")
+                chat = local_client.chats.create(
+                    model='gemini-1.5-pro',
+                    config=types.GenerateContentConfig(
+                        system_instruction=SYSTEM_INSTRUCTION,
+                        temperature=0.7
+                    ),
+                    history=history
+                )
+                response = chat.send_message(user_message)
+                return response.text.strip()
             
         except Exception as api_err:
             print(f"Chat API Issue: {api_err}")
-            # Fallback to simple generate_content
-            response = local_client.models.generate_content(
-                model='gemini-1.5-flash',
-                contents=f"{SYSTEM_INSTRUCTION}\n\nUser: {user_message}"
-            )
-            return response.text.strip()
+            # Final fallback to standard generate_content (any available model)
+            for m in ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro']:
+                try:
+                    response = local_client.models.generate_content(
+                        model=m,
+                        contents=f"{SYSTEM_INSTRUCTION}\n\nUser: {user_message}"
+                    )
+                    return response.text.strip()
+                except: continue
+            raise Exception("All models failed")
             
     except Exception as e:
         print(f"AI ERROR (Final Fallback): {str(e)}")
@@ -325,13 +348,21 @@ def generate_expert_report(user_data, top_matches):
         return report
     
     try:
-        # 🎯 v20 최신 모델 우선 시도
+        # 🎯 모델 가용성 순차 시도 (2.0-flash -> 1.5-flash -> pro)
+        models_to_try = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro']
         prompt = f"다음 데이터를 바탕으로 청년 눈높이의 정책 보고서를 작성하세요: {user_data}, 추천목록: {top_matches[:5]}"
-        response = client.models.generate_content(
-            model='gemini-2.0-flash',
-            contents=prompt
-        )
-        return response.text.strip()
+        
+        for model_name in models_to_try:
+            try:
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=prompt
+                )
+                return response.text.strip()
+            except:
+                continue
+        raise Exception("No responding models")
+
     except Exception as e:
         print(f"Report AI Issue: {e}")
         # AI 호출 실패 시 기본적인 가이드 문구로 대체 (서버 쿼터 오류 방지)

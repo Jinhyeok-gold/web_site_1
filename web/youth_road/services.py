@@ -7,6 +7,9 @@ import os
 from django.conf import settings
 
 # Initialize environ
+from dotenv import load_dotenv
+load_dotenv(override=True) # --- [CRITICAL] Override System Variables ---
+
 env = environ.Env()
 env.read_env(os.path.join(settings.BASE_DIR, '.env'))
 
@@ -62,12 +65,12 @@ class PublicDataHousingService:
         try:
             # 타임아웃 10초, User-Agent 추가 (차단 방지)
             headers = {'User-Agent': 'Mozilla/5.0'}
-            response = requests.get(full_url, headers=headers, timeout=10)
+            response = requests.get(full_url, headers=headers, timeout=10, proxies={'http': None, 'https': None})
             
             if response.status_code != 200 or "SERVICE_KEY_IS_NOT_REGISTERED" in response.text:
                 print(f"LH API Primary Fail ({response.status_code}), trying Alternative...")
                 # MyHome API로 폴백
-                response = requests.get(f"{alt_url}?serviceKey={decoded_key}&numOfRows=10&pageNo=1", headers=headers, timeout=10)
+                response = requests.get(f"{alt_url}?serviceKey={decoded_key}&numOfRows=10&pageNo=1", headers=headers, timeout=10, proxies={'http': None, 'https': None})
             
             if response.status_code == 200:
                 root = ET.fromstring(response.text)
@@ -113,7 +116,7 @@ class SubscriptionHomeService:
         url = f"https://apis.data.go.kr/1613000/ApplyHomeInfoService/getLttotPblancList?serviceKey={decoded_key}&numOfRows=50&pageNo=1"
         
         try:
-            response = requests.get(url, timeout=15)
+            response = requests.get(url, timeout=15, proxies={'http': None, 'https': None})
             if response.status_code == 200:
                 if "SERVICE_KEY_IS_NOT_REGISTERED" in response.text:
                     return items
@@ -170,7 +173,7 @@ class FssFinanceService:
         
         try:
             # 타임아웃 10초, User-Agent 추가
-            res = requests.get(url, params=params, timeout=10)
+            res = requests.get(url, params=params, timeout=10, proxies={'http': None, 'https': None})
             if res.status_code == 200 and "baseList" in res.text:
                 data = res.json()
                 api_loans = []
@@ -209,55 +212,140 @@ class OntongWelfareService:
             return items
         
         # 🎯 복지로(Bokjiro) API - 온통청년 지연 시 우선 활용 (신뢰도 높음)
-        url_bokjiro = "http://apis.data.go.kr/B554287/NationalWelfareInformationsV001/NationalWelfarelistV001"
-        decoded_key = urllib.parse.unquote(api_key) # 온통청년 키를 범용 공공데이터 키로 가정 (보통 동일함)
-        params_bokjiro = {'serviceKey': decoded_key, 'callTp': 'L', 'srchKeyCode': '001', 'numOfRows': 20, 'pageNo': 1}
-        
-        try:
-            res_b = requests.get(url_bokjiro, params=params_bokjiro, timeout=10)
-            if res_b.status_code == 200:
-                root = ET.fromstring(res_b.content)
-                for s in root.findall('.//servList'):
-                    items.append({
-                        "id": f"BOK_{s.findtext('servId')}",
-                        "name": s.findtext('servNm'),
-                        "org": s.findtext('jurOrgNm', '중앙부처'),
-                        "benefit": s.findtext('servDtlNm', '-'),
-                        "url": "https://www.bokjiro.go.kr/"
-                    })
-        except Exception as e:
-            print(f"Bokjiro Fallback Error: {e}")
-
-        # 🎯 온통청년 API (명시적 포트 443 사용 및 User-Agent 추가)
-        url = f"https://www.youthcenter.go.kr/opi/youthPlcyList.do?display=100&pageIndex=1&openApiVlak={api_key}"
-        
-        try:
-            # 타임아웃 20초로 연장 + 헤더 추가 (봇 차단 방지)
-            headers = {'User-Agent': 'Mozilla/5.0'}
-            response = requests.get(url, headers=headers, timeout=20)
+        portal_key = env('DATA_PORTAL_KEY', default='').strip()
+        if portal_key:
+            url_bokjiro = "http://apis.data.go.kr/B554287/NationalWelfareInformationsV001/NationalWelfarelistV001"
+            decoded_portal_key = urllib.parse.unquote(portal_key)
+            params_bokjiro = {'serviceKey': decoded_portal_key, 'callTp': 'L', 'srchKeyCode': '001', 'numOfRows': 20, 'pageNo': 1}
             
-            if response.status_code == 200:
-                root = ET.fromstring(response.text)
-                api_policies = []
-                for p in root.findall('.//youthPolicy'):
-                    policy_id = f"WLF_{p.findtext('bizId', '00')}"
-                    api_policies.append({
-                        "id": policy_id,
-                        "name": p.findtext('polyBizSjnm', '청년 정책'),
-                        "org": p.findtext('polyBizTy', 'Youth Center'),
-                        "benefit": p.findtext('polyItcnCn', '-'),
-                        "url": "https://www.youthcenter.go.kr/",
-                        "raw_data": {child.tag: child.text for child in p}
-                    })
-                
-                if api_policies:
-                    # firebase_sync_disabled: FirebaseManager.sync_data('welfare_policies', api_policies, id_field='id')
-                    existing_names = {i.get('name') for i in items}
-                    items += [ap for ap in api_policies if ap.get('name') not in existing_names]
+            try:
+                res_b = requests.get(url_bokjiro, params=params_bokjiro, timeout=10, proxies={'http': None, 'https': None})
+                if res_b.status_code == 200:
+                    root = ET.fromstring(res_b.content)
+                    for s in root.findall('.//servList'):
+                        items.append({
+                            "id": f"BOK_{s.findtext('servId')}",
+                            "name": s.findtext('servNm'),
+                            "org": s.findtext('jurOrgNm', '중앙부처'),
+                            "benefit": s.findtext('servDtlNm', '-'),
+                            "url": "https://www.bokjiro.go.kr/"
+                        })
+            except Exception as e:
+                print(f"Bokjiro Fallback Error: {e}")
+
+        # 🎯 온통청년 API (최종 병기: 초강력 소켓 우회 로직)
+        # 일반적인 라이브러리가 사용자 환경의 8080 프록시에 납치되므로, 최하단 소켓 통신을 수행합니다.
+        items = OntongWelfareService._fetch_youth_center_socket_resilient(api_key, items)
+        return items
+
+    @staticmethod
+    def _fetch_youth_center_socket_resilient(api_key, items):
+        import socket, ssl, time
+        import xml.etree.ElementTree as ET
+
+        host = "www.youthcenter.go.kr"
+        ip = "210.90.169.167" # 사전에 확인된 고정 IP
+        port = 443
+        path = f"/opi/youthPlcyList.do?display=100&pageIndex=1&openApiVlak={api_key}"
+        
+        def socket_get(target_path):
+            context = ssl.create_default_context()
+            # 윈도우 환경 특수 처리를 위해 context 설정 보완 가능
+            with socket.create_connection((ip, port), timeout=15) as sock:
+                with context.wrap_socket(sock, server_hostname=host) as ssock:
+                    request = (
+                        f"GET {target_path} HTTP/1.1\r\n"
+                        f"Host: {host}\r\n"
+                        f"User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36\r\n"
+                        f"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\r\n"
+                        f"Accept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7\r\n"
+                        f"Referer: https://www.youthcenter.go.kr/\r\n"
+                        f"Connection: close\r\n\r\n"
+                    )
+                    ssock.sendall(request.encode())
+                    
+                    response_data = b""
+                    while True:
+                        chunk = ssock.recv(16384)
+                        if not chunk: break
+                        response_data += chunk
+                    return response_data
+
+        try:
+            print(f"🚀 Attempting Resilient Socket Bypass for YouthCenter...")
+            raw_res = socket_get(path)
+            
+            # 헤더와 본문 분리
+            header_end = raw_res.find(b"\r\n\r\n")
+            if header_end == -1: return items
+            
+            headers = raw_res[:header_end].decode('utf-8', errors='ignore')
+            body_raw = raw_res[header_end+4:]
+
+            # 1. 리다이렉트 처리 (301, 302)
+            if "HTTP/1.1 30" in headers:
+                import re
+                location_match = re.search(r"Location: (.*)\r\n", headers)
+                if location_match:
+                    new_url = location_match.group(1).strip()
+                    # 상대 경로일 경우 절대 경로로 변환
+                    if new_url.startswith("/"):
+                        print(f"🔄 Following Redirect to: {new_url}")
+                        raw_res = socket_get(new_url)
+                        header_end = raw_res.find(b"\r\n\r\n")
+                        headers = raw_res[:header_end].decode('utf-8', errors='ignore')
+                        body_raw = raw_res[header_end+4:]
+
+            # 2. 청키드(Chunked) 인코딩 처리
+            if "Transfer-Encoding: chunked" in headers:
+                final_body = b""
+                pos = 0
+                while pos < len(body_raw):
+                    line_end = body_raw.find(b"\r\n", pos)
+                    if line_end == -1: break
+                    try:
+                        chunk_size = int(body_raw[pos:line_end].split(b";")[0], 16)
+                    except: break
+                    if chunk_size == 0: break
+                    final_body += body_raw[line_end+2 : line_end+2+chunk_size]
+                    pos = line_end + 2 + chunk_size + 2 # \r\n 건너뜀
+                body = final_body.decode('utf-8', errors='ignore')
             else:
-                print(f"Welfare API Issue: Status {response.status_code}")
+                body = body_raw.decode('utf-8', errors='ignore')
+
+            # 3. 데이터 파싱 및 필터링 (과거 상품 방지 - 2026년 기준)
+            if "<youthPolicy>" in body:
+                import datetime
+                root = ET.fromstring(body)
+                for p in root.findall('.//youthPolicy'):
+                    pol_name = p.findtext('polyBizSjnm', '청년 정책')
+                    
+                    # 기간 및 유효성 체크
+                    prd_info = (p.findtext('rqutPrdCn', '') + p.findtext('bizPrdCn', '')).strip()
+                    # 2026년 현재 기준, 완료되거나 과거 연도(2023, 2024 등)가 명시된 경우 제외
+                    is_old = any(word in prd_info for word in ['종료', '마감', '완료', '2023', '2024', '2022'])
+                    if is_old and '2026' not in prd_info: # 2026년 언급이 있으면 일단 포함
+                        continue
+
+                    if not any(i.get('name') == pol_name for i in items):
+                        items.append({
+                            "id": f"SOK_{p.findtext('bizId', '00')}",
+                            "name": pol_name,
+                            "org": p.findtext('polyBizTy', '온라인청년센터'),
+                            "benefit": p.findtext('polyItcnCn', '-'),
+                            "url": "https://www.youthcenter.go.kr/",
+                            "region_code": p.findtext('polyBizSecd', ''), # 지역코드
+                            "type_nm": p.findtext('plcyTpNm', ''),      # 정책유형
+                            "target_desc": p.findtext('rqutUrTarget', ''), # 지원대상
+                            "income_limit": p.findtext('rqutUrLimit', ''), # 소득제한 상세
+                            "raw_data": {child.tag: child.text for child in p}
+                        })
+                print(f"✅ Socket Bypass successful. Filtered current items: {len(items)}")
+            else:
+                # 데이터가 없는 경우 바디 정보 출력 (디버깅용)
+                print(f"YouthCenter Socket Result: Policy tag not found in response body.")
 
         except Exception as e:
-            print(f"Welfare API Error (Timeout or Connection): {e}")
+            print(f"YouthCenter API Final Error: {e}")
             
         return items

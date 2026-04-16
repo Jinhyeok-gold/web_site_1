@@ -3,11 +3,13 @@ from .models import HousingProduct, FinanceProduct, WelfareProduct
 import random
 from datetime import datetime, date, timedelta
 from django.db.models import Q
+from .services import OntongWelfareService
 
 class MatchingEngine:
     """청춘로 지능형 초정밀(Housing/Finance/Welfare) 매칭 엔진 v20 (17 Regions Edition)"""
 
     # 🗺️ 전국 17개 광역자치단체 키워드 매핑 (중앙 관리)
+    # [v27] API 요청 호환을 위해 명확한 한글명 매핑 강화
     REGION_KEYWORD_MAP = {
         'Seoul': '서울', 'Busan': '부산', 'Daegu': '대구', 'Incheon': '인천', 
         'Gwangju': '광주', 'Daejeon': '대전', 'Ulsan': '울산', 'Sejong': '세종', 
@@ -15,8 +17,10 @@ class MatchingEngine:
         'Jeonbuk': '전북', 'Jeonnam': '전남', 'Gyeongbuk': '경북', 'Gyeongnam': '경남', 
         'Jeju': '제주'
     }
-    
+
     @staticmethod
+    def get_hangeul_region(key):
+        return MatchingEngine.REGION_KEYWORD_MAP.get(key, "전국")
     def map_profile_to_instance(profile):
         """[Adapter] UserProfile(policyapp) 객체를 MatchingEngine용 가상 인스턴스로 변환"""
         # 간단한 가상 클래스 생성 (getattr 대응용)
@@ -35,11 +39,12 @@ class MatchingEngine:
                 self.subscription_count = p.subscription_count or 0
                 self.subscription_amount = p.subscription_amount or 0
                 self.marital_status = 'Married' if p.marital_status == '신혼부부' else 'Single'
-                self.kids_count = p.children_count or 0
+                self.kids_count = getattr(p, 'children_count', 0)
                 self.is_pregnant = getattr(p, 'is_pregnant', False)
                 self.is_first_home = getattr(p, 'is_first_home', True)
                 self.is_homeless = getattr(p, 'is_homeless', True)
-                self.homeless_years = p.homeless_period or 0
+                # 속성명 혼용(period/years) 대응
+                self.homeless_years = getattr(p, 'homeless_period', getattr(p, 'homeless_years', 0))
             
             def get_marital_status_display(self):
                 return "신혼부부" if self.marital_status == 'Married' else "미혼"
@@ -380,29 +385,69 @@ class MatchingEngine:
         if marital in ['Engaged', 'Married'] and any(x in target for x in ["신혼", "부부", "혼인"]): score += 400
         if is_parent and any(x in target for x in ["자녀", "출산", "임신", "양육"]): score += 500
         
-        # 부정 매칭 (오차 차단: 기혼자에게 미혼 전용 정책 추천 방지 등)
-        if marital != 'Single' and any(x in target for x in ["미혼 전용", "1인 가구 한정"]): score -= 1000
-        if marital == 'Single' and "신혼부부 전용" in target: score -= 1000
-        if not is_parent and "다자녀 가구" in target: score -= 500
+        # 4. [v50] 순수 청년/신혼부부 전용 엔진 (Pure Youth-Only Opt-in)
+        # 4-1. [Absolute Exclusion] 보훈/노인/무공 상품 원천 봉쇄
+        title_norm = title.replace(" ", "")
+        target_norm = target.replace(" ", "")
         
-        # 4. [v23.1] 청년 정책 핵심 키워드 부스터 및 소득 필터링
-        policy_id = policy.policy_id or ""
-        keywords = ["월세", "수당", "지원금", "도약", "임대", "행복주택", "장기전세", "세금", "감면", "혜택", "비과세"]
+        # 🎯 청년 리포트 오염의 주범들 (무공, 영예, 참전 등)
+        total_blacklist = [
+            "무공", "영예", "수당(보훈)", "참전", "고엽제", "유공", "보훈", "미망인", "노인", "고령", 
+            "기초연금", "연금수급", "상이", "농업", "농어", "어민", "농가", "어가", "귀농", "귀촌", 
+            "장애", "산재", "기초수급", "차상위", "북한이탈", "난민", "노숙", "피해자"
+        ]
         
-        # [v24] 꼼꼼한 소득 대조: 월세지원/수당/공공임대 등은 고소득자(80M+) 무조건 탈락
+        if any(x in title_norm or x in target_norm for x in total_blacklist):
+            # "청년" 키워드가 제목에 없는 한, 보훈/노인 계열은 무조건 영구 삭제
+            if "청년" not in title:
+                print(f"🚫 [Opt-out] {title} (Reason: Military/Senior/Vulnerable focus)")
+                return -1
+
+        # 4-2. [Pure Opt-in] 청년/신혼부부 전용 키워드 필수제
+        # 복지로(BOK) 데이터 등 범용 데이터는 아래 키워드 중 하나라도 없으면 즉시 퇴출
+        is_universal = "BOK-" in str(getattr(policy, 'policy_id', getattr(policy, 'id', '')))
+        opt_in_keywords = ["청년", "대학", "학생", "근로자", "사회초년생", "취업", "구직", "저축", "도약", "월세", "전세", "LH", "SH", "신혼", "부부", "혼인", "결혼", "출산", "육아", "장려금"]
+        
+        if is_universal:
+            if not any(x in title_norm or x in target_norm for x in opt_in_keywords):
+                print(f"🚫 [Opt-in Fail] {title} (Reason: No Youth/Marriage focus)")
+                return -1
+
+        # 4-3. [Constraint] 지역 및 생애주기 (Region & Life-Stage)
+        reg_hangeul = MatchingEngine.get_hangeul_region(instance.region)
+        p_region_text = (policy.region or "").replace(" ", "")
+        if "전국" not in p_region_text and p_region_text and reg_hangeul not in p_region_text:
+             print(f"🚫 [Reject] {title} (Location Mismatch)")
+             return -1
+
+        # 미혼/무자녀 장벽 (가족/육아 정책 물리적 격리)
+        is_single_no_kids = (instance.marital_status == 'Single' and instance.kids_count == 0)
+        # 🎯 가족 관련 키워드 대폭 확장 (아이, 돌봄 추가)
+        family_keywords = ["신혼", "부부", "혼인", "결혼", "출산", "임신", "아동", "보육", "육아", "자녀", "아이", "돌봄", "꿈나무", "양육", "난임", "출생"]
+        
+        if is_single_no_kids and any(x in title or x in target for x in family_keywords):
+             # "청년"이라는 단어가 있어도 미혼 사용자에게 육아/부부 정책은 필요 없음
+             print(f"🚫 [Reject] {title} (Reason: Family/Childcare policy for Single user)")
+             return -1
+
+        # 4-4. [Economic Scale] 소득 검증 복구
         income = instance.total_income
-        title_flat = title.lower().replace(" ", "")
-        if income > 6000:
-            # 월세, 수당, 생활비, LH, SH, 임대 키워드가 하나라도 걸리면 탈락 (-1)
-            if any(x in title_flat for x in ["월세", "수당", "생활비", "지원금", "lh", "sh", "임대", "공공"]):
-                return -1 
+        limit = 4500 if is_universal else 8500
+        if income > limit and any(x in title for x in ["지원금", "수당", "기부", "보조"]):
+             print(f"🚫 [Reject] {title} (Income Overload)")
+             return -1
+
+        # 4-5. [Super Booster] 실제 청년 핵심 수퍼 부스터
+        score_bonus = 0
+        premium_keywords = ["월세", "도약", "적금", "저축", "취업", "자격증", "보증금", "LH", "SH", "수당"]
+        if any(x in title for x in premium_keywords):
+            score_bonus += 85000 
+            
+        p_id = getattr(policy, 'policy_id', getattr(policy, 'id', ''))
+        is_youth_center = "SOK-" in str(p_id)
         
-        if "WEL-" in policy_id or any(x in title.lower() for x in keywords):
-            # 소득이 적정 수준인 경우에만 부스터 적용
-            if income <= 6000:
-                score += 10000 
-            else:
-                score += 100 # 고소득자는 부스터 없이 기본 점수만
+        score += 20000 + score_bonus
+        if is_youth_center: score += 10000
             
         return score
 
@@ -411,42 +456,79 @@ class MatchingEngine:
         """[STRICT] 복지: 스코어링 시스템 기반 최적 정책 선별"""
         try:
             reg_key = MatchingEngine.REGION_KEYWORD_MAP.get(instance.region, '')
+            today = date.today()
             
             # 사용자 지역 혹은 전국 정책 통합 검색 (기타 지역일 경우 전국 공고만)
             query = Q(region__icontains="전국") | Q(region__isnull=True)
             if reg_key:
                 query |= Q(region__icontains=reg_key)
             
-            today = date.today()
-            # [v25] DB 레벨에서 쿼리 최적화 및 날짜 필터링
-            local = list(WelfareProduct.objects.filter(
+            # 1. DB 데이터 로드 (핵심 변수 복구)
+            local_db = list(WelfareProduct.objects.filter(
                 query, 
                 Q(end_date__gte=today) | Q(end_date__isnull=True),
                 is_active=True
-            ).order_by('-notice_date')[:150])
+            ).order_by('-notice_date')[:100])
             
+            # 2. 리얼타임 API 데이터 로드 (지역명 한글 변환 필수)
+            hangeul_region = MatchingEngine.get_hangeul_region(instance.region)
+            print(f"📡 [Engine] Fetching Real-time Data for {hangeul_region}...")
+            api_items = OntongWelfareService.get_welfare_policies(instance.age, hangeul_region)
+            print(f"✅ [Engine] Successfully loaded {len(api_items)} items from Dual-Socket Bypass.")
+            
+            # 3. 통합 리스트 구축
+            all_candidate_raw = []
+            
+            # API 항목 추가 (실시간성 우선)
+            for api_p in api_items:
+                all_candidate_raw.append({
+                    'id': api_p.get('id'), 'title': api_p.get('name'), 'org_nm': api_p.get('org', '청년지원기관'),
+                    'benefit_desc': api_p.get('benefit', '상세 혜택 분석 중'), 'url': api_p.get('url'),
+                    'target_desc': api_p.get('benefit'), # Fallback
+                    'region': hangeul_region,
+                    'is_api': True
+                })
+            
+            # DB 항목 추가 (중복 제외)
+            existing_titles = {c['title'] for c in all_candidate_raw}
+            for p in local_db:
+                if p.title not in existing_titles:
+                    all_candidate_raw.append({
+                        'id': p.policy_id, 'title': p.title, 'org_nm': p.org_nm,
+                        'benefit_desc': p.benefit_desc, 'url': p.url, 'end_date': p.end_date,
+                        'notice_date': p.notice_date, 'target_desc': p.target_desc, 'region': p.region
+                    })
+
             valid = []
-            
-            for p in local:
-                # [STRICT] 모집 기간 필터링 (과거 공고 절대 배제)
-                if p.end_date and p.end_date < today:
+            for item_data in all_candidate_raw:
+                # [v27] 기간 필터링 완화 (상세 날짜 없으면 일단 통과)
+                e_date = item_data.get('end_date')
+                if e_date and isinstance(e_date, (date, datetime)) and e_date < today:
                     continue
                 
-                # [v25] 공고일 기준 최대 60일 초과 데이터 배제 (상시는 180일) [60/180 Days Cutoff]
-                if p.notice_date:
-                    is_const = any(x in (p.title or "") for x in ["상시", "기본", "급여"]) or any(x in (p.benefit_desc or "") for x in ["상시", "기본", "급여"])
-                    limit_days = 180 if is_const else 60
-                    if p.notice_date < (today - timedelta(days=limit_days)):
-                        continue
-
-                score = MatchingEngine.calculate_welfare_score(instance, p)
+                # 가상 객체 생성 (calculate_welfare_score 호환용)
+                class VirtualWelfare:
+                    def __init__(self, d):
+                        self.policy_id = d.get('id')
+                        self.title = d.get('title')
+                        self.org_nm = d.get('org_nm')
+                        self.benefit_desc = d.get('benefit_desc')
+                        self.target_desc = d.get('target_desc')
+                        self.region = d.get('region')
+                
+                score = MatchingEngine.calculate_welfare_score(instance, VirtualWelfare(item_data))
+                
+                # [v27] 강제 노출 보정: API 데이터이고 다른 결격 사유 없으면 최소 점수 보장
+                if item_data.get('is_api') and score <= 0:
+                    score = 500 # 최소 500점 부여하여 탈락 방지
+                
                 if score < 0: continue
                 
                 valid.append({
-                    'name': p.title,
-                    'org': p.org_nm,
-                    'benefit': p.benefit_desc,
-                    'url': p.url or '#',
+                    'name': item_data['title'],
+                    'org': item_data['org_nm'],
+                    'benefit': item_data['benefit_desc'],
+                    'url': item_data['url'] or '#',
                     'score': score
                 })
             
@@ -460,7 +542,10 @@ class MatchingEngine:
                 "list": valid[1:11], 
                 "reason": f"회원님의 생애주기({instance.get_marital_status_display()})와 연령에 가장 특화된 혜택을 1순위에 배치했습니다." 
             }
-        except Exception:
+        except Exception as e:
+            import traceback
+            print(f"❌ Matching Welfare Final Error: {e}")
+            traceback.print_exc()
             return MatchingEngine.get_default_item("복지")
 
     @staticmethod

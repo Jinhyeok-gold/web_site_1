@@ -217,11 +217,11 @@ class Command(BaseCommand):
         res = None
         try:
             # 1차 시도: HTTPS (Timeout 15s)
-            res = requests.get(url_https, params=params, headers=self.headers, timeout=15)
+            res = requests.get(url_https, params=params, headers=self.headers, timeout=15, proxies={'http': None, 'https': None})
         except Exception:
             try:
                 # 2차 시도: HTTP 폴백
-                res = requests.get(url_http, params=params, headers=self.headers, timeout=15)
+                res = requests.get(url_http, params=params, headers=self.headers, timeout=15, proxies={'http': None, 'https': None})
             except Exception as e:
                 self.stderr.write(self.style.WARNING(f"  ! YouthCenter API Unavailable (v20): {e}"))
                 return
