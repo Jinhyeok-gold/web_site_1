@@ -1,0 +1,125 @@
+/* ==========================================================================
+   id_login.css — 아이디 로그인 페이지
+   ========================================================================== */
+
+.id-login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    padding: 60px 20px;
+}
+
+.login-detail-container {
+    display: flex;
+    border: 1px solid #e2e8f0;
+    border-radius: 30px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 800px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.06);
+}
+
+/* 좌측 폼 */
+.login-form-side {
+    flex: 1;
+    padding: 60px;
+    background: #ffffff;
+}
+
+.login-form-side h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #1e293b;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 8px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    font-size: 0.95rem;
+    outline: none;
+    transition: 0.2s;
+    box-sizing: border-box;
+}
+
+.input-group input:focus {
+    border-color: #6366f1;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.login-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 5px;
+}
+
+.save-id {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 30px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.submit-btn:hover {
+    background: #4338ca;
+    transform: translateY(-1px);
+}
+
+.error-msg {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+/* 우측 안내 */
+.login-info-side {
+    flex: 1;
+    padding: 60px;
+    background: #f8fafc;
+    font-size: 0.9rem;
+    color: #64748b;
+    line-height: 2.0;
+}
+
+.login-info-side ul {
+    padding-left: 0;
+    list-style: none;
+}
+
+.login-info-side li {
+    margin-bottom: 20px;
+}

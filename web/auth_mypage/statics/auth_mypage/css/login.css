@@ -1,0 +1,69 @@
+/* ==========================================================================
+   login.css — 로그인 방식 선택 페이지
+   ========================================================================== */
+
+.login-select-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.login-select-page h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 40px;
+    color: #1e293b;
+}
+
+.card-container {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.login-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    width: 200px;
+    padding: 50px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    box-sizing: border-box;
+}
+
+.login-card:hover {
+    transform: translateY(-8px);
+    background: #ffffff;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    border-color: #c7d2fe;
+}
+
+.login-card .icon {
+    font-size: 3.5rem;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+    color: #4f46e5;
+}
+
+.login-card .card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.4;
+}
+
+.info-msg {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-top: 10px;
+}

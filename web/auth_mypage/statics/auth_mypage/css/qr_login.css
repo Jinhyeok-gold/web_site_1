@@ -1,0 +1,139 @@
+/* ==========================================================================
+   qr_login.css — QR 로그인 페이지
+   ========================================================================== */
+
+.qr-login-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.qr-login-page .page-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 10px;
+}
+
+.qr-login-page .page-sub {
+    font-size: 1rem;
+    color: #64748b;
+    margin-bottom: 40px;
+}
+
+/* 컨테이너 */
+.qr-container {
+    display: flex;
+    width: 100%;
+    max-width: 960px;
+    background: #ffffff;
+    border-radius: 30px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+/* 좌측 */
+.qr-section {
+    flex: 1;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #e2e8f0;
+}
+
+.qr-box {
+    width: 220px;
+    height: 220px;
+    background: #f8fafc;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.qr-box i {
+    font-size: 160px;
+    color: #334155;
+}
+
+.timer {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #ef4444;
+    background: #fef2f2;
+    padding: 6px 18px;
+    border-radius: 20px;
+}
+
+.btn-reissue {
+    margin-top: 16px;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 0.9rem;
+}
+
+/* 우측 */
+.guide-section {
+    flex: 1.5;
+    padding: 50px;
+    text-align: left;
+}
+
+.guide-title {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.guide-sub {
+    display: block;
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.guide-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.guide-item {
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 16px;
+    text-align: center;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+.guide-item .step-img {
+    width: 56px;
+    height: 56px;
+    background: #e0e7ff;
+    border-radius: 50%;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: #4f46e5;
+}

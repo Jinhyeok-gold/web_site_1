@@ -1,0 +1,121 @@
+/* ==========================================================================
+   edit_profile.css — 정보 수정 페이지
+   ========================================================================== */
+
+.edit-profile-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    padding: 60px 20px;
+}
+
+.edit-card {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 30px;
+    width: 500px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+}
+
+.edit-card h2 {
+    text-align: center;
+    color: #1e293b;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    margin-bottom: 18px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 6px;
+    color: #475569;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    box-sizing: border-box;
+    outline: none;
+    transition: 0.2s;
+    font-size: 0.95rem;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    border-color: #6366f1;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.input-grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.btn-zip {
+    background: #4a69bd;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 8px;
+    width: 100%;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.btn-zip:hover {
+    background: #3a55a0;
+}
+
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.btn {
+    flex: 1;
+    padding: 14px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    opacity: 0.88;
+}
+
+.btn-save {
+    background: #4a69bd;
+    color: white;
+}
+
+.btn-cancel {
+    background: #ffffff;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+}

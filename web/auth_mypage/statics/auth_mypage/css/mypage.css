@@ -1,0 +1,111 @@
+/* ==========================================================================
+   mypage.css — 마이페이지
+   ========================================================================== */
+
+.mypage-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    padding: 60px 20px;
+}
+
+.mypage-card {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 30px;
+    width: 450px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+}
+
+.mypage-card h2 {
+    text-align: center;
+    color: #1e293b;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.mypage-card h3 {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1a4f8b;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 6px;
+    margin: 20px 0 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.info-item {
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.info-item .label {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.info-item .value {
+    font-size: 1rem;
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.info-grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.info-grid-equal {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* 버튼 그룹 */
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.btn {
+    flex: 1;
+    padding: 14px;
+    border-radius: 14px;
+    text-align: center;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.88;
+}
+
+.btn-modify {
+    background: #ffffff;
+    color: #4a69bd;
+    border: 1px solid #4a69bd;
+}
+
+.btn-home {
+    background: #4a69bd;
+    color: #ffffff;
+}
