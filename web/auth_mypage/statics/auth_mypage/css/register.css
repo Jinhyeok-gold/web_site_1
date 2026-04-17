@@ -21,7 +21,6 @@
    ===================================================== */
 .register-page {
     display: grid;
-    /* 좌측: 스텝(고정폭) | 중앙: 카드(최대 520px) | 우측: 스텝과 대칭되는 빈 공간 */
     grid-template-columns: 200px minmax(0, 520px) 200px;
     justify-content: center;
     align-items: flex-start;
@@ -29,7 +28,6 @@
     padding: 60px 20px 80px;
     min-height: calc(100vh - 80px);
 }
- 
 
 /* =====================================================
    좌측 스텝 인디케이터
@@ -51,7 +49,6 @@
     position: relative;
 }
 
-/* 스텝 간 연결선 */
 .step-item:not(:last-child)::after {
     content: '';
     position: absolute;
@@ -70,7 +67,6 @@
     background: #6366f1;
 }
 
-/* 스텝 번호 원 */
 .step-dot {
     width: 32px;
     height: 32px;
@@ -102,9 +98,7 @@
     color: white;
 }
 
-.step-info {
-    padding-top: 4px;
-}
+.step-info { padding-top: 4px; }
 
 .step-label {
     font-size: 0.7rem;
@@ -115,7 +109,7 @@
     margin-bottom: 2px;
 }
 
-.step-item.active .step-label { color: #6366f1; }
+.step-item.active .step-label,
 .step-item.done .step-label { color: #6366f1; }
 
 .step-name {
@@ -133,7 +127,7 @@
 .register-card {
     grid-column: 2;
     position: relative;
-    background: rgba(255, 255, 255, 0.50);
+    background: var(--reg-glass);
     backdrop-filter: blur(32px) saturate(180%);
     -webkit-backdrop-filter: blur(32px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.65);
@@ -145,7 +139,6 @@
                 inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
-/* 카드 eyebrow + 타이틀 */
 .card-eyebrow {
     font-size: 10px;
     font-weight: 700;
@@ -171,7 +164,7 @@
 }
 
 /* =====================================================
-   섹션 그룹 카드 (네이버 스타일)
+   섹션 그룹 카드
    ===================================================== */
 .input-section-card {
     background: rgba(255, 255, 255, 0.65);
@@ -249,11 +242,10 @@
 }
 
 .field-group input::placeholder { color: #94a3b8; font-size: 0.88rem; }
-
 .field-group input:focus { border-bottom-color: var(--reg-primary); }
 .field-group:focus-within .field-icon { color: var(--reg-primary); }
 
-/* 언더라인 슬라이드 */
+/* 언더라인 슬라이드 애니메이션 */
 .field-group::after {
     content: '';
     position: absolute;
@@ -268,7 +260,6 @@
 
 /* 아이콘 없는 필드 */
 .field-group.no-icon input { padding-left: 0; }
-.field-group.no-icon::after { left: 0; }
 
 /* select */
 .field-group select {
@@ -289,34 +280,39 @@
     padding-right: 24px;
 }
 
-/* 두 컬럼 그리드 */
+/* =====================================================
+   2열 그리드 — field-row
+   각 셀이 자기 콘텐츠 높이만큼만 차지해야
+   ::after가 input 바로 아래에 붙음
+   ===================================================== */
 .field-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px 32px;  /* 세로 gap 늘려서 ::after 공간 확보 */
+    gap: 20px 32px;
 }
 
-/* 입력창 + 버튼 가로 배치 */
+/* 핵심 수정: 각 셀을 자기 높이에 맞게 정렬 */
+.field-row .field-group {
+    align-self: start;
+    margin-bottom: 0;
+}
+
+/* =====================================================
+   입력창 + 버튼 가로 배치
+   ===================================================== */
 .field-with-btn {
     display: flex;
-    align-items: flex-start;
+    align-items: flex-start;  /* flex-end → flex-start */
     gap: 10px;
 }
 
-.field-with-btn .field-group { flex: 1; margin-bottom: 0; }
-
-.field-msg {
-    position: absolute;
-    bottom: -20px;
-    left: 0;
-    white-space: nowrap;
+.field-with-btn .field-group {
+    flex: 1;
+    margin-bottom: 0;
+    align-self: start;  /* 추가 */
 }
 
-.field-group.no-line::after {
-    display: none;
-}
-
-/* pill 스타일 인라인 버튼 (중복확인, 인증번호 전송) */
+/* pill 스타일 인라인 버튼 */
 .btn-inline {
     flex-shrink: 0;
     padding: 8px 16px;
@@ -330,19 +326,13 @@
     white-space: nowrap;
     transition: background 0.2s, color 0.2s;
     font-family: inherit;
-    margin-bottom: 2px;
+    margin-top: 22px;  /* 라벨 높이만큼 밀어서 input과 나란히 */
 }
 
 .btn-inline:hover {
     background: var(--reg-primary);
     color: white;
 }
-
-.btn-inline.red {
-    border-color: #FF5B5B;
-    color: #FF5B5B;
-}
-.btn-inline.red:hover { background: #FF5B5B; color: white; }
 
 /* 주소 검색 버튼 */
 .btn-address {
@@ -368,22 +358,34 @@
     gap: 8px;
 }
 .dual-input input { flex: 1; text-align: center; }
-.dual-input span { color: #cbd5e1; font-weight: 700; padding-bottom: 10px; flex-shrink: 0; }
-
-/* ID 체크 메시지 */
-.id-check-msg {
-    font-size: 0.75rem;
-    margin-top: 6px;
-    font-weight: 600;
+.dual-input span {
+    color: #cbd5e1;
+    font-weight: 700;
+    padding-bottom: 10px;
+    flex-shrink: 0;
 }
-.id-check-msg.ok { color: var(--reg-success); }
-.id-check-msg.fail { color: var(--reg-error); }
-
-/* 필수 표시 */
-.req { color: #FF5B5B; margin-left: 2px; }
 
 /* =====================================================
-   약관 섹션 (네이버 스타일)
+   에러/성공 메시지
+   field-with-btn 안에서 메시지가 생겨도
+   버튼/아이콘이 밀리지 않도록 일반 흐름 유지
+   ===================================================== */
+.field-msg {
+    position: absolute;
+    bottom: -18px;
+    left: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+.field-msg.error { color: var(--reg-error); }
+.field-msg.success { color: var(--reg-success); }
+
+/* =====================================================
+   약관 섹션
    ===================================================== */
 .terms-card {
     background: rgba(255, 255, 255, 0.65);
@@ -491,7 +493,10 @@ input[type="checkbox"]:checked::after {
     transform: rotate(45deg);
 }
 
-/* 라디오 버튼 그룹 */
+/* =====================================================
+   라디오 버튼 그룹 (주택 상황)
+   라디오 클릭 시 언더라인 슬라이드 없애야 함
+   ===================================================== */
 .radio-group {
     display: flex;
     gap: 12px;
@@ -532,7 +537,14 @@ input[type="checkbox"]:checked::after {
     font-weight: 800;
 }
 
-/* 정보 안내 박스 */
+/* 라디오 그룹 포함한 field-group은 ::after 제거 */
+.field-group.no-line::after {
+    display: none;
+}
+
+/* =====================================================
+   정보 안내 박스
+   ===================================================== */
 .info-box {
     display: flex;
     gap: 10px;
@@ -550,18 +562,9 @@ input[type="checkbox"]:checked::after {
 .info-box i { color: var(--reg-primary); margin-top: 2px; flex-shrink: 0; }
 
 /* =====================================================
-   에러/성공 메시지
+   필수 표시
    ===================================================== */
-.field-msg {
-    font-size: 0.75rem;
-    margin-top: 5px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-.field-msg.error { color: var(--reg-error); }
-.field-msg.success { color: var(--reg-success); }
+.req { color: #FF5B5B; margin-left: 2px; }
 
 /* =====================================================
    버튼
@@ -612,7 +615,9 @@ input[type="checkbox"]:checked::after {
 
 .btn-secondary:hover { border-color: rgba(99, 102, 241, 0.4); color: #1e293b; }
 
-/* 모달 */
+/* =====================================================
+   모달
+   ===================================================== */
 .modal-overlay {
     display: none;
     position: fixed;
@@ -687,13 +692,15 @@ input[type="checkbox"]:checked::after {
 }
 .modal-confirm:hover { opacity: 0.88; }
 
-/* 반응형 */
+/* =====================================================
+   반응형
+   ===================================================== */
 @media (max-width: 900px) {
     .register-page {
         grid-template-columns: 1fr;
         justify-items: center;
     }
- 
+
     .step-sidebar {
         grid-column: 1;
         position: static;
@@ -702,25 +709,27 @@ input[type="checkbox"]:checked::after {
         max-width: 520px;
         margin-bottom: 24px;
     }
- 
+
     .register-card {
         grid-column: 1;
         max-width: 520px;
     }
- 
+
     .step-item {
         flex-direction: column;
         align-items: center;
         flex: 1;
         padding-bottom: 0;
     }
- 
+
     .step-item:not(:last-child)::after {
         top: 16px;
         left: calc(50% + 16px);
         width: calc(100% - 32px);
         height: 2px;
     }
- 
+
     .step-info { text-align: center; }
+
+    .field-row { grid-template-columns: 1fr; }
 }
