@@ -293,17 +293,28 @@
 .field-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 20px 32px;  /* 세로 gap 늘려서 ::after 공간 확보 */
 }
 
 /* 입력창 + 버튼 가로 배치 */
 .field-with-btn {
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
     gap: 10px;
 }
 
 .field-with-btn .field-group { flex: 1; margin-bottom: 0; }
+
+.field-msg {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    white-space: nowrap;
+}
+
+.field-group.no-line::after {
+    display: none;
+}
 
 /* pill 스타일 인라인 버튼 (중복확인, 인증번호 전송) */
 .btn-inline {
