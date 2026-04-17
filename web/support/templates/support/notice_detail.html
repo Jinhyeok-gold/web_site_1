@@ -4,42 +4,226 @@
 {% block title %}{{ notice.title }} - 딱맞춤{% endblock %}
 
 {% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-    .notice-container { max-width: 900px; margin: 60px auto; padding: 40px; background: white; border-radius: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); }
-    .notice-header { border-bottom: 2px solid #f1f5f9; padding-bottom: 30px; margin-bottom: 30px; }
-    .notice-title { font-size: 2rem; font-weight: 800; color: #1e293b; margin-bottom: 15px; line-height: 1.3; }
-    .notice-meta { display: flex; gap: 20px; color: #94a3b8; font-size: 0.9rem; }
-    
-    .notice-content { font-size: 1.1rem; line-height: 1.8; color: #334155; min-height: 300px; }
-    .notice-content p { margin-bottom: 20px; }
-    
-    .notice-footer { margin-top: 50px; padding-top: 30px; border-top: 1px solid #f1f5f9; display: flex; justify-content: center; }
-    .btn-list { background: #f1f5f9; color: #475569; padding: 12px 30px; border-radius: 12px; text-decoration: none; font-weight: 700; transition: 0.3s; }
-    .btn-list:hover { background: #e2e8f0; color: #1e293b; }
-    
-    .badge-important { background: #fee2e2; color: #ef4444; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 12px; margin-bottom: 10px; display: inline-block; }
+:root {
+  --ink: #0d0d18; --ink-2: #2d2d45; --ink-3: #6e6e8a; --ink-4: #a6a6c0;
+  --paper: #f2f2f7; --card: #ffffff; --card-2: #f7f7fb; --card-3: #eeeefc;
+  --line: #e0e0ec; --line-2: #c8c8dc;
+  --violet: #5b5ef4; --violet-2: #7c7ff7; --violet-pale: #eeeeff;
+  --prime-bg: #1e1b4b; --prime-accent: #a5b4fc;
+  --red: #ef4444; --red-pale: #fee2e2;
+  --r-pill: 999px; --r-xl: 20px; --r-lg: 16px; --r-md: 12px; --r-sm: 8px;
+  --font: 'Inter', 'Pretendard', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+.sp-page {
+  min-height: 100vh;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(rgba(0,0,0,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  padding: 40px 56px 96px;
+  font-family: var(--font);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+.sp-header {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-bottom: 36px;
+}
+.sp-eyebrow {
+  display: block; font-size: 9px; font-weight: 600;
+  letter-spacing: .22em; color: var(--violet);
+  font-family: var(--mono); text-transform: uppercase;
+  margin-bottom: 6px; opacity: .75;
+}
+.sp-title {
+  font-size: 28px; font-weight: 900;
+  color: var(--ink); margin: 0;
+  letter-spacing: -.8px; line-height: 1;
+}
+.sp-back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700;
+  color: var(--ink-3);
+  background: var(--card);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-pill);
+  padding: 8px 16px;
+  text-decoration: none;
+  transition: all .14s;
+  font-family: var(--mono);
+}
+.sp-back-btn:hover { color: var(--violet); border-color: rgba(91,94,244,.3); background: var(--violet-pale); }
+
+/* 디테일 카드 */
+.sp-detail-card {
+  background: var(--card);
+  border-radius: var(--r-xl);
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.03);
+  overflow: hidden;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* 카드 상단 헤더 바 */
+.sp-detail-topbar {
+  background: var(--prime-bg);
+  padding: 24px 40px;
+  position: relative;
+  overflow: hidden;
+}
+.sp-detail-topbar::after {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 150px; height: 150px;
+  background: radial-gradient(circle, rgba(165,180,252,.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+.sp-detail-topbar-inner { position: relative; z-index: 1; }
+
+.sp-badge {
+  display: inline-flex; align-items: center;
+  font-size: 9px; font-weight: 800;
+  padding: 2px 8px; border-radius: var(--r-pill);
+  letter-spacing: .04em; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.sp-badge--red    { background: var(--red-pale); color: var(--red); }
+.sp-badge--dark   { background: rgba(165,180,252,.15); color: var(--prime-accent); border: 1px solid rgba(165,180,252,.2); }
+
+.sp-detail-notice-title {
+  font-size: 1.5rem; font-weight: 800;
+  color: #fff;
+  margin: 0 0 12px;
+  letter-spacing: -.5px;
+  line-height: 1.3;
+}
+.sp-detail-meta {
+  display: flex; gap: 20px;
+  font-size: 11px;
+  color: rgba(165,180,252,.6);
+  font-family: var(--mono);
+}
+.sp-detail-meta span { display: flex; align-items: center; gap: 5px; }
+
+/* 본문 */
+.sp-detail-body {
+  padding: 40px;
+}
+.sp-detail-content {
+  font-size: 15px; line-height: 1.9;
+  color: var(--ink-2);
+  min-height: 200px;
+}
+.sp-detail-content p { margin-bottom: 16px; }
+.sp-detail-content a {
+  color: var(--violet);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(91,94,244,.3);
+  transition: border-color .14s;
+}
+.sp-detail-content a:hover { border-bottom-color: var(--violet); }
+
+/* 하단 액션 */
+.sp-detail-footer {
+  padding: 24px 40px;
+  border-top: 1px solid var(--line);
+  background: var(--card-2);
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+.sp-btn-secondary {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 10px 22px;
+  background: var(--card);
+  color: var(--ink-2);
+  border: 1.5px solid var(--line-2);
+  border-radius: var(--r-pill);
+  font-size: 12px; font-weight: 700;
+  text-decoration: none;
+  transition: all .14s;
+  font-family: var(--font);
+}
+.sp-btn-secondary:hover {
+  background: var(--violet-pale);
+  border-color: rgba(91,94,244,.3);
+  color: var(--violet);
+}
+
+@keyframes sp-fadein {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.sp-fadein { animation: sp-fadein .4s ease both; }
+
+@media (max-width: 768px) {
+  .sp-page { padding: 24px 16px 60px; }
+  .sp-detail-topbar { padding: 20px 24px; }
+  .sp-detail-body { padding: 24px; }
+  .sp-detail-footer { padding: 16px 24px; }
+  .sp-detail-notice-title { font-size: 1.2rem; }
+}
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="notice-container fade-in">
-    <div class="notice-header">
+<div class="sp-page">
+
+  <div class="sp-header sp-fadein">
+    <div>
+      <span class="sp-eyebrow">NOTICE DETAIL</span>
+      <h1 class="sp-title">공지사항</h1>
+    </div>
+    <a href="{% url 'support:notice_list' %}" class="sp-back-btn">
+      <i class="fas fa-arrow-left"></i> 목록으로
+    </a>
+  </div>
+
+  <div class="sp-detail-card sp-fadein">
+    <!-- 상단 헤더 바 -->
+    <div class="sp-detail-topbar">
+      <div class="sp-detail-topbar-inner">
         {% if notice.is_important %}
-        <span class="badge-important">중요공지</span>
+        <div><span class="sp-badge sp-badge--red">중요공지</span></div>
+        {% else %}
+        <div><span class="sp-badge sp-badge--dark">NOTICE</span></div>
         {% endif %}
-        <h1 class="notice-title">{{ notice.title }}</h1>
-        <div class="notice-meta">
-            <span><i class="far fa-calendar-alt"></i> 작성일: {{ notice.created_at|date:"Y.m.d" }}</span>
-            <span><i class="far fa-user"></i> 작성자: 관리자</span>
+        <h2 class="sp-detail-notice-title">{{ notice.title }}</h2>
+        <div class="sp-detail-meta">
+          <span><i class="far fa-calendar-alt"></i> {{ notice.created_at|date:"Y.m.d" }}</span>
+          <span><i class="far fa-user"></i> 관리자</span>
         </div>
+      </div>
     </div>
-    
-    <div class="notice-content">
+
+    <!-- 본문 -->
+    <div class="sp-detail-body">
+      <div class="sp-detail-content">
         {{ notice.content|urlize|linebreaks }}
+      </div>
     </div>
-    
-    <div class="notice-footer">
-        <a href="{% url 'support:support_home' %}" class="btn-list">목록으로 돌아가기</a>
+
+    <!-- 하단 버튼 -->
+    <div class="sp-detail-footer">
+      <a href="{% url 'support:notice_list' %}" class="sp-btn-secondary">
+        <i class="fas fa-list"></i> 목록으로
+      </a>
+      <a href="{% url 'support:support_home' %}" class="sp-btn-secondary">
+        <i class="fas fa-home"></i> 고객센터 홈
+      </a>
     </div>
+  </div>
+
 </div>
 {% endblock %}

@@ -1,124 +1,271 @@
+{% extends 'mainwindow/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>상담사 통합 대시보드 - 딱맞춤</title>
-    <link rel="stylesheet" href="{% static 'mainwindow/css/base.css' %}">
-    <style>
-        body { font-family: 'Pretendard', sans-serif; background: #f8fafc; margin: 0; padding: 40px; color: #1e293b; }
-        .dashboard-container { max-width: 1200px; margin: 0 auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-        .header h1 { font-size: 28px; font-weight: 900; color: #1a4f8b; margin: 0; }
-        .header .user-info { font-weight: 700; color: #64748b; }
 
-        .section-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-        .badge { background: #ff4757; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
-        .badge.active { background: #1a4f8b; }
+{% block title %}상담 대기열 - 딱맞춤 관리자{% endblock %}
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; margin-bottom: 50px; }
-        
-        .chat-card {
-            background: white; border-radius: 20px; padding: 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            border: 1px solid #e2e8f0; transition: 0.3s;
-            display: flex; flex-direction: column; gap: 15px;
-        }
-        .chat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-color: #1a4f8b; }
+{% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0d0d18; --ink-2: #2d2d45; --ink-3: #6e6e8a; --ink-4: #a6a6c0;
+  --paper: #f2f2f7; --card: #ffffff; --card-2: #f7f7fb; --card-3: #eeeefc;
+  --line: #e0e0ec; --line-2: #c8c8dc;
+  --violet: #5b5ef4; --violet-2: #7c7ff7; --violet-pale: #eeeeff;
+  --prime-bg: #1e1b4b; --prime-accent: #a5b4fc;
+  --teal: #14b8a6; --teal-pale: #e6faf8;
+  --amber: #f59e0b; --amber-pale: #fef3c7;
+  --green: #10b981; --green-pale: #dcfce7;
+  --r-pill: 999px; --r-xl: 20px; --r-lg: 16px; --r-md: 12px; --r-sm: 8px;
+  --font: 'Inter', 'Pretendard', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
 
-        .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
-        .user-meta h3 { margin: 0; font-size: 18px; font-weight: 800; }
-        .user-meta p { margin: 5px 0 0; font-size: 13px; color: #94a3b8; }
+.sp-page {
+  min-height: 100vh;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(rgba(0,0,0,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  padding: 40px 56px 96px;
+  font-family: var(--font);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
 
-        .status-pill { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; background: #f1f5f9; color: #64748b; }
-        .status-pill.pending { background: #fff5f5; color: #ff4757; }
-        .status-pill.active { background: #f0f7ff; color: #1a4f8b; }
+.sp-header {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-bottom: 36px;
+}
+.sp-eyebrow {
+  display: block; font-size: 9px; font-weight: 600;
+  letter-spacing: .22em; color: var(--violet);
+  font-family: var(--mono); text-transform: uppercase;
+  margin-bottom: 6px; opacity: .75;
+}
+.sp-title { font-size: 28px; font-weight: 900; color: var(--ink); margin: 0; letter-spacing: -.8px; }
+.sp-back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700; color: var(--ink-3);
+  background: var(--card); border: 1px solid var(--line-2);
+  border-radius: var(--r-pill); padding: 8px 16px;
+  text-decoration: none; transition: all .14s; font-family: var(--mono);
+}
+.sp-back-btn:hover { color: var(--violet); border-color: rgba(91,94,244,.3); background: var(--violet-pale); }
 
-        .card-body { font-size: 14px; color: #475569; line-height: 1.5; }
-        .card-footer { margin-top: auto; }
+/* 섹션 타이틀 */
+.sp-section-label {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--ink-3); font-family: var(--mono);
+  margin-bottom: 14px; margin-top: 32px;
+}
+.sp-section-label:first-of-type { margin-top: 0; }
 
-        .btn-join { 
-            display: block; width: 100%; padding: 12px; text-align: center;
-            background: #1a4f8b; color: white; text-decoration: none;
-            border-radius: 12px; font-weight: 700; transition: 0.2s;
-        }
-        .btn-join:hover { background: #0f3661; }
+/* 카드 */
+.sp-card {
+  background: var(--card);
+  border-radius: var(--r-xl);
+  border: 1px solid var(--line);
+  padding: 28px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.03);
+}
 
-        .empty-state { padding: 40px; text-align: center; background: white; border-radius: 20px; color: #94a3b8; border: 2px dashed #e2e8f0; }
-    </style>
-</head>
-<body>
+/* 상담 룸 행 */
+.sp-room-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: var(--card-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  margin-bottom: 8px;
+  transition: all .14s;
+  gap: 16px;
+}
+.sp-room-row:hover {
+  border-color: rgba(91,94,244,.25);
+  background: var(--card-3);
+  transform: translateX(3px);
+}
+.sp-room-row:last-child { margin-bottom: 0; }
 
-    <div class="dashboard-container">
-        <div class="header">
-            <div onclick="location.href='/';" style="cursor:pointer">
-                <h1>상담사 관리 센터</h1>
-            </div>
-            <div class="user-info">
-                {{ user.last_name|default:user.username }} 상담사님 환영합니다.
-                <a href="{% url 'policy:logout' %}" style="margin-left:15px; font-size:13px; color:#ff4757;">로그아웃</a>
-            </div>
-        </div>
+/* 아바타 */
+.sp-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--violet), var(--violet-2));
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 15px; font-weight: 800;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(91,94,244,.3);
+}
+.sp-avatar--pending {
+  background: linear-gradient(135deg, var(--amber), #fb923c);
+  box-shadow: 0 4px 12px rgba(245,158,11,.3);
+}
 
-        <section>
-            <div class="section-title">
-                대기 중인 상담 <span class="badge">{{ pending_rooms.count }}</span>
-            </div>
-            {% if pending_rooms %}
-            <div class="grid">
-                {% for room in pending_rooms %}
-                <div class="chat-card">
-                    <div class="card-top">
-                        <div class="user-meta">
-                            <h3>{{ room.customer.username }}님</h3>
-                            <p>요청 시간: {{ room.created_at|date:"H:i" }}</p>
-                        </div>
-                        <span class="status-pill pending">배정 대기</span>
-                    </div>
-                    <div class="card-body">
-                        가장 최근 활동: {{ room.updated_at|timesince }} 전
-                    </div>
-                    <div class="card-footer">
-                        <a href="{% url 'support:admin_chat_detail' room.id %}" class="btn-join">상담 수락 및 연결</a>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <div class="empty-state">현재 대기 중인 상담 요청이 없습니다.</div>
-            {% endif %}
-        </section>
+.sp-room-info { flex: 1; min-width: 0; }
+.sp-room-name {
+  font-size: 14px; font-weight: 700;
+  color: var(--ink); margin-bottom: 3px;
+}
+.sp-room-meta {
+  font-size: 11px; color: var(--ink-4);
+  font-family: var(--mono);
+}
 
-        <section style="margin-top: 50px;">
-            <div class="section-title">
-                내가 답변 중인 상담 <span class="badge active">{{ active_rooms.count }}</span>
-            </div>
-            {% if active_rooms %}
-            <div class="grid">
-                {% for room in active_rooms %}
-                <div class="chat-card">
-                    <div class="card-top">
-                        <div class="user-meta">
-                            <h3>{{ room.customer.username }}님</h3>
-                            <p>마지막 대화: {{ room.updated_at|date:"H:i" }}</p>
-                        </div>
-                        <span class="status-pill active">상담 중</span>
-                    </div>
-                    <div class="card-body">
-                        참여 상담사: 나 ({{ user.username }})
-                    </div>
-                    <div class="card-footer">
-                        <a href="{% url 'support:admin_chat_detail' room.id %}" class="btn-join">상담실 다시 입장</a>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <div class="empty-state">진행 중인 상담이 없습니다.</div>
-            {% endif %}
-        </section>
+/* 상태 배지 */
+.sp-status {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 700;
+  padding: 4px 10px; border-radius: var(--r-pill);
+  flex-shrink: 0;
+}
+.sp-status--pending { background: var(--amber-pale); color: var(--amber); }
+.sp-status--active  { background: var(--green-pale); color: var(--green); }
+
+/* 상담 입장 버튼 */
+.sp-btn-enter {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px;
+  background: var(--violet);
+  color: #fff; border: none;
+  border-radius: var(--r-pill);
+  font-size: 12px; font-weight: 700;
+  cursor: pointer; text-decoration: none;
+  transition: all .14s; font-family: var(--font);
+  white-space: nowrap;
+  box-shadow: 0 3px 12px rgba(91,94,244,.25);
+}
+.sp-btn-enter:hover { background: var(--violet-2); transform: translateY(-1px); color: #fff; box-shadow: 0 6px 18px rgba(91,94,244,.35); }
+
+/* 빈 상태 */
+.sp-empty { padding: 40px 20px; text-align: center; }
+.sp-empty i { font-size: 2rem; color: var(--ink-4); opacity: .3; margin-bottom: 12px; display: block; }
+.sp-empty p { font-size: 13px; color: var(--ink-4); margin: 0; font-family: var(--mono); }
+
+/* 통계 그리드 */
+.sp-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.sp-stat-card {
+  background: var(--card);
+  border-radius: var(--r-xl);
+  border: 1px solid var(--line);
+  padding: 20px 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.03);
+}
+.sp-stat-label {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: .15em; text-transform: uppercase;
+  color: var(--ink-4); font-family: var(--mono);
+  margin-bottom: 8px;
+}
+.sp-stat-value {
+  font-size: 2rem; font-weight: 900;
+  color: var(--ink); letter-spacing: -.5px;
+  font-family: var(--mono);
+}
+.sp-stat-value--amber { color: var(--amber); }
+.sp-stat-value--green { color: var(--green); }
+.sp-stat-value--violet { color: var(--violet); }
+
+@keyframes sp-fadein {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.sp-fadein { animation: sp-fadein .4s ease both; }
+.sp-fadein-1 { animation-delay: .06s; }
+.sp-fadein-2 { animation-delay: .12s; }
+
+@media (max-width: 768px) {
+  .sp-page { padding: 24px 16px 60px; }
+  .sp-stats-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sp-page">
+
+  <div class="sp-header sp-fadein">
+    <div>
+      <span class="sp-eyebrow">ADMIN · SUPPORT DESK</span>
+      <h1 class="sp-title">상담 대기열</h1>
     </div>
+    <a href="{% url 'support:support_home' %}" class="sp-back-btn">
+      <i class="fas fa-arrow-left"></i> 고객센터
+    </a>
+  </div>
 
-</body>
-</html>
+  <!-- 통계 -->
+  <div class="sp-stats-grid sp-fadein sp-fadein-1">
+    <div class="sp-stat-card">
+      <div class="sp-stat-label">대기 중</div>
+      <div class="sp-stat-value sp-stat-value--amber">{{ pending_rooms.count }}</div>
+    </div>
+    <div class="sp-stat-card">
+      <div class="sp-stat-label">상담 진행 중</div>
+      <div class="sp-stat-value sp-stat-value--green">{{ active_rooms.count }}</div>
+    </div>
+    <div class="sp-stat-card">
+      <div class="sp-stat-label">전체</div>
+      <div class="sp-stat-value sp-stat-value--violet">{{ pending_rooms.count|add:active_rooms.count }}</div>
+    </div>
+  </div>
+
+  <!-- 대기 중 -->
+  <div class="sp-section-label sp-fadein sp-fadein-1">대기 중인 상담</div>
+  <div class="sp-card sp-fadein sp-fadein-1">
+    {% for room in pending_rooms %}
+    <div class="sp-room-row">
+      <div class="sp-avatar sp-avatar--pending">{{ room.customer.username|slice:":1"|upper }}</div>
+      <div class="sp-room-info">
+        <div class="sp-room-name">{{ room.customer.last_name|default:room.customer.username }} 고객님</div>
+        <div class="sp-room-meta">{{ room.created_at|date:"Y.m.d H:i" }} 접수</div>
+      </div>
+      <span class="sp-status sp-status--pending"><i class="fas fa-clock"></i> 대기</span>
+      <a href="{% url 'support:admin_chat_detail' room.id %}" class="sp-btn-enter">
+        <i class="fas fa-arrow-right"></i> 상담 입장
+      </a>
+    </div>
+    {% empty %}
+    <div class="sp-empty">
+      <i class="fas fa-check-circle"></i>
+      <p>대기 중인 상담이 없습니다.</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- 진행 중 -->
+  <div class="sp-section-label sp-fadein sp-fadein-2">내가 진행 중인 상담</div>
+  <div class="sp-card sp-fadein sp-fadein-2">
+    {% for room in active_rooms %}
+    <div class="sp-room-row">
+      <div class="sp-avatar">{{ room.customer.username|slice:":1"|upper }}</div>
+      <div class="sp-room-info">
+        <div class="sp-room-name">{{ room.customer.last_name|default:room.customer.username }} 고객님</div>
+        <div class="sp-room-meta">최종 활동 {{ room.updated_at|date:"Y.m.d H:i" }}</div>
+      </div>
+      <span class="sp-status sp-status--active"><i class="fas fa-circle"></i> 진행 중</span>
+      <a href="{% url 'support:admin_chat_detail' room.id %}" class="sp-btn-enter">
+        <i class="fas fa-comments"></i> 이어서 상담
+      </a>
+    </div>
+    {% empty %}
+    <div class="sp-empty">
+      <i class="fas fa-inbox"></i>
+      <p>진행 중인 상담이 없습니다.</p>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

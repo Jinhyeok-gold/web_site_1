@@ -4,206 +4,660 @@
 {% block title %}고객지원 센터 - 딱맞춤{% endblock %}
 
 {% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-    .support-hero {
-        padding: 60px 0;
-        text-align: center;
-        background: linear-gradient(135.47deg, #1A4F8B 16.32%, #4A90E2 91.56%);
-        border-radius: 30px;
-        color: white;
-        margin-bottom: 40px;
-        box-shadow: 0 20px 40px rgba(26, 79, 139, 0.2);
-    }
-    .support-hero h1 { font-size: 2.5rem; margin-bottom: 15px; font-weight: 800; }
-    .support-hero p { font-size: 1.1rem; opacity: 0.9; }
+/* =============================================
+   디자인 토큰 — 마이리포트와 동일한 변수 체계
+   ============================================= */
+:root {
+  --ink:          #0d0d18;
+  --ink-2:        #2d2d45;
+  --ink-3:        #6e6e8a;
+  --ink-4:        #a6a6c0;
+  --paper:        #f2f2f7;
+  --card:         #ffffff;
+  --card-2:       #f7f7fb;
+  --card-3:       #eeeefc;
+  --line:         #e0e0ec;
+  --line-2:       #c8c8dc;
+  --violet:       #5b5ef4;
+  --violet-2:     #7c7ff7;
+  --violet-pale:  #eeeeff;
+  --prime-bg:     #1e1b4b;
+  --prime-bg-2:   #2d2a6e;
+  --prime-accent: #a5b4fc;
+  --teal:         #14b8a6;
+  --teal-pale:    #e6faf8;
+  --red:          #ef4444;
+  --red-pale:     #fee2e2;
+  --r-pill: 999px; --r-xl: 20px; --r-lg: 16px; --r-md: 12px; --r-sm: 8px;
+  --font: 'Inter', 'Pretendard', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
 
-    .support-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 30px;
-        margin-bottom: 50px;
-    }
+/* =============================================
+   페이지 레이아웃 — 마이리포트와 동일한 그리드 배경
+   ============================================= */
+.sp-page {
+  min-height: 100vh;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(rgba(0,0,0,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  padding: 40px 56px 96px;
+  font-family: var(--font);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
 
-    .glass-card {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 24px;
-        padding: 35px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        transition: transform 0.3s ease;
-    }
-    .glass-card:hover { transform: translateY(-5px); }
-    .card-icon { font-size: 2.5rem; margin-bottom: 20px; }
-    .card-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 15px; color: #1e293b; }
-    
-    .notice-list, .faq-list { list-style: none; padding: 0; }
-    .list-item {
-        padding: 15px 0;
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        text-decoration: none;
-        color: #475569;
-        transition: 0.2s;
-    }
-    .list-item:hover { color: #1a4f8b; padding-left: 5px; }
-    .item-tag {
-        font-size: 11px;
-        background: rgba(26, 79, 139, 0.1);
-        color: #1a4f8b;
-        padding: 3px 8px;
-        border-radius: 5px;
-        font-weight: 700;
-        margin-right: 10px;
-    }
+/* =============================================
+   헤더 — 마이리포트 mr-header 구조와 동일
+   ============================================= */
+.sp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 36px;
+}
+.sp-header-left { display: flex; align-items: center; gap: 16px; }
+.sp-eyebrow {
+  display: block;
+  font-size: 9px; font-weight: 600;
+  letter-spacing: .22em;
+  color: var(--violet);
+  font-family: var(--mono);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  opacity: .75;
+}
+.sp-title {
+  font-size: 28px; font-weight: 900;
+  color: var(--ink);
+  margin: 0;
+  letter-spacing: -.8px;
+  line-height: 1;
+}
 
-    .btn-support {
-        display: inline-block;
-        background: #1a4f8b;
-        color: white;
-        padding: 12px 25px;
-        border-radius: 12px;
-        text-decoration: none;
-        font-weight: 700;
-        margin-top: 20px;
-        transition: 0.3s;
-    }
-    .btn-support:hover { background: #0f3661; box-shadow: 0 5px 15px rgba(26, 79, 139, 0.3); }
+/* =============================================
+   Hero 배너 — prime-bg 다크 + accent 그라디언트
+   ============================================= */
+.sp-hero {
+  background: var(--prime-bg);
+  border-radius: var(--r-xl);
+  padding: 52px 56px;
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+/* 배경 장식 — 마이리포트 dark card 느낌 */
+.sp-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(165,180,252,.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+.sp-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: 200px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(94,234,212,.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.sp-hero-text { position: relative; z-index: 1; }
+.sp-hero-eyebrow {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .22em;
+  color: var(--prime-accent);
+  font-family: var(--mono);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  opacity: .85;
+}
+.sp-hero h1 {
+  font-size: 2.2rem; font-weight: 900;
+  color: #ffffff;
+  margin: 0 0 12px;
+  letter-spacing: -.8px;
+  line-height: 1.2;
+}
+.sp-hero p {
+  font-size: .95rem;
+  color: rgba(165,180,252,.8);
+  line-height: 1.7;
+  margin: 0;
+}
+.sp-hero-badges {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.sp-hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.75);
+  padding: 6px 14px;
+  border-radius: var(--r-pill);
+  backdrop-filter: blur(8px);
+}
+.sp-hero-icon {
+  position: relative; z-index: 1;
+  font-size: 5rem;
+  opacity: .25;
+  color: var(--prime-accent);
+  flex-shrink: 0;
+}
 
-    .faq-accordion .faq-item { margin-bottom: 15px; border-radius: 15px; overflow: hidden; background: white; }
-    .faq-question {
-        padding: 15px 20px;
-        background: #f8fafc;
-        cursor: pointer;
-        font-weight: 600;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .faq-answer { padding: 0 20px; max-height: 0; overflow: hidden; transition: 0.3s ease-out; background: white; color: #64748b; font-size: 0.95rem; }
-    .faq-item.active .faq-answer { padding: 15px 20px; max-height: 500px; }
-    .faq-item.active .faq-question { color: #1a4f8b; background: rgba(26, 79, 139, 0.05); }
+/* =============================================
+   메인 그리드 — 2컬럼
+   ============================================= */
+.sp-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.sp-grid-full { grid-column: 1 / -1; }
 
-    @media (max-width: 900px) {
-        .support-grid { grid-template-columns: 1fr; }
-    }
+/* =============================================
+   카드 — 마이리포트 bento 카드와 동일한 스타일
+   ============================================= */
+.sp-card {
+  background: var(--card);
+  border-radius: var(--r-xl);
+  border: 1px solid var(--line);
+  padding: 28px 32px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.03);
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+.sp-card:hover {
+  box-shadow: 0 4px 24px rgba(91,94,244,.08), 0 1px 3px rgba(0,0,0,.04);
+}
 
-    /* Notice Vertical Scroll Styling */
-    .notice-vertical-scroll {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        overflow-y: auto;
-        max-height: 550px;
-        padding-right: 15px;
-        scroll-behavior: smooth;
-    }
-    .notice-vertical-scroll::-webkit-scrollbar { width: 6px; }
-    .notice-vertical-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-    .notice-vertical-scroll::-webkit-scrollbar-track { background: transparent; }
-    
-    .notice-card {
-        background: #fdfdfd;
-        border: 1px solid #f1f5f9;
-        border-radius: 20px;
-        padding: 25px;
-        text-decoration: none;
-        transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        display: flex;
-        flex-direction: column;
-    }
-    .notice-card:hover { transform: translateX(5px); border-color: #1a4f8b; box-shadow: 0 10px 20px rgba(26, 79, 139, 0.05); }
-    
-    .notice-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .notice-date { font-size: 0.8rem; color: #94a3b8; }
-    
-    .notice-card-body { flex-grow: 1; }
-    .notice-card-title { font-size: 1.1rem; font-weight: 700; color: #1e293b; margin-bottom: 8px; line-height: 1.4; }
-    .notice-card-teaser { font-size: 0.9rem; color: #64748b; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+/* 카드 헤더 */
+.sp-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.sp-card-title-group { display: flex; align-items: center; gap: 10px; }
+.sp-card-icon {
+  width: 36px; height: 36px;
+  border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.sp-card-icon--violet { background: var(--violet-pale); color: var(--violet); }
+.sp-card-icon--teal   { background: var(--teal-pale);   color: var(--teal);   }
+.sp-card-icon--red    { background: var(--red-pale);    color: var(--red);    }
+.sp-card-icon--dark   { background: var(--prime-bg);    color: var(--prime-accent); }
+
+.sp-card-title {
+  font-size: 15px; font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -.3px;
+}
+.sp-card-sub {
+  font-size: 11px; font-weight: 500;
+  color: var(--ink-3);
+  margin-top: 2px;
+  font-family: var(--mono);
+}
+
+/* 작은 링크 버튼 */
+.sp-link-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700;
+  color: var(--violet);
+  background: var(--violet-pale);
+  border: 1px solid rgba(91,94,244,.2);
+  border-radius: var(--r-pill);
+  padding: 5px 12px;
+  text-decoration: none;
+  transition: all .14s;
+  white-space: nowrap;
+  letter-spacing: .01em;
+}
+.sp-link-btn:hover {
+  background: var(--violet);
+  color: #fff;
+  border-color: var(--violet);
+  box-shadow: 0 4px 14px rgba(91,94,244,.3);
+}
+
+/* =============================================
+   공지사항 스크롤 리스트
+   ============================================= */
+.sp-notice-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+.sp-notice-scroll::-webkit-scrollbar { width: 4px; }
+.sp-notice-scroll::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 4px; }
+.sp-notice-scroll::-webkit-scrollbar-track { background: transparent; }
+
+.sp-notice-item {
+  display: block;
+  padding: 14px 16px;
+  background: var(--card-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  text-decoration: none;
+  transition: all .14s;
+  position: relative;
+  overflow: hidden;
+}
+.sp-notice-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--violet);
+  opacity: 0;
+  transition: opacity .14s;
+  border-radius: 0 2px 2px 0;
+}
+.sp-notice-item:hover {
+  background: var(--card-3);
+  border-color: rgba(91,94,244,.25);
+  transform: translateX(3px);
+}
+.sp-notice-item:hover::before { opacity: 1; }
+
+.sp-notice-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.sp-notice-title {
+  font-size: 13px; font-weight: 600;
+  color: var(--ink-2);
+  line-height: 1.4;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sp-notice-date {
+  font-size: 10px;
+  color: var(--ink-4);
+  font-family: var(--mono);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.sp-notice-teaser {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-top: 5px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 중요 공지 배지 */
+.sp-badge {
+  display: inline-flex; align-items: center;
+  font-size: 9px; font-weight: 800;
+  padding: 2px 8px;
+  border-radius: var(--r-pill);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.sp-badge--red    { background: var(--red-pale);    color: var(--red); }
+.sp-badge--violet { background: var(--violet-pale); color: var(--violet); }
+
+/* =============================================
+   FAQ 아코디언 — 마이리포트 카드 느낌
+   ============================================= */
+.sp-faq-list { display: flex; flex-direction: column; gap: 8px; }
+.sp-faq-item {
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--card);
+  transition: border-color .14s;
+}
+.sp-faq-item:hover { border-color: rgba(91,94,244,.3); }
+.sp-faq-item.active { border-color: rgba(91,94,244,.4); }
+
+.sp-faq-q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  cursor: pointer;
+  font-size: 13px; font-weight: 600;
+  color: var(--ink-2);
+  background: var(--card-2);
+  transition: background .14s, color .14s;
+  user-select: none;
+  gap: 12px;
+}
+.sp-faq-item.active .sp-faq-q {
+  color: var(--violet);
+  background: var(--violet-pale);
+}
+.sp-faq-q-left { display: flex; align-items: center; gap: 10px; }
+.sp-faq-cat {
+  font-size: 9px; font-weight: 700;
+  background: var(--card-3);
+  color: var(--violet);
+  border: 1px solid rgba(91,94,244,.2);
+  padding: 2px 8px;
+  border-radius: var(--r-pill);
+  white-space: nowrap;
+  font-family: var(--mono);
+}
+.sp-faq-item.active .sp-faq-cat {
+  background: rgba(91,94,244,.15);
+  border-color: rgba(91,94,244,.3);
+}
+.sp-faq-chevron {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--ink-4);
+  transition: transform .2s ease;
+}
+.sp-faq-item.active .sp-faq-chevron {
+  transform: rotate(180deg);
+  color: var(--violet);
+}
+.sp-faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .3s ease, padding .3s ease;
+  font-size: 13px;
+  color: var(--ink-3);
+  line-height: 1.7;
+  padding: 0 18px;
+  background: var(--card);
+}
+.sp-faq-item.active .sp-faq-a {
+  max-height: 400px;
+  padding: 14px 18px;
+}
+
+/* =============================================
+   상담 카드 — dark 테마 (prime-bg)
+   ============================================= */
+.sp-chat-card {
+  background: var(--prime-bg);
+  border-radius: var(--r-xl);
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(165,180,252,.1);
+}
+.sp-chat-card::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(165,180,252,.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.sp-chat-card::after {
+  content: '';
+  position: absolute;
+  bottom: -30px; left: 150px;
+  width: 150px; height: 150px;
+  background: radial-gradient(circle, rgba(94,234,212,.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.sp-chat-text { position: relative; z-index: 1; }
+.sp-chat-eyebrow {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: .22em;
+  color: var(--prime-accent);
+  font-family: var(--mono);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  opacity: .8;
+}
+.sp-chat-title {
+  font-size: 18px; font-weight: 800;
+  color: #fff;
+  margin-bottom: 8px;
+  letter-spacing: -.4px;
+}
+.sp-chat-desc {
+  font-size: 13px;
+  color: rgba(165,180,252,.7);
+  line-height: 1.6;
+}
+.sp-chat-actions {
+  position: relative; z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.sp-btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 24px;
+  background: var(--violet);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-pill);
+  font-size: 13px; font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all .15s;
+  font-family: var(--font);
+  letter-spacing: -.01em;
+  box-shadow: 0 4px 16px rgba(91,94,244,.35);
+  white-space: nowrap;
+}
+.sp-btn-primary:hover {
+  background: var(--violet-2);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(91,94,244,.45);
+  color: #fff;
+}
+.sp-admin-link {
+  font-size: 11px;
+  color: rgba(165,180,252,.5);
+  text-decoration: none;
+  text-align: center;
+  transition: color .14s;
+  font-family: var(--mono);
+}
+.sp-admin-link:hover { color: var(--prime-accent); }
+
+/* =============================================
+   빈 상태
+   ============================================= */
+.sp-empty {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--ink-4);
+}
+.sp-empty i { font-size: 2rem; margin-bottom: 12px; opacity: .4; }
+.sp-empty p { font-size: 13px; margin: 0; }
+
+/* =============================================
+   반응형
+   ============================================= */
+@media (max-width: 960px) {
+  .sp-page { padding: 24px 20px 60px; }
+  .sp-grid { grid-template-columns: 1fr; }
+  .sp-chat-card { flex-direction: column; align-items: flex-start; }
+  .sp-hero { flex-direction: column; padding: 36px 28px; }
+  .sp-hero-icon { display: none; }
+  .sp-chat-actions { width: 100%; }
+  .sp-btn-primary { justify-content: center; }
+}
+
+/* =============================================
+   페이드인 — 마이리포트와 동일
+   ============================================= */
+@keyframes sp-fadein {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.sp-fadein { animation: sp-fadein .4s ease both; }
+.sp-fadein-1 { animation-delay: .05s; }
+.sp-fadein-2 { animation-delay: .12s; }
+.sp-fadein-3 { animation-delay: .18s; }
+.sp-fadein-4 { animation-delay: .24s; }
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 {% endblock %}
 
 {% block content %}
-<div class="container wide">
-    <div class="support-hero fade-in">
-        <h1>무엇을 도와드릴까요?</h1>
-        <p>청년·신혼부부를 위한 정책 전문가들이 사용자님의 고민을 함께 해결해 드립니다.</p>
+<div class="sp-page">
+
+  <!-- 헤더 -->
+  <div class="sp-header sp-fadein">
+    <div class="sp-header-left">
+      <div>
+        <span class="sp-eyebrow">CUSTOMER SUPPORT</span>
+        <h1 class="sp-title">고객지원 센터</h1>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero 배너 -->
+  <div class="sp-hero sp-fadein sp-fadein-1">
+    <div class="sp-hero-text">
+      <div class="sp-hero-eyebrow">DDAK-MATCH SUPPORT</div>
+      <h1>무엇을 도와드릴까요?</h1>
+      <p>청년·신혼부부 맞춤 정책 안내부터 서비스 이용 문의까지<br>딱맞춤 고객센터가 함께합니다.</p>
+      <div class="sp-hero-badges">
+        <span class="sp-hero-badge"><i class="fas fa-bolt"></i> 빠른 답변</span>
+        <span class="sp-hero-badge"><i class="fas fa-lock"></i> 안전한 상담</span>
+        <span class="sp-hero-badge"><i class="fas fa-brain"></i> AI 기반 분석</span>
+      </div>
+    </div>
+    <div class="sp-hero-icon">
+      <i class="fas fa-headset"></i>
+    </div>
+  </div>
+
+  <!-- 공지 + FAQ -->
+  <div class="sp-grid">
+
+    <!-- 공지사항 카드 -->
+    <div class="sp-card sp-fadein sp-fadein-2">
+      <div class="sp-card-header">
+        <div class="sp-card-title-group">
+          <div class="sp-card-icon sp-card-icon--violet">
+            <i class="fas fa-bell"></i>
+          </div>
+          <div>
+            <div class="sp-card-title">공지사항</div>
+            <div class="sp-card-sub">NOTICE BOARD</div>
+          </div>
+        </div>
+        <a href="{% url 'support:notice_list' %}" class="sp-link-btn">
+          전체보기 <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="sp-notice-scroll">
+        {% for notice in notices %}
+        <a href="{% url 'support:notice_detail' notice.pk %}" class="sp-notice-item">
+          <div class="sp-notice-row">
+            <div style="display:flex; align-items:center; gap:6px; min-width:0;">
+              {% if notice.is_important %}
+              <span class="sp-badge sp-badge--red">중요</span>
+              {% endif %}
+              <span class="sp-notice-title">{{ notice.title }}</span>
+            </div>
+            <span class="sp-notice-date">{{ notice.created_at|date:"Y.m.d" }}</span>
+          </div>
+          <div class="sp-notice-teaser">{{ notice.content|truncatechars:55 }}</div>
+        </a>
+        {% empty %}
+        <div class="sp-empty">
+          <i class="fas fa-inbox"></i>
+          <p>등록된 공지사항이 없습니다.</p>
+        </div>
+        {% endfor %}
+      </div>
     </div>
 
-    <div class="support-grid">
-        <!-- 공지사항 카드 (Horizontal Slider 적용) -->
-        <div class="glass-card fade-in" style="animation-delay: 0.1s; grid-column: 1 / -1;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <div class="card-icon" style="margin: 0;"><i class="fas fa-bullhorn" style="color: #ff4757;"></i></div>
-                    <div class="card-title" style="margin: 0;">중요 공지사항 & 실시간 정책</div>
-                </div>
-                <a href="{% url 'support:notice_list' %}" class="btn-support" style="margin: 0; padding: 8px 15px; font-size: 0.85rem; background: rgba(26,79,139,0.1); color: #1a4f8b;">전체 공지 보기</a>
-            </div>
-
-            <!-- Vertical Scroll Container -->
-            <div class="notice-vertical-scroll">
-                {% for notice in notices %}
-                <a href="{% url 'support:notice_detail' notice.pk %}" class="notice-card">
-                    <div class="notice-card-header">
-                        {% if notice.is_important %}
-                        <span class="item-tag" style="background: #fee2e2; color: #ef4444;">중요</span>
-                        {% endif %}
-                        <span class="notice-date">{{ notice.created_at|date:"Y.m.d" }}</span>
-                    </div>
-                    <div class="notice-card-body">
-                        <div class="notice-card-title">{{ notice.title }}</div>
-                        <div class="notice-card-teaser">
-                            {{ notice.content|truncatechars:60 }}
-                        </div>
-                    </div>
-                </a>
-                {% empty %}
-                <div style="width: 100%; text-align: center; padding: 40px; color: #94a3b8;">등록된 공지사항이 없습니다.</div>
-                {% endfor %}
-            </div>
+    <!-- FAQ 카드 -->
+    <div class="sp-card sp-fadein sp-fadein-3">
+      <div class="sp-card-header">
+        <div class="sp-card-title-group">
+          <div class="sp-card-icon sp-card-icon--teal">
+            <i class="fas fa-circle-question"></i>
+          </div>
+          <div>
+            <div class="sp-card-title">자주 묻는 질문</div>
+            <div class="sp-card-sub">FAQ</div>
+          </div>
         </div>
+      </div>
 
-        <!-- 1:1 문의 카드 (기능 유지) -->
-        <div class="glass-card fade-in" style="animation-delay: 0.2s; grid-column: 1 / -1;">
-            <div class="card-icon"><i class="fas fa-headset" style="color: #2ed573;"></i></div>
-            <div class="card-title">1:1 전문가 맞춤 상담</div>
-            <p style="color: #64748b; line-height: 1.6; margin-bottom: 20px;">
-                복잡한 서류나 자격 요건, 기다릴 필요 없이 지금 바로 AI 정책 전문가와 상담하세요. 
-                사용자님의 진단 데이터를 기반으로 가장 정확한 답변을 드립니다.
-            </p>
-            <div style="display: flex; gap: 10px;">
-                <a href="{% url 'support:chat_room' %}" class="btn-support" style="width: 100%; text-align: center;">상담사 연결하기</a>
+      <div class="sp-faq-list">
+        {% for faq in faqs %}
+        <div class="sp-faq-item" onclick="this.classList.toggle('active')">
+          <div class="sp-faq-q">
+            <div class="sp-faq-q-left">
+              <span class="sp-faq-cat">{{ faq.get_category_display }}</span>
+              <span>{{ faq.question }}</span>
             </div>
-            {% if user.is_staff %}
-            <div style="margin-top: 15px; text-align: center;">
-                <a href="{% url 'support:admin_chat_list' %}" style="font-size: 13px; color: #64748b; text-decoration: underline;">관리자: 상담 대기열 보기</a>
-            </div>
-            {% endif %}
+            <i class="fas fa-chevron-down sp-faq-chevron"></i>
+          </div>
+          <div class="sp-faq-a">{{ faq.answer|linebreaks }}</div>
         </div>
+        {% empty %}
+        <div class="sp-empty">
+          <i class="fas fa-comment-slash"></i>
+          <p>등록된 질문이 없습니다.</p>
+        </div>
+        {% endfor %}
+      </div>
     </div>
+  </div>
 
-    <!-- 자주 묻는 질문(FAQ) -->
-    <div id="faq-section" class="glass-card fade-in" style="margin-bottom: 80px; animation-delay: 0.3s;">
-        <div class="card-title" style="text-align: center; margin-bottom: 30px;">자주 묻는 질문 (FAQ)</div>
-        <div class="faq-accordion">
-            {% for faq in faqs %}
-            <div class="faq-item" onclick="this.classList.toggle('active');">
-                <div class="faq-question">
-                    <span><span class="item-tag">{{ faq.get_category_display }}</span> {{ faq.question }}</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    {{ faq.answer|linebreaks }}
-                </div>
-            </div>
-            {% empty %}
-            <p style="text-align: center; color: #94a3b8;">준비된 질문이 없습니다.</p>
-            {% endfor %}
-        </div>
+  <!-- 1:1 상담 카드 (full width dark card) -->
+  <div class="sp-chat-card sp-fadein sp-fadein-4">
+    <div class="sp-chat-text">
+      <div class="sp-chat-eyebrow">REAL-TIME CONSULTING</div>
+      <div class="sp-chat-title">1:1 전문가 맞춤 상담</div>
+      <div class="sp-chat-desc">
+        복잡한 서류나 자격 요건, 기다릴 필요 없이 지금 바로 AI 정책 전문가와 상담하세요.<br>
+        사용자님의 진단 데이터를 기반으로 가장 정확한 답변을 드립니다.
+      </div>
     </div>
+    <div class="sp-chat-actions">
+      <a href="{% url 'support:chat_room' %}" class="sp-btn-primary">
+        <i class="fas fa-comment-dots"></i> 상담사 연결하기
+      </a>
+      {% if user.is_staff %}
+      <a href="{% url 'support:admin_chat_list' %}" class="sp-admin-link">
+        관리자: 상담 대기열 보기
+      </a>
+      {% endif %}
+    </div>
+  </div>
+
 </div>
 {% endblock %}

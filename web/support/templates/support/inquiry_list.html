@@ -4,85 +4,240 @@
 {% block title %}나의 문의 내역 - 딱맞춤{% endblock %}
 
 {% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-    .support-container { padding: 40px 0; max-width: 1000px; margin: 0 auto; }
-    .page-title { font-size: 2rem; font-weight: 800; color: #1e293b; margin-bottom: 30px; }
-    
-    .inquiry-card {
-        background: white;
-        border-radius: 20px;
-        padding: 25px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        border: 1px solid rgba(0,0,0,0.05);
-    }
-    .inquiry-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-    .inquiry-status {
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 700;
-    }
-    .status-pending { background: #fef3c7; color: #d97706; }
-    .status-answered { background: #dcfce7; color: #16a34a; }
-    
-    .inquiry-q { margin-bottom: 20px; }
-    .inquiry-q h3 { font-size: 1.25rem; margin-bottom: 10px; color: #1e293b; }
-    .inquiry-q p { color: #475569; line-height: 1.6; }
-    
-    .admin-answer-box {
-        background: #f8fafc;
-        border-radius: 12px;
-        padding: 20px;
-        border-left: 4px solid #1a4f8b;
-    }
-    .admin-answer-box strong { display: block; margin-bottom: 10px; color: #1a4f8b; }
-    .admin-answer-box p { margin: 0; color: #334155; }
-    
-    .btn-new {
-        background: #1a4f8b;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 10px;
-        text-decoration: none;
-        font-weight: 700;
-        display: inline-block;
-        margin-bottom: 30px;
-    }
+:root {
+  --ink: #0d0d18; --ink-2: #2d2d45; --ink-3: #6e6e8a; --ink-4: #a6a6c0;
+  --paper: #f2f2f7; --card: #ffffff; --card-2: #f7f7fb; --card-3: #eeeefc;
+  --line: #e0e0ec; --line-2: #c8c8dc;
+  --violet: #5b5ef4; --violet-2: #7c7ff7; --violet-pale: #eeeeff;
+  --prime-bg: #1e1b4b; --prime-accent: #a5b4fc;
+  --teal: #14b8a6; --teal-pale: #e6faf8;
+  --red: #ef4444; --red-pale: #fee2e2;
+  --amber: #f59e0b; --amber-pale: #fef3c7;
+  --green: #10b981; --green-pale: #dcfce7;
+  --r-pill: 999px; --r-xl: 20px; --r-lg: 16px; --r-md: 12px; --r-sm: 8px;
+  --font: 'Inter', 'Pretendard', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+.sp-page {
+  min-height: 100vh;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(rgba(0,0,0,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  padding: 40px 56px 96px;
+  font-family: var(--font);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+.sp-header {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-bottom: 36px;
+}
+.sp-eyebrow {
+  display: block; font-size: 9px; font-weight: 600;
+  letter-spacing: .22em; color: var(--violet);
+  font-family: var(--mono); text-transform: uppercase;
+  margin-bottom: 6px; opacity: .75;
+}
+.sp-title {
+  font-size: 28px; font-weight: 900;
+  color: var(--ink); margin: 0;
+  letter-spacing: -.8px; line-height: 1;
+}
+.sp-back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700;
+  color: var(--ink-3);
+  background: var(--card);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-pill);
+  padding: 8px 16px;
+  text-decoration: none;
+  transition: all .14s;
+  font-family: var(--mono);
+}
+.sp-back-btn:hover { color: var(--violet); border-color: rgba(91,94,244,.3); background: var(--violet-pale); }
+
+/* 새 문의 버튼 */
+.sp-btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 22px;
+  background: var(--violet);
+  color: #fff; border: none;
+  border-radius: var(--r-pill);
+  font-size: 13px; font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all .15s;
+  font-family: var(--font);
+  box-shadow: 0 4px 16px rgba(91,94,244,.3);
+  margin-bottom: 24px;
+  white-space: nowrap;
+}
+.sp-btn-primary:hover {
+  background: var(--violet-2);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(91,94,244,.4);
+  color: #fff;
+}
+
+/* 문의 카드 */
+.sp-inquiry-card {
+  background: var(--card);
+  border-radius: var(--r-xl);
+  border: 1px solid var(--line);
+  margin-bottom: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,.03);
+  transition: box-shadow .14s, border-color .14s;
+}
+.sp-inquiry-card:hover {
+  box-shadow: 0 4px 24px rgba(91,94,244,.07);
+  border-color: rgba(91,94,244,.2);
+}
+
+/* 카드 상단 바 */
+.sp-inquiry-topbar {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: var(--card-2);
+  border-bottom: 1px solid var(--line);
+}
+.sp-status-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 700;
+  padding: 4px 10px; border-radius: var(--r-pill);
+  letter-spacing: .03em;
+}
+.sp-status-badge--pending  { background: var(--amber-pale); color: var(--amber); }
+.sp-status-badge--answered { background: var(--green-pale); color: var(--green); }
+.sp-inquiry-date {
+  font-size: 11px; color: var(--ink-4);
+  font-family: var(--mono);
+}
+
+/* 카드 바디 */
+.sp-inquiry-body { padding: 24px; }
+.sp-inquiry-title {
+  font-size: 16px; font-weight: 700;
+  color: var(--ink); margin-bottom: 10px;
+  letter-spacing: -.3px;
+}
+.sp-inquiry-content {
+  font-size: 13px; color: var(--ink-3);
+  line-height: 1.7;
+}
+
+/* 답변 박스 */
+.sp-answer-box {
+  margin: 20px 24px 24px;
+  background: var(--card-3);
+  border: 1px solid rgba(91,94,244,.15);
+  border-left: 3px solid var(--violet);
+  border-radius: var(--r-lg);
+  padding: 18px 20px;
+}
+.sp-answer-label {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 11px; font-weight: 800;
+  color: var(--violet);
+  font-family: var(--mono);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.sp-answer-text {
+  font-size: 13px; color: var(--ink-2);
+  line-height: 1.7;
+}
+.sp-answer-date {
+  font-size: 10px; color: var(--ink-4);
+  font-family: var(--mono); margin-top: 10px;
+}
+
+/* 빈 상태 */
+.sp-empty-card {
+  background: var(--card);
+  border-radius: var(--r-xl);
+  border: 1px solid var(--line);
+  padding: 80px 20px;
+  text-align: center;
+}
+.sp-empty-card i { font-size: 2.5rem; color: var(--ink-4); opacity: .4; margin-bottom: 16px; display: block; }
+.sp-empty-card p { font-size: 14px; color: var(--ink-3); margin: 0; }
+
+@keyframes sp-fadein {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.sp-fadein { animation: sp-fadein .4s ease both; }
+.sp-fadein-1 { animation-delay: .06s; }
+
+@media (max-width: 768px) {
+  .sp-page { padding: 24px 16px 60px; }
+}
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="support-container wide">
-    <div class="page-title">✉️ 나의 1:1 문의 내역</div>
-    
-    <a href="{% url 'support:inquiry_create' %}" class="btn-new">+ 새 문의 작성하기</a>
+<div class="sp-page">
 
-    {% for inquiry in inquiries %}
-    <div class="inquiry-card fade-in">
-        <div class="inquiry-header">
-            <span class="inquiry-status {% if inquiry.status == 'PENDING' %}status-pending{% else %}status-answered{% endif %}">
-                {{ inquiry.get_status_display }}
-            </span>
-            <small style="color: #94a3b8;">{{ inquiry.created_at|date:"Y.m.d H:i" }}</small>
-        </div>
-        <div class="inquiry-q">
-            <h3>{{ inquiry.title }}</h3>
-            <p>{{ inquiry.content|linebreaks }}</p>
-        </div>
-        
-        {% if inquiry.admin_answer %}
-        <div class="admin-answer-box">
-            <strong>🏠 정책 어드바이저 답변</strong>
-            <p>{{ inquiry.admin_answer|linebreaks }}</p>
-            <small style="display:block; margin-top:10px; color:#94a3b8;">답변일: {{ inquiry.answered_at|date:"Y.m.d" }}</small>
-        </div>
+  <div class="sp-header sp-fadein">
+    <div>
+      <span class="sp-eyebrow">MY INQUIRIES</span>
+      <h1 class="sp-title">나의 문의 내역</h1>
+    </div>
+    <a href="{% url 'support:support_home' %}" class="sp-back-btn">
+      <i class="fas fa-arrow-left"></i> 고객센터
+    </a>
+  </div>
+
+  <a href="{% url 'support:inquiry_create' %}" class="sp-btn-primary sp-fadein sp-fadein-1">
+    <i class="fas fa-plus"></i> 새 문의 작성하기
+  </a>
+
+  {% for inquiry in inquiries %}
+  <div class="sp-inquiry-card sp-fadein" style="animation-delay: {{ forloop.counter0 }}00ms">
+    <div class="sp-inquiry-topbar">
+      <span class="sp-status-badge {% if inquiry.status == 'PENDING' %}sp-status-badge--pending{% else %}sp-status-badge--answered{% endif %}">
+        {% if inquiry.status == 'PENDING' %}
+        <i class="fas fa-clock"></i>
+        {% else %}
+        <i class="fas fa-check-circle"></i>
         {% endif %}
+        {{ inquiry.get_status_display }}
+      </span>
+      <span class="sp-inquiry-date">{{ inquiry.created_at|date:"Y.m.d H:i" }}</span>
     </div>
-    {% empty %}
-    <div class="inquiry-card" style="text-align: center; padding: 60px;">
-        <p style="color: #64748b; font-size: 1.1rem;">아직 작성된 문의가 없습니다.</p>
+    <div class="sp-inquiry-body">
+      <div class="sp-inquiry-title">{{ inquiry.title }}</div>
+      <div class="sp-inquiry-content">{{ inquiry.content|linebreaks }}</div>
     </div>
-    {% endfor %}
+
+    {% if inquiry.admin_answer %}
+    <div class="sp-answer-box">
+      <div class="sp-answer-label">
+        <i class="fas fa-comment-dots"></i> 정책 어드바이저 답변
+      </div>
+      <div class="sp-answer-text">{{ inquiry.admin_answer|linebreaks }}</div>
+      <div class="sp-answer-date">답변일 · {{ inquiry.answered_at|date:"Y.m.d" }}</div>
+    </div>
+    {% endif %}
+  </div>
+  {% empty %}
+  <div class="sp-empty-card sp-fadein">
+    <i class="fas fa-envelope-open"></i>
+    <p>아직 작성된 문의가 없습니다.</p>
+  </div>
+  {% endfor %}
+
 </div>
 {% endblock %}

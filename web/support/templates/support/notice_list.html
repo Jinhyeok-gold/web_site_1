@@ -4,59 +4,199 @@
 {% block title %}전체 공지사항 - 딱맞춤{% endblock %}
 
 {% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-    .list-container { max-width: 1000px; margin: 60px auto; padding: 40px; background: white; border-radius: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); }
-    .list-header { text-align: center; margin-bottom: 50px; }
-    .list-header h1 { font-size: 2.2rem; font-weight: 800; color: #1e293b; }
-    
-    .notice-table { width: 100%; border-collapse: separate; border-spacing: 0 15px; }
-    .notice-row { background: #f8fafc; transition: 0.3s; cursor: pointer; border-radius: 12px; }
-    .notice-row:hover { background: #f1f5f9; transform: scale(1.01); }
-    .notice-cell { padding: 20px; border: none; }
-    .notice-cell:first-child { border-radius: 12px 0 0 12px; }
-    .notice-cell:last-child { border-radius: 0 12px 12px 0; text-align: right; color: #94a3b8; font-size: 0.9rem; }
-    
-    .badge-important { background: #fee2e2; color: #ef4444; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 11px; margin-right: 10px; vertical-align: middle; }
-    .notice-title { font-weight: 600; color: #1e293b; text-decoration: none; }
-    
-    .empty-state { text-align: center; padding: 100px 0; color: #94a3b8; }
+:root {
+  --ink: #0d0d18; --ink-2: #2d2d45; --ink-3: #6e6e8a; --ink-4: #a6a6c0;
+  --paper: #f2f2f7; --card: #ffffff; --card-2: #f7f7fb; --card-3: #eeeefc;
+  --line: #e0e0ec; --line-2: #c8c8dc;
+  --violet: #5b5ef4; --violet-2: #7c7ff7; --violet-pale: #eeeeff;
+  --prime-bg: #1e1b4b; --prime-accent: #a5b4fc;
+  --red: #ef4444; --red-pale: #fee2e2;
+  --r-pill: 999px; --r-xl: 20px; --r-lg: 16px; --r-md: 12px; --r-sm: 8px;
+  --font: 'Inter', 'Pretendard', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+.sp-page {
+  min-height: 100vh;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(rgba(0,0,0,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  padding: 40px 56px 96px;
+  font-family: var(--font);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 헤더 */
+.sp-header {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-bottom: 36px;
+}
+.sp-eyebrow {
+  display: block; font-size: 9px; font-weight: 600;
+  letter-spacing: .22em; color: var(--violet);
+  font-family: var(--mono); text-transform: uppercase;
+  margin-bottom: 6px; opacity: .75;
+}
+.sp-title {
+  font-size: 28px; font-weight: 900;
+  color: var(--ink); margin: 0;
+  letter-spacing: -.8px; line-height: 1;
+}
+
+/* 돌아가기 버튼 */
+.sp-back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700;
+  color: var(--ink-3);
+  background: var(--card);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-pill);
+  padding: 8px 16px;
+  text-decoration: none;
+  transition: all .14s;
+  font-family: var(--mono);
+}
+.sp-back-btn:hover { color: var(--violet); border-color: rgba(91,94,244,.3); background: var(--violet-pale); }
+
+/* 테이블 카드 */
+.sp-card {
+  background: var(--card);
+  border-radius: var(--r-xl);
+  border: 1px solid var(--line);
+  padding: 32px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.03);
+}
+
+/* 공지 리스트 */
+.sp-notice-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+}
+.sp-notice-row {
+  background: var(--card-2);
+  cursor: pointer;
+  transition: all .14s;
+}
+.sp-notice-row:hover {
+  background: var(--card-3);
+  transform: translateX(3px);
+}
+.sp-notice-row:hover .sp-notice-title { color: var(--violet); }
+
+.sp-notice-cell {
+  padding: 16px 20px;
+  border: none;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+.sp-notice-cell:first-child {
+  border-left: 1px solid var(--line);
+  border-radius: var(--r-lg) 0 0 var(--r-lg);
+}
+.sp-notice-cell:last-child {
+  border-right: 1px solid var(--line);
+  border-radius: 0 var(--r-lg) var(--r-lg) 0;
+  text-align: right;
+}
+/* hover 시 테두리 컬러도 변경 */
+.sp-notice-row:hover .sp-notice-cell {
+  border-color: rgba(91,94,244,.2);
+}
+
+.sp-notice-title {
+  font-size: 14px; font-weight: 600;
+  color: var(--ink-2);
+  transition: color .14s;
+}
+.sp-notice-date {
+  font-size: 11px; color: var(--ink-4);
+  font-family: var(--mono);
+  white-space: nowrap;
+}
+
+.sp-badge {
+  display: inline-flex; align-items: center;
+  font-size: 9px; font-weight: 800;
+  padding: 2px 8px; border-radius: var(--r-pill);
+  letter-spacing: .04em; text-transform: uppercase;
+  margin-right: 8px; vertical-align: middle;
+}
+.sp-badge--red    { background: var(--red-pale); color: var(--red); }
+.sp-badge--violet { background: var(--violet-pale); color: var(--violet); }
+
+/* 빈 상태 */
+.sp-empty {
+  text-align: center; padding: 80px 20px; color: var(--ink-4);
+}
+.sp-empty i { font-size: 2.5rem; margin-bottom: 16px; opacity: .3; display: block; }
+.sp-empty p { font-size: 14px; margin: 0; }
+
+/* 하단 */
+.sp-footer-link {
+  text-align: center; margin-top: 32px;
+}
+
+@keyframes sp-fadein {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.sp-fadein { animation: sp-fadein .4s ease both; }
+
+@media (max-width: 768px) {
+  .sp-page { padding: 24px 16px 60px; }
+  .sp-notice-date { display: none; }
+}
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="list-container fade-in">
-    <div class="list-header">
-        <h1>전체 공지사항</h1>
-        <p>청년·신혼부부 맞춤 소식을 모두 확인하세요.</p>
-    </div>
+<div class="sp-page">
 
+  <div class="sp-header sp-fadein">
+    <div>
+      <span class="sp-eyebrow">NOTICE BOARD</span>
+      <h1 class="sp-title">전체 공지사항</h1>
+    </div>
+    <a href="{% url 'support:support_home' %}" class="sp-back-btn">
+      <i class="fas fa-arrow-left"></i> 고객센터
+    </a>
+  </div>
+
+  <div class="sp-card sp-fadein">
     {% if all_notices %}
-    <table class="notice-table">
-        <tbody>
-            {% for notice in all_notices %}
-            <tr class="notice-row" onclick="location.href='{% url 'support:notice_detail' notice.pk %}';">
-                <td class="notice-cell">
-                    {% if notice.is_important %}
-                    <span class="badge-important">중요</span>
-                    {% endif %}
-                    <span class="notice-title">{{ notice.title }}</span>
-                </td>
-                <td class="notice-cell">
-                    {{ notice.created_at|date:"Y.m.d" }}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
+    <table class="sp-notice-table">
+      <tbody>
+        {% for notice in all_notices %}
+        <tr class="sp-notice-row" onclick="location.href='{% url 'support:notice_detail' notice.pk %}'">
+          <td class="sp-notice-cell">
+            {% if notice.is_important %}
+            <span class="sp-badge sp-badge--red">중요</span>
+            {% endif %}
+            <span class="sp-notice-title">{{ notice.title }}</span>
+          </td>
+          <td class="sp-notice-cell">
+            <span class="sp-notice-date">{{ notice.created_at|date:"Y.m.d" }}</span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
     {% else %}
-    <div class="empty-state">
-        <i class="fas fa-box-open fa-3x" style="margin-bottom: 20px; opacity: 0.3;"></i>
-        <p>등록된 공지사항이 없습니다.</p>
+    <div class="sp-empty">
+      <i class="fas fa-box-open"></i>
+      <p>등록된 공지사항이 없습니다.</p>
     </div>
     {% endif %}
+  </div>
 
-    <div style="text-align: center; margin-top: 40px;">
-        <a href="{% url 'support:support_home' %}" style="color: #1a4f8b; font-weight: 700; text-decoration: none;"><i class="fas fa-arrow-left"></i> 고객센터 메인으로</a>
-    </div>
 </div>
 {% endblock %}

@@ -6,194 +6,413 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>상담 진행 중 - {{ room.customer.username }}님</title>
     <link rel="stylesheet" href="{% static 'mainwindow/css/base.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Pretendard', sans-serif; background: #f1f5f9; margin: 0; padding: 0; display: flex; height: 100vh; width: 100vw; color: #1e293b; overflow: hidden; flex-direction: row !important; }
-        
-        /* Sidebar: Customer Info */
-        .chat-sidebar {
-            width: 300px; min-width: 300px; background: white; border-right: 1px solid #e2e8f0;
-            display: flex; flex-direction: column; padding: 30px 20px; box-sizing: border-box;
-        }
-        .sidebar-header { margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
-        .back-btn { padding: 8px 15px; background: #f1f5f9; border-radius: 10px; color: #64748b; text-decoration: none; font-size: 13px; font-weight: 700; transition: 0.2s; }
-        .back-btn:hover { background: #e2e8f0; color: #1e293b; }
+    :root {
+      --ink: #0d0d18; --ink-2: #2d2d45; --ink-3: #6e6e8a; --ink-4: #a6a6c0;
+      --paper: #f2f2f7; --card: #ffffff; --card-2: #f7f7fb; --card-3: #eeeefc;
+      --line: #e0e0ec; --line-2: #c8c8dc;
+      --violet: #5b5ef4; --violet-2: #7c7ff7; --violet-pale: #eeeeff;
+      --prime-bg: #1e1b4b; --prime-bg-2: #2d2a6e; --prime-accent: #a5b4fc;
+      --teal: #14b8a6; --teal-pale: #e6faf8;
+      --green: #10b981;
+      --r-pill: 999px; --r-xl: 20px; --r-lg: 16px; --r-md: 12px; --r-sm: 8px;
+      --font: 'Inter', 'Pretendard', system-ui, sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
 
-        .customer-card {
-            background: #f0f7ff; border-radius: 20px; padding: 25px;
-            text-align: center; margin-bottom: 30px; border: 1px solid #d0e6ff;
-        }
-        .sidebar-avatar { width: 70px; height: 70px; border-radius: 50%; background: #1a4f8b; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 28px; font-weight: 800; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .customer-name { font-size: 18px; font-weight: 800; margin-bottom: 5px; }
-        .customer-id { font-size: 12px; color: #1a4f8b; font-weight: 700; opacity: 0.7; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .diagnose-info {
-            flex: 1; border-top: 1px solid #e2e8f0; padding-top: 25px; overflow-y: auto;
-        }
-        .info-title { font-size: 14px; font-weight: 800; margin-bottom: 15px; color: #1a4f8b; text-transform: uppercase; letter-spacing: 1px; }
-        .info-item { font-size: 13px; color: #475569; margin-bottom: 12px; display: flex; justify-content: space-between; border-bottom: 1px solid #f8fafc; padding-bottom: 8px; }
-        .info-item b { color: #0f172a; }
+    body {
+      font-family: var(--font);
+      background: var(--paper);
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      color: var(--ink);
+      overflow: hidden;
+      flex-direction: row !important;
+      -webkit-font-smoothing: antialiased;
+    }
 
-        /* Chat Area */
-        .chat-main { flex: 1; display: flex; flex-direction: column; background: white; }
-        .chat-p-header {
-            height: 80px; background: white; border-bottom: 1px solid #e2e8f0;
-            display: flex; align-items: center; justify-content: space-between; padding: 0 40px;
-        }
-        .chat-status { display: flex; align-items: center; gap: 10px; font-weight: 800; color: #1a4f8b; }
-        .status-dot { width: 10px; height: 10px; background: #2ed573; border-radius: 50%; }
+    /* =============================================
+       사이드바 — 고객 정보
+       ============================================= */
+    .chat-sidebar {
+      width: 300px; min-width: 300px;
+      background: var(--prime-bg);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 20px;
+      overflow-y: auto;
+      position: relative;
+    }
+    .chat-sidebar::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 240px; height: 240px;
+      background: radial-gradient(circle, rgba(165,180,252,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
 
-        .chat-history { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #fdfdfd; }
-        .message-row { display: flex; flex-direction: column; max-width: 65%; animation: slideIn 0.2s ease; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
-        
-        .bot-row { align-self: flex-start; } /* Client messages */
-        .user-row { align-self: flex-end; align-items: flex-end; } /* Counselor messages */
+    .sidebar-header {
+      display: flex; align-items: center;
+      gap: 10px; margin-bottom: 24px;
+      position: relative; z-index: 1;
+    }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 7px 12px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.1);
+      color: rgba(255,255,255,.6);
+      border-radius: var(--r-pill);
+      text-decoration: none;
+      font-size: 11px; font-weight: 700;
+      transition: all .14s;
+      font-family: var(--mono);
+    }
+    .back-btn:hover { background: rgba(255,255,255,.14); color: #fff; }
 
-        .bubble {
-            padding: 14px 18px; border-radius: 18px; font-size: 15px; line-height: 1.6;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-        }
-        .bot-row .bubble { background: #f1f5f9; border-bottom-left-radius: 4px; border: 1px solid #e2e8f0; }
-        .user-row .bubble { background: #1a4f8b; color: white; border-bottom-right-radius: 4px; }
-        .sender-name { font-size: 11px; font-weight: 700; margin-bottom: 4px; color: #64748b; }
-        .time { font-size: 10px; color: #94a3b8; margin-top: 5px; }
+    /* 고객 카드 */
+    .customer-card {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(165,180,252,.12);
+      border-radius: var(--r-xl);
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 24px;
+      position: relative; z-index: 1;
+    }
+    .sidebar-avatar {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--teal), #06b6d4);
+      margin: 0 auto 12px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 24px; font-weight: 800;
+      border: 3px solid rgba(255,255,255,.15);
+      box-shadow: 0 8px 24px rgba(20,184,166,.4);
+    }
+    .customer-name {
+      font-size: 15px; font-weight: 800;
+      color: #fff; margin-bottom: 4px;
+    }
+    .customer-id {
+      font-size: 10px; color: rgba(165,180,252,.6);
+      font-family: var(--mono);
+    }
 
-        .chat-footer { padding: 30px 40px; background: white; border-top: 1px solid #e2e8f0; }
-        .input-container {
-            display: flex; gap: 15px; background: #f8fafc; border: 2px solid #e2e8f0;
-            border-radius: 16px; padding: 10px 15px; align-items: center; transition: 0.3s;
-        }
-        .input-container:focus-within { border-color: #1a4f8b; background: white; }
-        .message-input { flex: 1; border: none; background: transparent; padding: 10px; outline: none; font-size: 15px; }
-        .btn-send { background: #1a4f8b; color: white; border: none; border-radius: 12px; padding: 12px 25px; font-weight: 800; cursor: pointer; }
+    /* 진단 정보 */
+    .diagnose-info {
+      flex: 1;
+      border-top: 1px solid rgba(165,180,252,.12);
+      padding-top: 20px;
+      position: relative; z-index: 1;
+    }
+    .info-title {
+      font-size: 9px; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--prime-accent); opacity: .7;
+      font-family: var(--mono);
+      margin-bottom: 14px;
+    }
+    .info-item {
+      font-size: 12px;
+      color: rgba(255,255,255,.55);
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .info-item b {
+      color: rgba(255,255,255,.85);
+      font-weight: 700;
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+    .no-data {
+      font-size: 11px;
+      color: rgba(165,180,252,.4);
+      text-align: center;
+      padding: 20px 0;
+      font-family: var(--mono);
+    }
 
-        .end-btn { padding: 8px 15px; background: #fff5f5; color: #ff4757; border: 1px solid #ffebeb; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    /* =============================================
+       메인 채팅 영역
+       ============================================= */
+    .chat-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--paper);
+      background-image:
+        linear-gradient(rgba(0,0,0,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,.03) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    /* 채팅 헤더 */
+    .chat-p-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 32px;
+      background: var(--card);
+      border-bottom: 1px solid var(--line);
+    }
+    .chat-status-info { display: flex; align-items: center; gap: 8px; }
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 6px #4ade80;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .4; }
+    }
+    .chat-status-text {
+      font-size: 13px; font-weight: 700;
+      color: var(--ink-2);
+    }
+    .end-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px;
+      background: var(--card-2);
+      color: var(--ink-3);
+      border: 1px solid var(--line-2);
+      border-radius: var(--r-pill);
+      font-size: 12px; font-weight: 700;
+      cursor: pointer;
+      transition: all .14s;
+      font-family: var(--font);
+    }
+    .end-btn:hover { border-color: rgba(239,68,68,.3); color: #ef4444; background: #fee2e2; }
+
+    /* 채팅 히스토리 */
+    .chat-history {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .chat-history::-webkit-scrollbar { width: 4px; }
+    .chat-history::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 4px; }
+    .chat-history::-webkit-scrollbar-track { background: transparent; }
+
+    .message-row {
+      display: flex;
+      flex-direction: column;
+      max-width: 72%;
+      margin-bottom: 8px;
+    }
+    .user-row { align-self: flex-end; align-items: flex-end; }
+    .bot-row  { align-self: flex-start; align-items: flex-start; }
+
+    .sender-name {
+      font-size: 10px; color: var(--ink-4);
+      font-family: var(--mono);
+      margin-bottom: 3px;
+      padding: 0 4px;
+    }
+    .bubble {
+      padding: 11px 16px;
+      border-radius: var(--r-xl);
+      font-size: 14px; line-height: 1.6;
+      word-break: break-word;
+    }
+    /* 상담사(나) 버블 — violet */
+    .user-row .bubble {
+      background: var(--violet);
+      color: #fff;
+      border-bottom-right-radius: var(--r-sm);
+      box-shadow: 0 4px 16px rgba(91,94,244,.25);
+    }
+    /* 고객 버블 — white */
+    .bot-row .bubble {
+      background: var(--card);
+      color: var(--ink-2);
+      border-bottom-left-radius: var(--r-sm);
+      border: 1px solid var(--line);
+      box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    }
+    .time {
+      font-size: 10px; color: var(--ink-4);
+      margin-top: 4px;
+      font-family: var(--mono);
+      padding: 0 4px;
+    }
+
+    /* 입력 푸터 */
+    .chat-footer {
+      padding: 20px 32px;
+      background: var(--card);
+      border-top: 1px solid var(--line);
+    }
+    .input-container {
+      display: flex; gap: 12px;
+      background: var(--card-2);
+      border: 1.5px solid var(--line-2);
+      border-radius: var(--r-xl);
+      padding: 8px 8px 8px 18px;
+      align-items: center;
+      transition: border-color .18s, box-shadow .18s;
+    }
+    .input-container:focus-within {
+      border-color: var(--violet);
+      box-shadow: 0 0 0 3px rgba(91,94,244,.1);
+      background: #fff;
+    }
+    .message-input {
+      flex: 1; border: none; background: transparent;
+      padding: 8px 0; outline: none;
+      font-size: 14px; color: var(--ink);
+      font-family: var(--font);
+    }
+    .message-input::placeholder { color: var(--ink-4); }
+    .btn-send {
+      background: var(--violet);
+      color: white; border: none;
+      border-radius: var(--r-lg);
+      padding: 10px 20px;
+      font-weight: 700; font-size: 13px;
+      cursor: pointer; transition: all .15s;
+      font-family: var(--font);
+    }
+    .btn-send:hover:not(:disabled) {
+      background: var(--violet-2);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(91,94,244,.35);
+    }
+    .btn-send:disabled { background: var(--line-2); color: var(--ink-4); cursor: not-allowed; }
     </style>
 </head>
 <body>
 
-    <aside class="chat-sidebar">
-        <div class="sidebar-header">
-            <a href="{% url 'support:admin_chat_list' %}" class="back-btn">← 목록으로</a>
-        </div>
+  <!-- 사이드바 — 고객 정보 -->
+  <aside class="chat-sidebar">
+    <div class="sidebar-header">
+      <a href="{% url 'support:admin_chat_list' %}" class="back-btn">
+        <i class="fas fa-arrow-left"></i> 목록으로
+      </a>
+    </div>
 
-        <div class="customer-card">
-            <div class="sidebar-avatar">{{ room.customer.username|slice:":1" }}</div>
-            <div class="customer-name">{{ room.customer.last_name|default:room.customer.username }} 고객님</div>
-            <div class="customer-id">가입일: {{ room.customer.date_joined|date:"Y.m.d" }}</div>
-        </div>
+    <div class="customer-card">
+      <div class="sidebar-avatar">{{ room.customer.username|slice:":1"|upper }}</div>
+      <div class="customer-name">{{ room.customer.last_name|default:room.customer.username }} 고객님</div>
+      <div class="customer-id">가입일 · {{ room.customer.date_joined|date:"Y.m.d" }}</div>
+    </div>
 
-        <div class="diagnose-info">
-            <div class="info-title">상담 지원 데이터</div>
-            {% if diagnostic %}
-                <div class="info-item">현재 연령 <b>만 {{ diagnostic.age }}세</b></div>
-                <div class="info-item">거주 지역 <b>{{ diagnostic.region }}</b></div>
-                <div class="info-item">혼인 상태 <b>{{ diagnostic.get_marital_status_display }}</b></div>
-                <div class="info-item">연간 소득 <b>{{ diagnostic.total_income }}만원</b></div>
-                <div class="info-item">보유 자산 <b>{{ diagnostic.assets }}만원</b></div>
-                <div class="info-item">청약 횟수 <b>{{ diagnostic.subscription_count }}회</b></div>
-                <div class="info-item">무주택 여부 <b>{% if diagnostic.is_homeless %}예{% else %}아니오{% endif %}</b></div>
-            {% else %}
-                <p style="font-size: 12px; color: #94a3b8; text-align: center;">진단 데이터가 부족합니다.</p>
-            {% endif %}
-        </div>
-    </aside>
+    <div class="diagnose-info">
+      <div class="info-title">상담 지원 데이터</div>
+      {% if diagnostic %}
+        <div class="info-item">연령 <b>만 {{ diagnostic.age }}세</b></div>
+        <div class="info-item">지역 <b>{{ diagnostic.region }}</b></div>
+        <div class="info-item">혼인상태 <b>{{ diagnostic.get_marital_status_display }}</b></div>
+        <div class="info-item">연간소득 <b>{{ diagnostic.total_income }}만원</b></div>
+        <div class="info-item">보유자산 <b>{{ diagnostic.assets }}만원</b></div>
+        <div class="info-item">청약횟수 <b>{{ diagnostic.subscription_count }}회</b></div>
+        <div class="info-item">무주택 <b>{% if diagnostic.is_homeless %}예{% else %}아니오{% endif %}</b></div>
+      {% else %}
+        <div class="no-data">진단 데이터 없음</div>
+      {% endif %}
+    </div>
+  </aside>
 
-    <main class="chat-main">
-        <header class="chat-p-header">
-            <div class="chat-status">
-                <span class="status-dot"></span>
-                실시간 상담 중 ({{ room.customer.username }})
-            </div>
-            <button class="end-btn" onclick="alert('상담 종료 기능은 준비 중입니다.')">상담 종료</button>
-        </header>
+  <!-- 메인 채팅 -->
+  <main class="chat-main">
+    <header class="chat-p-header">
+      <div class="chat-status-info">
+        <span class="status-dot"></span>
+        <span class="chat-status-text">실시간 상담 중 ({{ room.customer.username }})</span>
+      </div>
+      <button class="end-btn" onclick="alert('상담 종료 기능은 준비 중입니다.')">
+        <i class="fas fa-phone-slash"></i> 상담 종료
+      </button>
+    </header>
 
-        <div class="chat-history" id="chatHistory">
-            <!-- Messages load here -->
-        </div>
+    <div class="chat-history" id="chatHistory">
+      <!-- 메시지 로드 -->
+    </div>
 
-        <footer class="chat-footer">
-            <form id="chatForm" class="input-container">
-                <input type="text" id="messageInput" class="message-input" placeholder="고객님께 답변 입력..." autocomplete="off">
-                <button type="submit" id="sendBtn" class="btn-send">답변 전송</button>
-            </form>
-        </footer>
-    </main>
+    <footer class="chat-footer">
+      <form id="chatForm" class="input-container">
+        <input type="text" id="messageInput" class="message-input" placeholder="고객님께 답변 입력..." autocomplete="off">
+        <button type="submit" id="sendBtn" class="btn-send">
+          <i class="fas fa-paper-plane"></i> 답변 전송
+        </button>
+      </form>
+    </footer>
+  </main>
 
-    <script>
-        const getMessagesUrl = "{% url 'support:api_get_messages' room.id %}";
-        const sendMessageUrl = "{% url 'support:api_send_message' room.id %}";
-        const roomId = "{{ room.id }}";
-        const chatHistory = document.getElementById('chatHistory');
-        const chatForm = document.getElementById('chatForm');
-        const messageInput = document.getElementById('messageInput');
-        const sendBtn = document.getElementById('sendBtn');
-        let lastMessageId = 0;
+  <script>
+    const getMessagesUrl = "{% url 'support:api_get_messages' room.id %}";
+    const sendMessageUrl = "{% url 'support:api_send_message' room.id %}";
+    const chatHistory = document.getElementById('chatHistory');
+    const chatForm = document.getElementById('chatForm');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    let lastMessageId = 0;
 
-        async function fetchMessages() {
-            try {
-                const response = await fetch(`${getMessagesUrl}?last_id=${lastMessageId}`);
-                const data = await response.json();
-                
-                if (data.messages && data.messages.length > 0) {
-                    data.messages.forEach(msg => {
-                        appendMessage(msg);
-                        lastMessageId = Math.max(lastMessageId, msg.id);
-                    });
-                    scrollToBottom();
-                }
-            } catch (error) {
-                console.error("Error fetching messages:", error);
-            }
+    async function fetchMessages() {
+      try {
+        const response = await fetch(`${getMessagesUrl}?last_id=${lastMessageId}`);
+        const data = await response.json();
+        if (data.messages && data.messages.length > 0) {
+          data.messages.forEach(msg => {
+            appendMessage(msg);
+            lastMessageId = Math.max(lastMessageId, msg.id);
+          });
+          scrollToBottom();
         }
+      } catch (error) { console.error("Error fetching messages:", error); }
+    }
 
-        function appendMessage(msg) {
-            const row = document.createElement('div');
-            // In Admin view: msg.is_me means Counselor, others are Clients
-            row.className = `message-row ${msg.is_me ? 'user-row' : 'bot-row'}`;
-            
-            const senderTag = msg.is_me ? "나 (상담사)" : msg.sender;
+    function appendMessage(msg) {
+      const row = document.createElement('div');
+      row.className = `message-row ${msg.is_me ? 'user-row' : 'bot-row'}`;
+      const senderTag = msg.is_me ? '나 (상담사)' : msg.sender;
+      row.innerHTML = `
+        <div class="sender-name">${senderTag}</div>
+        <div class="bubble">${msg.message}</div>
+        <div class="time">${msg.timestamp}</div>
+      `;
+      chatHistory.appendChild(row);
+    }
 
-            row.innerHTML = `
-                <div class="sender-name">${senderTag}</div>
-                <div class="bubble">${msg.message}</div>
-                <div class="time">${msg.timestamp}</div>
-            `;
-            chatHistory.appendChild(row);
-        }
+    function scrollToBottom() { chatHistory.scrollTop = chatHistory.scrollHeight; }
 
-        function scrollToBottom() {
-            chatHistory.scrollTop = chatHistory.scrollHeight;
-        }
+    chatForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const content = messageInput.value.trim();
+      if (!content) return;
+      messageInput.value = '';
+      messageInput.disabled = true;
+      try {
+        const response = await fetch(sendMessageUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: content })
+        });
+        if (response.ok) { fetchMessages(); }
+      } catch (error) { console.error("Error sending message:", error); }
+      finally {
+        messageInput.disabled = false;
+        messageInput.focus();
+      }
+    };
 
-        chatForm.onsubmit = async (e) => {
-            e.preventDefault();
-            const content = messageInput.value.trim();
-            if (!content) return;
-
-            messageInput.value = '';
-            messageInput.disabled = true;
-
-            try {
-                const response = await fetch(sendMessageUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ content: content })
-                });
-                
-                if (response.ok) {
-                    fetchMessages();
-                }
-            } catch (error) {
-                console.error("Error sending message:", error);
-            } finally {
-                messageInput.disabled = false;
-                messageInput.focus();
-            }
-        };
-
-        setInterval(fetchMessages, 2500);
-        fetchMessages();
-    </script>
+    setInterval(fetchMessages, 2500);
+    fetchMessages();
+  </script>
 </body>
 </html>
