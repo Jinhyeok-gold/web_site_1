@@ -8,7 +8,7 @@
         :root {
             --primary-color: #74ebd5; 
             --secondary-color: #ACB6E5; 
-            --text-color: #ffffff;
+            --text-color: #333333;
             --glass-bg: rgba(255, 255, 255, 0.15); 
             --glass-border: rgba(255, 255, 255, 0.2); 
             --glass-blur: blur(15px); 
@@ -17,7 +17,7 @@
         body {
             margin: 0; padding: 0;
             font-family: 'Apple SD Gothic Neo', sans-serif;
-            background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+            background: #ffffff;
             background-attachment: fixed;
             color: var(--text-color);
             min-height: 100vh;
@@ -32,16 +32,16 @@
             background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
-            border-bottom: 1px solid var(--glass-border);
+            border-bottom: 1px solid #e2e8f0;
             position: fixed;
             top: 0; width: 100%; box-sizing: border-box; z-index: 1000;
         }
 
-        .logo { font-weight: bold; font-size: 1.4rem; cursor: pointer; }
+        .logo { font-weight: bold; font-size: 1.4rem; cursor: pointer; color: #1e293b; }
         
         nav a {
             text-decoration: none;
-            color: rgba(255,255,255,0.8);
+            color: #64748b;
             margin-left: 20px;
             font-size: 0.9rem;
         }
@@ -56,10 +56,10 @@
         }
 
         .login-detail-container {
-            background: var(--glass-bg);
+            background: #ffffff;
             backdrop-filter: var(--glass-blur);
             border-radius: 30px;
-            border: 1px solid var(--glass-border);
+            border: 1px solid #e2e8f0;
             width: 900px;
             display: flex;
             overflow: hidden;
@@ -72,13 +72,13 @@
             text-align: left;
         }
 
-        .login-form-side h2 { margin-bottom: 30px; font-size: 1.8rem; }
+        .login-form-side h2 { margin-bottom: 30px; font-size: 1.8rem; color: #1e293b; }
 
         .input-group { margin-bottom: 20px; }
-        .input-group label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 0.9rem; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 0.9rem; color: #475569; }
         .input-group input {
             width: 100%; padding: 12px; border-radius: 10px; border: none;
-            background: rgba(255, 255, 255, 0.8); outline: none; box-sizing: border-box;
+            background: #f1f5f9; outline: none; box-sizing: border-box;
             color: #333;
         }
 
@@ -113,7 +113,7 @@
 <body>
 
      <header>
-        <div class="logo" onclick="location.href='/'">청춘로</div>
+        <div class="logo" onclick="location.href='{% url 'home' %}'">딱맞춤</div>
         <nav>
     <a href="javascript:void(0);">통합검색</a>
 
@@ -121,12 +121,18 @@
         <span style="color: white; font-weight: bold; margin-left: 20px;">
             {{ user.last_name }}님 환영합니다!
         </span>
+        <a href="{% url 'policy:mypage' %}" style="color: white; text-decoration: none; margin-left: 15px;">
+            마이페이지
+        </a>
         <a href="{% url 'policy:logout' %}">로그아웃</a>
 
     {% elif request.session.is_guest %}
         <span style="color: white; font-weight: bold; margin-left: 20px;">
             {{ request.session.guest_name }}님 환영합니다!
         </span>
+        <a href="{% url 'policy:mypage' %}" style="color: white; text-decoration: none; margin-left: 15px;">
+            <i class="fa-solid fa-user-gear"></i> 마이페이지
+        </a>
         <a href="{% url 'policy:logout' %}">로그아웃</a>
 
     {% else %}

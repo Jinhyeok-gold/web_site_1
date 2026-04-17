@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>비회원 로그인 | 청춘로</title>
+    <title>비회원 로그인 | 딱맞춤</title>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -17,7 +17,7 @@
             font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
             margin: 0; padding: 0;
             min-height: 100vh;
-            background: linear-gradient(135deg, #a7d8f5 0%, #b3e8e5 100%);
+            background: #ffffff;
             background-attachment: fixed;
             display: flex; flex-direction: column; align-items: center;
         }
@@ -30,16 +30,16 @@
             background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
-            border-bottom: 1px solid var(--glass-border);
+            border-bottom: 1px solid #e2e8f0;
             position: fixed;
             top: 0; width: 100%; box-sizing: border-box; z-index: 1000;
         }
 
-        .logo { font-weight: bold; font-size: 1.4rem; cursor: pointer; color: white; text-decoration: none; }
+        .logo { font-weight: bold; font-size: 1.4rem; cursor: pointer; color: #1e293b; text-decoration: none; }
         
         nav a {
             text-decoration: none;
-            color: rgba(255,255,255,0.8);
+            color: #64748b;
             margin-left: 20px;
             font-size: 0.9rem;
         }
@@ -51,23 +51,23 @@
         }
 
         .glass-container {
-            background: rgba(255, 255, 255, 0.3);
+            background: #ffffff;
             backdrop-filter: blur(15px);
             border-radius: 30px;
             padding: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            border: 1px solid #e2e8f0;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             color: #444;
         }
 
-        h2 { color: #fff; text-align: center; margin-bottom: 30px; font-size: 2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h2 { color: #333333; text-align: center; margin-bottom: 30px; font-size: 2rem; text-shadow: none; }
 
         .section-box {
-            background: rgba(255, 255, 255, 0.5);
+            background: #f8fafc;
             border-radius: 20px;
             padding: 25px;
             margin-bottom: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid #e2e8f0;
         }
         .section-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 15px; color: #2c3e50; display: block; }
 
@@ -116,11 +116,34 @@
 </head>
 <body>
 <header>
-    <a href="/" class="logo">청춘로</a>
+    <div class="logo" onclick="location.href='{% url 'home' %}'">딱맞춤</div>
     <nav>
-        <a href="#">통합검색</a>
-        <a href="/login/">로그인</a>
-        <a href="{% url 'policy:register_step1' %}" style="background:rgba(255,255,255,0.2); padding:5px 15px; border-radius:15px;">회원가입</a>
+        <a href="javascript:void(0);">통합검색</a>
+
+        {% if user.is_authenticated %}
+            <span style="color: white; font-weight: bold; margin-left: 20px;">
+                {{ user.last_name }}님 환영합니다!
+            </span>
+            <a href="{% url 'policy:mypage' %}" style="color: white; text-decoration: none; margin-left: 15px;">
+                마이페이지
+            </a>
+            <a href="{% url 'policy:logout' %}">로그아웃</a>
+
+        {% elif request.session.is_guest %}
+            <span style="color: white; font-weight: bold; margin-left: 20px;">
+                {{ request.session.guest_name }}님 환영합니다!
+            </span>
+            <a href="{% url 'policy:mypage' %}" style="color: white; text-decoration: none; margin-left: 15px;">
+                <i class="fa-solid fa-user-gear"></i> 마이페이지
+            </a>
+            <a href="{% url 'policy:logout' %}">로그아웃</a>
+
+        {% else %}
+            <a href="{% url 'policy:login' %}">로그인</a> 
+            <a href="{% url 'policy:register_step1' %}" class="register-btn" style="background:rgba(255,255,255,0.2); padding:5px 15px; border-radius:15px;">
+                회원가입
+            </a>
+        {% endif %}
     </nav>
 </header>
 
@@ -133,7 +156,7 @@
         <div class="section-box">
             <span class="section-title">유의사항</span>
             <ul class="notice-list">
-                <li>비회원 로그인은 회원 가입 없이 청춘로 서비스를 이용하실 수 있습니다.</li>
+                <li>비회원 로그인은 회원 가입 없이 딱맞춤 서비스를 이용하실 수 있습니다.</li>
                 <li>비회원 로그인 방식으로 신청한 서비스 내역 확인은 동일하게 비회원 로그인으로 로그인해야 확인이 가능합니다.</li>
             </ul>
         </div>

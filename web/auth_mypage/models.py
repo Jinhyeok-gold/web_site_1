@@ -20,5 +20,8 @@ class UserProfile(models.Model):
     is_first_home = models.BooleanField(default=True, verbose_name="생애최초 주택구입 여부")
     is_homeless = models.BooleanField(default=True, verbose_name="현재 무주택 여부")
 
+    class Meta:
+        db_table = 'policyapp_userprofile'
+
     def __str__(self):
         return f"{self.user.username}의 프로필"

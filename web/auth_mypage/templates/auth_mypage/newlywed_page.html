@@ -106,27 +106,27 @@
 <body>
 
     <header>
-        <div class="logo">청춘로</div>
-   <nav>
+        <div class="logo" onclick="location.href='{% url 'home' %}'">청춘로</div>
+    <nav>
     <a href="javascript:void(0);">통합검색</a>
 
     {% if user.is_authenticated %}
-        <span style="color: white; font-size: 0.9rem;">
+        <a href="{% url 'policy:mypage' %}" style="color: white; font-size: 0.9rem; text-decoration: none; margin-left: 15px;">
             <strong>{{ user.last_name }}</strong>님 환영합니다!
-        </span>
+        </a>
         
-        <a href="{% url 'policy:mypage' %}" title="마이페이지" style="margin-left: 15px;">
-            <i class="fa-solid fa-user-circle"></i> 마이페이지
+        <a href="{% url 'policy:mypage' %}" title="마이페이지" style="margin-left: 10px;">
+            마이페이지
         </a>
         
         <a href="{% url 'policy:logout' %}" style="margin-left: 15px;">로그아웃</a>
 
     {% elif request.session.is_guest %}
-        <span style="color: white; font-size: 0.9rem;">
+        <a href="{% url 'policy:mypage' %}" style="color: white; font-size: 0.9rem; text-decoration: none; margin-left: 15px;">
             <strong>{{ request.session.guest_name }}</strong>(비회원)님 환영합니다!
-        </span>
+        </a>
         
-        <a href="{% url 'policy:mypage' %}" title="마이페이지" style="margin-left: 15px;">
+        <a href="{% url 'policy:mypage' %}" title="마이페이지" style="margin-left: 10px;">
             <i class="fa-solid fa-user-circle"></i> 마이페이지
         </a>
         
@@ -137,22 +137,23 @@
         <a href="{% url 'policy:register_step1' %}" style="background:rgba(255,255,255,0.2); padding:5px 15px; border-radius:15px;">회원가입</a>
     {% endif %}
 </nav>
-    </header>
+    
+        </header>
 
     <main>
-        <h1>청년를 위한 맞춤 정책</h1>
+        <h1>신혼부부를 위한 맞춤 정책</h1>
         <div class="card-container">
             <div class="policy-card">
                 <span class="icon">💼</span>
-                <div class="card-title">청년 복지 지원</div>
+                <div class="card-title">신혼 복지 지원</div>
             </div>
             <div class="policy-card">
                 <span class="icon">🏠</span>
-                <div class="card-title">청년 주거 지원</div>
+                <div class="card-title">신혼 주거 지원</div>
             </div>
             <div class="policy-card">
                 <span class="icon">🚀</span>
-                <div class="card-title">청년 금융 지원</div>
+                <div class="card-title">신혼 금융 지원</div>
             </div>
         </div>
     </main>

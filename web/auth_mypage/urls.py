@@ -4,7 +4,7 @@ from . import views
 app_name = 'policy'
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', views.home, name='home'),
     path('youth/', views.youth_home, name='youth_home'),
     path('newlywed/', views.newlywed_home, name='newlywed_home'),
     path('login/', views.login_view, name='login'),

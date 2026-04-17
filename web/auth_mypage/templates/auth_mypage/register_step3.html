@@ -6,15 +6,15 @@
     <style>
         /* 기존 register_step2.html의 스타일과 동일하게 설정 */
         body {
-            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 50%, #ffd3b6 100%);
+            background: #ffffff;
             margin: 0; display: flex; justify-content: center; align-items: center;
             min-height: 120vh; padding: 50px 0; font-family: 'Pretendard', sans-serif;
         }
         .register-container { width: 100%; max-width: 500px; padding: 20px; }
         .glass-card-wide {
-            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px);
-            padding: 40px; border-radius: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: #ffffff;
+            padding: 40px; border-radius: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
         }
         .field-group { margin-bottom: 20px; }
         .field-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #444; font-size: 14px; }
@@ -39,27 +39,27 @@
         
         <div class="field-group">
             <label>나이 (만)</label>
-            <input type="number" name="age" placeholder="만 나이를 입력하세요" required>
+            <input type="number" name="age" placeholder="만 나이를 입력하세요" required min="0" max="120">
         </div>
 
         <div class="field-group">
             <label>연소득 (가구 합산, 만원)</label>
-            <input type="number" name="income" placeholder="예: 4000" required>
+            <input type="number" name="income" placeholder="예: 4000" required min="0">
         </div>
 
         <div class="field-group">
             <label>순자산 규모 (만원)</label>
-            <input type="number" name="net_assets" placeholder="예: 15000" required>
+            <input type="number" name="net_assets" placeholder="예: 15000" required min="0">
         </div>
 
         <div class="field-group">
             <label>부채 규모 (만원)</label>
-            <input type="number" name="debt" value="0" required>
+            <input type="number" name="debt" value="0" required min="0">
         </div>
 
         <div class="field-group">
             <label>청약통장 납입 횟수 (회)</label>
-            <input type="number" name="subscription_count" required>
+            <input type="number" name="subscription_count" required min="0">
         </div>
 
         <div class="field-group">
@@ -73,12 +73,12 @@
 
         <div class="field-group">
             <label>자녀수</label>
-            <input type="number" name="children_count" value="0" required>
+            <input type="number" name="children_count" value="0" required min="0">
         </div>
 
         <div class="field-group">
             <label>무주택기간 (년)</label>
-            <input type="number" name="homeless_period" required>
+            <input type="number" name="homeless_period" required min="0">
         </div>
 
         <div class="field-group" style="display: flex; gap: 20px; flex-wrap: wrap;">

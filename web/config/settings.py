@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     'mainwindow',
     'youth_road',
     'chatbot.core',
-    'policyapp',
+    'auth_mypage', # Replaced policyapp
 
     # Allauth & Sites
     'django.contrib.sites',
@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'support',
+    'data_storage',
 ]
 
 MIDDLEWARE = [
@@ -84,7 +85,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -146,11 +147,20 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+# Media files (User uploaded files)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 # Login settings
 LOGIN_URL = 'policy:login'
+
+# 창을 닫을 때 자동으로 로그아웃 되도록 세션 설정 추가
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True

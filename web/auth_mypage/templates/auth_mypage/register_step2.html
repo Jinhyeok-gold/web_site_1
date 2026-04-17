@@ -88,7 +88,7 @@
             margin-left: 2px;
         }
   body {
-            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 50%, #ffd3b6 100%);
+            background: #ffffff;
             margin: 0;
             display: flex;
             justify-content: center;
@@ -101,12 +101,12 @@
         .register-container { width: 100%; max-width: 500px; padding: 20px; }
         
         .glass-card-wide {
-            background: rgba(255, 255, 255, 0.7);
+            background: #ffffff;
             backdrop-filter: blur(10px);
             padding: 40px;
             border-radius: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid #e2e8f0;
         }
 
         .field-group { margin-bottom: 20px; }
@@ -179,6 +179,11 @@
 
             <input type="hidden" name="sido" id="sido" required>
             <input type="hidden" name="sigungu" id="sigungu" required>
+        </div>
+
+        <div class="field-group">
+            <label>이메일 <span class="required-star">(필수)</span></label>
+            <input type="email" name="email" placeholder="결과 리포트를 받을 이메일을 입력해 주세요." required style="width: 100%; padding: 12px 15px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255, 255, 255, 0.9); box-sizing: border-box;">
         </div>
 
         <div class="field-group">

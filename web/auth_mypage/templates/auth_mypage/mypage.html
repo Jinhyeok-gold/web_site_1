@@ -3,18 +3,18 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>마이페이지 | 청춘로</title>
+    <title>마이페이지 | 딱맞춤</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
-            background: linear-gradient(135deg, #a7d8f5 0%, #b3e8e5 100%);
+            background: #ffffff;
             min-height: 100vh; display: flex; justify-content: center; align-items: center;
             font-family: 'Apple SD Gothic Neo', sans-serif; margin: 0;
         }
         .mypage-card {
-            background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(15px);
+            background: #ffffff;
             padding: 40px; border-radius: 30px; width: 400px;
-            border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0; box-shadow: 0 15px 35px rgba(0,0,0,0.05);
         }
         h2 { text-align: center; color: #2c3e50; margin-bottom: 30px; }
         
@@ -43,20 +43,23 @@
 </head>
 <body>
     <div class="mypage-card" style="width: 450px;">
-    <h2><i class="fa-solid fa-address-card"></i> 마이페이지</h2>
+    <h2>마이페이지</h2>
     
-    <div style="display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 10px; margin-bottom: 20px;">
+    <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 10px; margin-bottom: 20px;">
         <div class="info-item" style="border-bottom: none;">
             <span class="label">이름</span>
             <span class="value">{{ user_info.name }}</span>
         </div>
         <div class="info-item" style="border-bottom: none;">
-            <span class="label">거주 지역</span>
-            <span class="value">{{ user_info.sido }} {{ user_info.sigungu }}</span>
-        </div>
-        <div class="info-item" style="border-bottom: none;">
             <span class="label">아이디</span>
             <span class="value">{{ user_info.username }}</span>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 20px;">
+        <div class="info-item" style="border-bottom: none;">
+            <span class="label">거주 지역</span>
+            <span class="value">{{ user_info.sido }} {{ user_info.sigungu }}</span>
         </div>
     </div>
 
@@ -90,9 +93,9 @@
     </div>
         <div class="btn-group">
             <button class="btn btn-modify" onclick="location.href='{% url 'policy:edit_profile' %}'">
-    <i class="fa-solid fa-gear"></i> 정보수정
-</button>
-            <a href="{% url 'policy:index' %}" class="btn btn-home">
+                정보수정
+            </button>
+            <a href="{% url 'home' %}" class="btn btn-home">
                 <i class="fa-solid fa-house"></i> 메인으로
             </a>
         </div>

@@ -5,6 +5,7 @@ import xml.etree.ElementTree as ET
 import os
 # from .firebase_service import FirebaseManager (Removed)
 from django.conf import settings
+from .models import HousingProduct, FinanceProduct, WelfareProduct
 
 # Initialize environ
 from dotenv import load_dotenv
@@ -12,6 +13,18 @@ load_dotenv(override=True) # --- [CRITICAL] Override System Variables ---
 
 env = environ.Env()
 env.read_env(os.path.join(settings.BASE_DIR, '.env'))
+
+class DateFormatter:
+    """날짜 변환 유틸리티 (v20 Consolidation)"""
+    @staticmethod
+    def format_date(d):
+        if not d: return None
+        d_str = str(d).replace('.', '-').strip()
+        if len(d_str) == 10 and d_str[4] == '-' and d_str[7] == '-':
+            return d_str
+        if len(d_str) == 8 and d_str.isdigit():
+            return f"{d_str[:4]}-{d_str[4:6]}-{d_str[6:8]}"
+        return None
 
 class RegionMapper:
     """각 기관별 Open API에 최적화된 지역 코드 매핑 시스템"""
@@ -42,6 +55,31 @@ class RegionMapper:
 class PublicDataHousingService:
     """1단계: LH 및 SH 실시간 임대공고 연동 엔진"""
     
+    @staticmethod
+    def sync_all(region_name='Seoul'):
+        """[Consolidated] LH/SH DB 동기화용 메서드"""
+        # LH/SH 공고를 가져온 후 DB에 저장
+        items = PublicDataHousingService.get_lh_sh_notices(region_name)
+        for item in items:
+            pan_id = item.get('raw_data', {}).get('PAN_ID', '')
+            HousingProduct.objects.update_or_create(
+                manage_no=item.get('id'),
+                defaults={
+                    'pblanc_no': pan_id,
+                    'title': item.get('title'),
+                    'category': item.get('type'),
+                    'region': item.get('region'),
+                    'location': item.get('raw_data', {}).get('LCC_ADDR', ''),
+                    'url': item.get('url'),
+                    'org': item.get('org'),
+                    'notice_date': DateFormatter.format_date(item.get('raw_data', {}).get('PAN_NT_DT')),
+                    'start_date': DateFormatter.format_date(item.get('raw_data', {}).get('RCEPT_BGNDE')),
+                    'end_date': DateFormatter.format_date(item.get('raw_data', {}).get('RCEPT_ENDDE')),
+                    'raw_data': item.get('raw_data')
+                }
+            )
+        return len(items)
+
     @staticmethod
     def get_lh_sh_notices(region_name, type_code='05'):
         # 1. Local Archive 로드 (Firebase 제거됨)
@@ -76,8 +114,19 @@ class PublicDataHousingService:
                 root = ET.fromstring(response.text)
                 api_items = []
                 for item_xml in root.findall('.//item'):
-                    # ... (기존 파싱 로직 유지)
-                    notice_id = f"LH_{item_xml.findtext('PAN_ID', '') or item_xml.findtext('AIS_TP_CD_NM', '')}_{item_xml.findtext('PAN_NT_DT', '')}"
+                    pan_id = item_xml.findtext('PAN_ID', '')
+                    upp_ais_tp_cd = item_xml.findtext('UPP_AIS_TP_CD', type_code)
+                    ais_tp_cd = item_xml.findtext('AIS_TP_CD', '')
+                    cnp_cd = item_xml.findtext('CNP_CD', '')
+                    
+                    # [v25] LH 전용 상세 공고 주소 조합 로직
+                    lh_url = "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancInfo.do"
+                    if pan_id:
+                        lh_url += f"?panId={pan_id}&ccrCnntSysDsCd=03&uppAisTpCd={upp_ais_tp_cd}&aisTpCd={ais_tp_cd}&mi=1026"
+                    else:
+                        lh_url = "https://apply.lh.or.kr/"
+
+                    notice_id = f"LH_{pan_id or item_xml.findtext('AIS_TP_CD_NM', '')}_{item_xml.findtext('PAN_NT_DT', '')}"
                     api_items.append({
                         "id": notice_id,
                         "org": "LH",
@@ -85,7 +134,7 @@ class PublicDataHousingService:
                         "region": item_xml.findtext('CNP_CD_NM', region_name),
                         "type": item_xml.findtext('UPP_AIS_TP_NM', 'Rental'),
                         "schedule": f"접수: {item_xml.findtext('RCEPT_BGNDE', '-')} ~ {item_xml.findtext('RCEPT_ENDDE', '-')}",
-                        "url": "https://apply.lh.or.kr/",
+                        "url": lh_url,
                         "raw_data": {child.tag: child.text for child in item_xml}
                     })
                 
@@ -97,11 +146,54 @@ class PublicDataHousingService:
         except Exception as e:
             print(f"LH API Comprehensive Error: {e}")
         
+        # 🎯 SH (서울주택도시공사) 공고 추가 연동
+        sh_url = "https://api.odcloud.kr/api/15008820/v1/uddi:6c80ca2d-dccc-4bd9-8068-feaea3d3d110"
+        sh_params = {'page': 1, 'perPage': 50, 'serviceKey': decoded_key}
+        try:
+            res_sh = requests.get(sh_url, params=sh_params, timeout=10, proxies={'http': None, 'https': None})
+            sh_data = res_sh.json().get('data', [])
+            for s in sh_data:
+                title = s.get('단지명', 'SH공공분양')
+                items.append({
+                    "id": f"SH_H_{title}",
+                    "org": "서울주택도시공사",
+                    "title": f"[SH분양] {title}",
+                    "region": "서울",
+                    "type": "공공분양",
+                    "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C295/www/brd/m_241/list.do",
+                    "raw_data": s
+                })
+        except Exception as e:
+            print(f"SH API Error: {e}")
+
         return items
 
 class SubscriptionHomeService:
     """1.5단계: 청약홈(한국부동산원) 실시간 공고 연동"""
     
+    @staticmethod
+    def sync_all(region_name='Seoul'):
+        """[Consolidated] 청약홈 DB 동기화용 메서드"""
+        items = SubscriptionHomeService.get_subscription_notices(region_name)
+        for item in items:
+            it = item.get('raw_data', {})
+            HousingProduct.objects.update_or_create(
+                manage_no=it.get('HOUSE_MANAGE_NO', item.get('id')),
+                defaults={
+                    'pblanc_no': it.get('PBLANC_NO'),
+                    'title': item.get('title'),
+                    'category': item.get('type'),
+                    'region': item.get('region'),
+                    'location': it.get('HSSPLY_ADRES', ''),
+                    'url': item.get('url'),
+                    'org': it.get('BSNS_MBY_NM', 'ApplyHome'),
+                    'notice_date': DateFormatter.format_date(it.get('RCRIT_PBLANC_DE') or it.get('RCEPT_BGNDE')),
+                    'end_date': DateFormatter.format_date(it.get('PBLANC_END_DE')),
+                    'raw_data': item.get('raw_data')
+                }
+            )
+        return len(items)
+
     @staticmethod
     def get_subscription_notices(region_name):
         # 1. Local Archive 먼저 로드
@@ -126,15 +218,24 @@ class SubscriptionHomeService:
                 for it in (root.findall('.//item') or root.findall('.//row')):
                     item_region = it.findtext('SUBSCRPT_AREA_CODE_NM', '')
                     if region_name in item_region or not region_name:
-                        notice_id = f"SUB_{it.findtext('PBLANC_NO', '00')}"
+                        pblanc_no = it.findtext('PBLANC_NO', '')
+                        manage_no = it.findtext('HOUSE_MANAGE_NO', pblanc_no) 
+                        
+                        # [v25] 청약홈 전용 상세 페이지 주소 조합 (사용자 스크린샷 대응)
+                        sub_url = "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do" 
+                        if pblanc_no and manage_no:
+                            sub_url += f"?houseManageNo={manage_no}&pblancNo={pblanc_no}"
+                        else:
+                            sub_url = "https://www.applyhome.co.kr/"
+
                         api_items.append({
-                            "id": notice_id,
+                            "id": f"SUB_{pblanc_no}",
                             "org": "ApplyHome",
                             "title": it.findtext('HOUSE_NM', '청약홈 분양 공고'),
                             "region": item_region,
                             "type": it.findtext('HOUSE_SECD_NM', 'Sale'),
                             "schedule": f"모집공고일: {it.findtext('RCEPT_BGNDE', '-')}",
-                            "url": "https://www.applyhome.co.kr/",
+                            "url": sub_url,
                             "raw_data": {child.tag: child.text for child in it}
                         })
                 
@@ -151,6 +252,23 @@ class SubscriptionHomeService:
 class FssFinanceService:
     """2단계: 금융감독원(금감원) 금융상품 비교공시 연동"""
     
+    @staticmethod
+    def sync_all():
+        """[Consolidated] 금감원 대출상품 DB 동기화용 메서드"""
+        # marital_status=None, income=None 등으로 호출하여 모든 상품 가져오기
+        items = FssFinanceService.get_loan_products(None, None)
+        for item in items:
+            FinanceProduct.objects.update_or_create(
+                product_id=item.get('id'),
+                defaults={
+                    'title': item.get('name'),
+                    'bank_nm': item.get('org'),
+                    'url': item.get('url'),
+                    'raw_data': item
+                }
+            )
+        return len(items)
+
     @staticmethod
     def get_loan_products(income, marital_status):
         # 1. 고정 데이터 + Firebase 데이터 로드
@@ -178,12 +296,14 @@ class FssFinanceService:
                 data = res.json()
                 api_loans = []
                 for l in data.get('result', {}).get('baseList', []):
+                    # [v29] 금융 상품 혜택 정보 추출 (한도 등)
+                    lmt = l.get('loan_lmt', '상세내용 참고')
                     api_loans.append({
                         "id": l.get('fin_prdt_cd'),
                         "org": l.get('kor_co_nm'),
                         "name": l.get('fin_prdt_nm'),
-                        "base_rate": 3.5,
-                        "limit": 30000,
+                        "base_rate": 3.5, # 금리는 상품마다 다르므로 기본값 유지 후 UI 표시
+                        "benefit": f"한도: {lmt}",
                         "url": "http://finlife.fss.or.kr/"
                     })
                 
@@ -195,12 +315,51 @@ class FssFinanceService:
                 print(f"FSS API Response Error: Received HTML or Invalid JSON (Status: {res.status_code})")
         except Exception as e:
             print(f"FSS API Logic Error: {e}")
+
+        # 🎯 HUG (주택도시보증공사) 상품 추가 연동
+        hug_url = "https://api.odcloud.kr/api/15134235/v1/uddi:c301ade3-c98f-4ed7-938c-ec0f060d8cde"
+        raw_key = env('DATA_PORTAL_KEY', default='').strip()
+        if raw_key:
+            hug_params = {'page': 1, 'perPage': 100, 'serviceKey': urllib.parse.unquote(raw_key)}
+            try:
+                res_hug = requests.get(hug_url, params=hug_params, timeout=10, proxies={'http': None, 'https': None})
+                hug_data = res_hug.json().get('data', [])
+                for h in hug_data:
+                    name = h.get('상품명', '정부대출상품')
+                    items.append({
+                        "id": f"HUG_{name}",
+                        "org": "HUG",
+                        "name": name,
+                        "url": "https://nhuf.molit.go.kr/",
+                        "raw_data": h
+                    })
+            except Exception as e:
+                print(f"HUG API Error: {e}")
             
         return items
 
 class OntongWelfareService:
     """3단계: 고용노동부(온통청년) 청년정책 연동"""
     
+    @staticmethod
+    def sync_all(age=29, region_name='전국'):
+        """[Consolidated] 온통청년/복지로 DB 동기화용 메서드"""
+        items = OntongWelfareService.get_welfare_policies(age, region_name)
+        for item in items:
+            WelfareProduct.objects.update_or_create(
+                policy_id=item.get('id'),
+                defaults={
+                    'title': item.get('name'),
+                    'org_nm': item.get('org'),
+                    'benefit_desc': item.get('benefit'),
+                    'target_desc': item.get('target_desc' or 'benefit'),
+                    'region': item.get('region_code' or 'region'),
+                    'url': item.get('url'),
+                    'raw_data': item.get('raw_data')
+                }
+            )
+        return len(items)
+
     @staticmethod
     def get_welfare_policies(age, region_name):
         # 1. Local Archive 로드
@@ -223,12 +382,14 @@ class OntongWelfareService:
                 if res_b.status_code == 200:
                     root = ET.fromstring(res_b.content)
                     for s in root.findall('.//servList'):
+                        # [v29] 복지로 상세 내용 파싱 고도화 (servDgst 우선)
+                        benefit_txt = s.findtext('servDgst') or s.findtext('servDtlNm') or '-'
                         items.append({
                             "id": f"BOK_{s.findtext('servId')}",
                             "name": s.findtext('servNm'),
                             "org": s.findtext('jurOrgNm', '중앙부처'),
-                            "benefit": s.findtext('servDtlNm', '-'),
-                            "url": "https://www.bokjiro.go.kr/"
+                            "benefit": benefit_txt,
+                            "url": s.findtext('servDtlLink', 'https://www.bokjiro.go.kr/') # [v20] 실시간 링크 추출
                         })
             except Exception as e:
                 print(f"Bokjiro Fallback Error: {e}")
@@ -333,7 +494,7 @@ class OntongWelfareService:
                             "name": pol_name,
                             "org": p.findtext('polyBizTy', '온라인청년센터'),
                             "benefit": p.findtext('polyItcnCn', '-'),
-                            "url": "https://www.youthcenter.go.kr/",
+                            "url": f"https://www.youthcenter.go.kr/youthPolicy/youthPolicyDetail.do?polyBizSecd={p.findtext('polyBizSecd', '')}&bizId={p.findtext('bizId', '')}", # [v20] 전용 상세 주소
                             "region_code": p.findtext('polyBizSecd', ''), # 지역코드
                             "type_nm": p.findtext('plcyTpNm', ''),      # 정책유형
                             "target_desc": p.findtext('rqutUrTarget', ''), # 지원대상

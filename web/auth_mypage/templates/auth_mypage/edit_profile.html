@@ -7,21 +7,21 @@
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <style>
         body {
-            background: linear-gradient(135deg, #a7d8f5 0%, #b3e8e5 100%);
+            background: #ffffff;
             min-height: 100vh; display: flex; justify-content: center; align-items: center;
             font-family: 'Apple SD Gothic Neo', sans-serif; margin: 0;
         }
         .edit-card {
-            background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(15px);
+            background: #ffffff;
             padding: 40px; border-radius: 30px; width: 400px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            border: 1px solid #e2e8f0; box-shadow: 0 15px 35px rgba(0,0,0,0.05);
         }
         h2 { text-align: center; color: #2c3e50; }
         .input-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 5px; color: #555; font-size: 0.9rem; }
         input {
             width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1);
-            background: rgba(255,255,255,0.6); box-sizing: border-box;
+            background: #f8fafc; box-sizing: border-box;
         }
         .btn-zip {
             background: #4a69bd; color: white; border: none; padding: 8px 15px;
@@ -46,50 +46,50 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
             <div class="input-group">
                 <label>나이 (만)</label>
-                <input type="number" name="age" value="{{ profile.age|default:'' }}" placeholder="예: 25">
+                <input type="number" name="age" value="{{ profile.age|default:'' }}" placeholder="예: 25" min="0" max="120">
             </div>
             <div class="input-group">
                 <label>연소득 (만원)</label>
-                <input type="number" name="income" value="{{ profile.income|default:'' }}" placeholder="예: 3000">
+                <input type="number" name="income" value="{{ profile.income|default:'' }}" placeholder="예: 3000" min="0">
             </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
             <div class="input-group">
                 <label>순자산 (만원)</label>
-                <input type="number" name="net_assets" value="{{ profile.net_assets|default:'' }}">
+                <input type="number" name="net_assets" value="{{ profile.net_assets|default:'' }}" min="0">
             </div>
             <div class="input-group">
                 <label>부채 (만원)</label>
-                <input type="number" name="debt" value="{{ profile.debt|default:'' }}">
+                <input type="number" name="debt" value="{{ profile.debt|default:'' }}" min="0">
             </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
             <div class="input-group">
                 <label>청약 납입 횟수 (회)</label>
-                <input type="number" name="subscription_count" value="{{ profile.subscription_count|default:'' }}">
+                <input type="number" name="subscription_count" value="{{ profile.subscription_count|default:'' }}" min="0">
             </div>
             <div class="input-group">
                 <label>청약 총 납입액 (만원)</label>
-                <input type="number" name="subscription_amount" value="{{ profile.subscription_amount|default:'' }}">
+                <input type="number" name="subscription_amount" value="{{ profile.subscription_amount|default:'' }}" min="0">
             </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
             <div class="input-group">
                 <label>자녀 수 (명)</label>
-                <input type="number" name="children_count" value="{{ profile.children_count|default:'0' }}">
+                <input type="number" name="children_count" value="{{ profile.children_count|default:'0' }}" min="0">
             </div>
             <div class="input-group">
                 <label>무주택 기간 (년)</label>
-                <input type="number" name="homeless_period" value="{{ profile.homeless_period|default:'' }}">
+                <input type="number" name="homeless_period" value="{{ profile.homeless_period|default:'' }}" min="0">
             </div>
         </div>
 
         <div class="input-group">
             <label>혼인 상황</label>
-            <select name="marital_status" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.6);">
+            <select name="marital_status" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1); background: #f8fafc;">
                 <option value="미혼" {% if profile.marital_status == "미혼" %}selected{% endif %}>미혼</option>
                 <option value="결혼예정" {% if profile.marital_status == "결혼예정" %}selected{% endif %}>결혼예정</option>
                 <option value="신혼부부" {% if profile.marital_status == "신혼부부" %}selected{% endif %}>신혼부부</option>

@@ -1,5 +1,5 @@
 from .matching_service import MatchingEngine
-from policyapp.models import UserProfile
+from auth_mypage.models import UserProfile
 
 def global_matching_results(request):
     """
@@ -12,7 +12,7 @@ def global_matching_results(request):
     
     if request.user.is_authenticated:
         try:
-            # policyapp의 UserProfile 가져오기
+            # auth_mypage의 UserProfile 가져오기
             profile = UserProfile.objects.filter(user=request.user).first()
             if profile:
                 # MatchingEngine용 가상 인스턴스로 변환

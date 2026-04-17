@@ -22,7 +22,7 @@ class MatchingEngine:
     def get_hangeul_region(key):
         return MatchingEngine.REGION_KEYWORD_MAP.get(key, "전국")
     def map_profile_to_instance(profile):
-        """[Adapter] UserProfile(policyapp) 객체를 MatchingEngine용 가상 인스턴스로 변환"""
+        """[Adapter] UserProfile(auth_mypage) 객체를 MatchingEngine용 가상 인스턴스로 변환"""
         # 간단한 가상 클래스 생성 (getattr 대응용)
         class VirtualInstance:
             def __init__(self, p):
@@ -334,12 +334,20 @@ class MatchingEngine:
                 if "FIN-YOUTH" in product_id or any(x in title for x in ["적금", "청년도약", "전세자금", "청약통장"]):
                     score += 10000 
                 
+                # [v28] 금융 상품 전용 상세 링크 생성 (Fallback)
+                p_url = p.url or '#'
+                if p_url == '#' or p_url == 'http://finlife.fss.or.kr/':
+                    if p.bank_nm == 'HUG':
+                        if "디딤돌" in p.title: p_url = "https://nhuf.molit.go.kr/FP/FP05/FP0503/FP05030101.jsp"
+                        elif "버팀목" in p.title: p_url = "https://nhuf.molit.go.kr/FP/FP05/FP0502/FP05020101.jsp"
+                        elif "도약" in p.title: p_url = "https://nhuf.molit.go.kr/FP/FP05/FP0505/FP05050101.jsp"
+                
                 valid.append({
                     'name': p.title,
                     'bank_nm': p.bank_nm,
                     'base_rate': rate,
                     'limit': min(p.limit_amt // 10000 if p.limit_amt > 0 else 50000, sim['max_limit']),
-                    'url': p.url or '#',
+                    'url': p_url,
                     'score': score
                 })
             
@@ -524,11 +532,28 @@ class MatchingEngine:
                 
                 if score < 0: continue
                 
+                # [v28] 복지 정책 전용 상세 링크 생성 (Fallback)
+                p_url = item_data.get('url') or '#'
+                if p_url == '#' or 'bokjiro.go.kr' in p_url and len(p_url) < 30:
+                    srv_id = item_data.get('id', '').replace('BOK_', '').replace('WELFARE_', '')
+                    if srv_id and len(srv_id) > 5:
+                        p_url = f"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId={srv_id}&wlfareInfoReldBztpCd=01"
+                elif p_url == '#' and item_data.get('id', '').startswith('YOUTH_'):
+                    plcy_id = item_data.get('id', '').replace('YOUTH_', '')
+                    p_url = f"https://www.youthcenter.go.kr/youthPolicy/youthPolicyDetail.do?bizId={plcy_id}"
+
+                # [v29] 상세 내용 보강 (상세내용 없음 퇴치)
+                benefit_desc = item_data.get('benefit_desc') or '상세내용 없음'
+                if benefit_desc == '상세내용 없음' or not benefit_desc.strip():
+                    org = item_data.get('org_nm', '정부부처')
+                    title = item_data.get('title', '청년 정책')
+                    benefit_desc = f"{org}에서 주행 중인 {title}은(는) 회원님의 조건에 부합하는 맞춤형 혜택입니다. 상세 공고를 통해 자세한 지원 내용을 확인해 보세요."
+
                 valid.append({
                     'name': item_data['title'],
                     'org': item_data['org_nm'],
-                    'benefit': item_data['benefit_desc'],
-                    'url': item_data['url'] or '#',
+                    'benefit': benefit_desc,
+                    'url': p_url,
                     'score': score
                 })
             
