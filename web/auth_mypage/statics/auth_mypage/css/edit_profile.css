@@ -6,7 +6,7 @@
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    min-height: 80vh;
+    min-height: calc(100vh - 80px);
     padding: 56px 20px 80px;
     background:
         radial-gradient(ellipse 50% 40% at 50% 0%,
