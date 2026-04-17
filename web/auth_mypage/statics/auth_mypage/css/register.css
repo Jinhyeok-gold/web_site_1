@@ -1,0 +1,715 @@
+/* register.css — 회원가입 공통 스타일 */
+
+/* =====================================================
+   색상 변수
+   ===================================================== */
+:root {
+    --reg-primary: #6366f1;
+    --reg-primary-dark: #4f46e5;
+    --reg-primary-gradient: linear-gradient(135deg, #4f46e5, #7c3aed);
+    --reg-accent: #8b5cf6;
+    --reg-success: #10b981;
+    --reg-error: #ef4444;
+    --reg-text: #0f172a;
+    --reg-text-sub: #64748b;
+    --reg-border: rgba(99, 102, 241, 0.20);
+    --reg-glass: rgba(255, 255, 255, 0.50);
+}
+
+/* =====================================================
+   페이지 레이아웃
+   ===================================================== */
+.register-page {
+    display: grid;
+    /* 좌측: 스텝(고정폭) | 중앙: 카드(최대 520px) | 우측: 스텝과 대칭되는 빈 공간 */
+    grid-template-columns: 200px minmax(0, 520px) 200px;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0 40px;
+    padding: 60px 20px 80px;
+    min-height: calc(100vh - 80px);
+}
+ 
+
+/* =====================================================
+   좌측 스텝 인디케이터
+   ===================================================== */
+.step-sidebar {
+    grid-column: 1;
+    position: sticky;
+    top: 100px;
+    display: flex;
+    flex-direction: column;
+    padding-top: 8px;
+}
+
+.step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding-bottom: 32px;
+    position: relative;
+}
+
+/* 스텝 간 연결선 */
+.step-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 32px;
+    width: 2px;
+    height: calc(100% - 32px);
+    background: rgba(99, 102, 241, 0.15);
+}
+
+.step-item.active::after {
+    background: linear-gradient(to bottom, #6366f1, rgba(99, 102, 241, 0.15));
+}
+
+.step-item.done::after {
+    background: #6366f1;
+}
+
+/* 스텝 번호 원 */
+.step-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid rgba(99, 102, 241, 0.25);
+    background: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #94a3b8;
+    flex-shrink: 0;
+    transition: all 0.3s;
+    position: relative;
+    z-index: 1;
+}
+
+.step-item.active .step-dot {
+    background: var(--reg-primary-gradient);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.40);
+}
+
+.step-item.done .step-dot {
+    background: #6366f1;
+    border-color: transparent;
+    color: white;
+}
+
+.step-info {
+    padding-top: 4px;
+}
+
+.step-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.step-item.active .step-label { color: #6366f1; }
+.step-item.done .step-label { color: #6366f1; }
+
+.step-name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #cbd5e1;
+}
+
+.step-item.active .step-name { color: var(--reg-text); }
+.step-item.done .step-name { color: #6366f1; }
+
+/* =====================================================
+   메인 카드
+   ===================================================== */
+.register-card {
+    grid-column: 2;
+    position: relative;
+    background: rgba(255, 255, 255, 0.50);
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    border-radius: 36px;
+    padding: 52px 52px 48px;
+    width: 100%;
+    box-shadow: 0 16px 48px rgba(99, 102, 241, 0.10),
+                0 4px 16px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* 카드 eyebrow + 타이틀 */
+.card-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    color: var(--reg-primary);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.card-title {
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: -0.8px;
+    color: var(--reg-text);
+    margin-bottom: 6px;
+}
+
+.card-subtitle {
+    font-size: 0.88rem;
+    color: var(--reg-text-sub);
+    margin-bottom: 36px;
+    line-height: 1.5;
+}
+
+/* =====================================================
+   섹션 그룹 카드 (네이버 스타일)
+   ===================================================== */
+.input-section-card {
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+}
+
+.section-card-title {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--reg-primary);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.section-card-title::before {
+    content: '';
+    width: 4px;
+    height: 14px;
+    background: var(--reg-primary-gradient);
+    border-radius: 2px;
+}
+
+/* =====================================================
+   언더라인 입력 그룹
+   ===================================================== */
+.field-group {
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.field-group:last-child { margin-bottom: 0; }
+
+.field-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--reg-primary);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.field-group .field-icon {
+    position: absolute;
+    left: 0;
+    bottom: 11px;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    transition: color 0.2s;
+    pointer-events: none;
+}
+
+.field-group input[type="text"],
+.field-group input[type="password"],
+.field-group input[type="email"],
+.field-group input[type="number"] {
+    width: 100%;
+    padding: 8px 0 8px 26px;
+    border: none;
+    border-bottom: 1.5px solid var(--reg-border);
+    background: transparent;
+    font-size: 0.95rem;
+    color: var(--reg-text);
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.field-group input::placeholder { color: #94a3b8; font-size: 0.88rem; }
+
+.field-group input:focus { border-bottom-color: var(--reg-primary); }
+.field-group:focus-within .field-icon { color: var(--reg-primary); }
+
+/* 언더라인 슬라이드 */
+.field-group::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1.5px;
+    background: var(--reg-primary-gradient);
+    transition: width 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.field-group:focus-within::after { width: 100%; }
+
+/* 아이콘 없는 필드 */
+.field-group.no-icon input { padding-left: 0; }
+.field-group.no-icon::after { left: 0; }
+
+/* select */
+.field-group select {
+    width: 100%;
+    padding: 8px 0;
+    border: none;
+    border-bottom: 1.5px solid var(--reg-border);
+    background: transparent;
+    font-size: 0.95rem;
+    color: var(--reg-text);
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+    font-family: inherit;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    padding-right: 24px;
+}
+
+/* 두 컬럼 그리드 */
+.field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* 입력창 + 버튼 가로 배치 */
+.field-with-btn {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.field-with-btn .field-group { flex: 1; margin-bottom: 0; }
+
+/* pill 스타일 인라인 버튼 (중복확인, 인증번호 전송) */
+.btn-inline {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    background: transparent;
+    border: 1.5px solid var(--reg-primary);
+    color: var(--reg-primary);
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s, color 0.2s;
+    font-family: inherit;
+    margin-bottom: 2px;
+}
+
+.btn-inline:hover {
+    background: var(--reg-primary);
+    color: white;
+}
+
+.btn-inline.red {
+    border-color: #FF5B5B;
+    color: #FF5B5B;
+}
+.btn-inline.red:hover { background: #FF5B5B; color: white; }
+
+/* 주소 검색 버튼 */
+.btn-address {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    background: var(--reg-primary-gradient);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+    font-family: inherit;
+    margin-bottom: 2px;
+}
+.btn-address:hover { opacity: 0.85; transform: translateY(-1px); }
+
+/* 주민번호 분할 */
+.dual-input {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+}
+.dual-input input { flex: 1; text-align: center; }
+.dual-input span { color: #cbd5e1; font-weight: 700; padding-bottom: 10px; flex-shrink: 0; }
+
+/* ID 체크 메시지 */
+.id-check-msg {
+    font-size: 0.75rem;
+    margin-top: 6px;
+    font-weight: 600;
+}
+.id-check-msg.ok { color: var(--reg-success); }
+.id-check-msg.fail { color: var(--reg-error); }
+
+/* 필수 표시 */
+.req { color: #FF5B5B; margin-left: 2px; }
+
+/* =====================================================
+   약관 섹션 (네이버 스타일)
+   ===================================================== */
+.terms-card {
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+}
+
+.term-all {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(99, 102, 241, 0.12);
+    margin-bottom: 12px;
+}
+
+.term-all label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: var(--reg-text);
+}
+
+.term-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.term-item label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: #475569;
+}
+
+.term-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-left: 4px;
+}
+
+.term-badge.required {
+    background: rgba(99, 102, 241, 0.10);
+    color: var(--reg-primary);
+}
+
+.term-badge.optional {
+    background: #f1f5f9;
+    color: #94a3b8;
+}
+
+.view-link {
+    font-size: 0.78rem;
+    color: var(--reg-text-sub);
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    transition: color 0.2s;
+}
+.view-link:hover { color: var(--reg-primary); }
+
+/* 커스텀 체크박스 */
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.2s, background 0.2s;
+    flex-shrink: 0;
+}
+
+input[type="checkbox"]:checked {
+    background: var(--reg-primary);
+    border-color: var(--reg-primary);
+}
+
+input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 1.5px;
+    width: 5px;
+    height: 9px;
+    border: 2px solid white;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg);
+}
+
+/* 라디오 버튼 그룹 */
+.radio-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 6px;
+}
+
+.radio-option {
+    flex: 1;
+    position: relative;
+}
+
+.radio-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.radio-option label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border: 1.5px solid var(--reg-border);
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #64748b;
+    transition: all 0.2s;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.radio-option input[type="radio"]:checked + label {
+    border-color: var(--reg-primary);
+    background: rgba(99, 102, 241, 0.08);
+    color: var(--reg-primary);
+    font-weight: 800;
+}
+
+/* 정보 안내 박스 */
+.info-box {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 14px 16px;
+    background: rgba(99, 102, 241, 0.05);
+    border: 1px solid rgba(99, 102, 241, 0.12);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 0.82rem;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+.info-box i { color: var(--reg-primary); margin-top: 2px; flex-shrink: 0; }
+
+/* =====================================================
+   에러/성공 메시지
+   ===================================================== */
+.field-msg {
+    font-size: 0.75rem;
+    margin-top: 5px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.field-msg.error { color: var(--reg-error); }
+.field-msg.success { color: var(--reg-success); }
+
+/* =====================================================
+   버튼
+   ===================================================== */
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 32px;
+}
+
+.btn-primary {
+    flex: 1;
+    padding: 17px;
+    background: var(--reg-primary-gradient);
+    color: white;
+    border: none;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.25s;
+    box-shadow: 0 8px 28px rgba(79, 70, 229, 0.40);
+    font-family: inherit;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 36px rgba(79, 70, 229, 0.50);
+}
+
+.btn-secondary {
+    padding: 17px 28px;
+    background: transparent;
+    color: #64748b;
+    border: 1.5px solid rgba(99, 102, 241, 0.20);
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+}
+
+.btn-secondary:hover { border-color: rgba(99, 102, 241, 0.4); color: #1e293b; }
+
+/* 모달 */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(6px);
+    z-index: 9000;
+    align-items: center;
+    justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+
+.modal-box {
+    background: white;
+    border-radius: 24px;
+    padding: 36px;
+    width: 90%;
+    max-width: 480px;
+    max-height: 70vh;
+    position: relative;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+}
+
+.modal-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 16px;
+    letter-spacing: -0.3px;
+}
+
+.modal-body {
+    max-height: 40vh;
+    overflow-y: auto;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: #475569;
+    white-space: pre-line;
+    padding-right: 8px;
+}
+
+.modal-body::-webkit-scrollbar { width: 4px; }
+.modal-body::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+
+.modal-close {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    color: #94a3b8;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+}
+.modal-close:hover { color: #1e293b; }
+
+.modal-confirm {
+    width: 100%;
+    padding: 14px;
+    background: var(--reg-primary-gradient);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    margin-top: 20px;
+    font-family: inherit;
+    transition: opacity 0.2s;
+}
+.modal-confirm:hover { opacity: 0.88; }
+
+/* 반응형 */
+@media (max-width: 900px) {
+    .register-page {
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+ 
+    .step-sidebar {
+        grid-column: 1;
+        position: static;
+        flex-direction: row;
+        width: 100%;
+        max-width: 520px;
+        margin-bottom: 24px;
+    }
+ 
+    .register-card {
+        grid-column: 1;
+        max-width: 520px;
+    }
+ 
+    .step-item {
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+        padding-bottom: 0;
+    }
+ 
+    .step-item:not(:last-child)::after {
+        top: 16px;
+        left: calc(50% + 16px);
+        width: calc(100% - 32px);
+        height: 2px;
+    }
+ 
+    .step-info { text-align: center; }
+}

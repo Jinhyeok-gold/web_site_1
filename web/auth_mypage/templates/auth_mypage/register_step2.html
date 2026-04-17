@@ -1,210 +1,172 @@
-{% load static %}<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-    <style>
-        /* 입력 필드 스타일 */
-        .field-group { margin-bottom: 25px; }
-        .field-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
+{% extends 'mainwindow/base.html' %}
+{% load static %}
 
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 12px 15px;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-            box-sizing: border-box;
-        }
+{% block title %}회원가입 — 기본 정보 | 딱맞춤{% endblock %}
 
-        .dual-input { display: flex; align-items: center; gap: 10px; }
-        .input-with-btn { display: flex; gap: 10px; }
-        .inner-btn {
-            padding: 0 20px;
-            background: #666;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            white-space: nowrap;
-            cursor: pointer;
-        }
+{% block extra_css %}
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'auth_mypage/css/register.css' %}">
+{% endblock %}
 
-        body {
-            background-color: #f5f7fa;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            padding: 50px 0;
-            font-family: sans-serif;
-        }
+{% block content %}
+<div class="register-page">
 
-        .register-container {
-            width: 90%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .title-section {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .glass-card-wide {
-            width: 100%;
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            box-sizing: border-box;
-        }
-
-        /* 버튼 그룹 스타일 (수정됨: .glass-card-wide 밖으로 분리) */
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            text-decoration: none;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            font-size: 16px;
-        }
-
-        .btn-primary { background: #1a4f8b; color: white; }
-        .btn-secondary { background: #eee; color: #333; }
-
-        .required-star {
-            color: #e74c3c;
-            margin-left: 2px;
-        }
-  body {
-            background: #ffffff;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 120vh; /* 주소가 추가되어 길어지므로 높이 조절 */
-            padding: 50px 0;
-            font-family: 'Pretendard', sans-serif;
-        }
-
-        .register-container { width: 100%; max-width: 500px; padding: 20px; }
-        
-        .glass-card-wide {
-            background: #ffffff;
-            backdrop-filter: blur(10px);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e2e8f0;
-        }
-
-        .field-group { margin-bottom: 20px; }
-        .field-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #444; font-size: 14px; }
-
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 12px 15px;
-            border-radius: 10px;
-            border: 1px solid rgba(0,0,0,0.1);
-            background: rgba(255, 255, 255, 0.9);
-            box-sizing: border-box;
-            margin-bottom: 8px;
-        }
-
-        .input-with-btn { display: flex; gap: 10px; }
-        
-        .inner-btn {
-            padding: 0 15px;
-            background: #555;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 12px;
-            white-space: nowrap;
-        }
-
-        .button-group { display: flex; gap: 10px; margin-top: 30px; }
-        .btn { flex: 1; padding: 15px; border-radius: 10px; text-align: center; text-decoration: none; font-weight: bold; border: none; cursor: pointer; }
-        .btn-primary { background: #1a4f8b; color: white; }
-        .btn-secondary { background: rgba(0,0,0,0.05); color: #666; }
-        .required-star { color: #e74c3c; margin-left: 2px; }
-        h3 { margin-top: 0; color: #333; font-size: 18px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px; margin-bottom: 20px; }
-    </style>
-</head>
-<div class="register-container">
-        <div class="title-section">
-            <h1 style="font-size: 24px; margin-bottom: 5px;">회원가입</h1>
-            <p style="margin: 0; color: #666;">회원정보를 입력해 주세요</p>
-        </div>
-
-        <form method="post" action="{% url 'policy:register_step2' %}" class="glass-card-wide" id="registerForm">
-    {% csrf_token %}
-    
-    <div class="input-section">
-        <h3>기본정보</h3>
-        
-        <div class="field-group">
-            <label>이름 <span class="required-star">(필수)</span></label>
-            <input type="text" name="name" placeholder="이름을 입력해 주세요." required>
-        </div>
-
-        <div class="field-group">
-            <label>주민등록번호 <span class="required-star">(필수)</span></label>
-            <div class="dual-input">
-                <input type="text" name="resident_num_front" placeholder="앞 6자리" maxlength="6" required>
-                <span>-</span>
-                <input type="password" name="resident_num_back" placeholder="뒤 7자리" maxlength="7" required>
+    <!-- 좌측 스텝 인디케이터 -->
+    <aside class="step-sidebar">
+        <div class="step-item done">
+            <div class="step-dot"><i class="fas fa-check" style="font-size:0.7rem;"></i></div>
+            <div class="step-info">
+                <div class="step-label">Step 1</div>
+                <div class="step-name">약관 동의</div>
             </div>
         </div>
-
-        <div class="field-group">
-            <label>거주 지역 <span class="required-star">(필수)</span></label>
-            <div class="input-with-btn" style="display: flex; gap: 10px; margin-bottom: 8px;">
-                <input type="text" id="display_address" placeholder="주소를 검색해주세요" readonly required style="flex: 3;">
-                <button type="button" class="inner-btn" onclick="execDaumPostcode()" style="flex: 1; padding: 0 10px; background: #555; color: white; border: none; border-radius: 10px; cursor: pointer;">주소 찾기</button>
+        <div class="step-item active">
+            <div class="step-dot">2</div>
+            <div class="step-info">
+                <div class="step-label">Step 2</div>
+                <div class="step-name">기본 정보</div>
             </div>
-            <input type="text" name="detail_address" placeholder="상세 주소를 입력해 주세요.">
-
-            <input type="hidden" name="sido" id="sido" required>
-            <input type="hidden" name="sigungu" id="sigungu" required>
         </div>
-
-        <div class="field-group">
-            <label>이메일 <span class="required-star">(필수)</span></label>
-            <input type="email" name="email" placeholder="결과 리포트를 받을 이메일을 입력해 주세요." required style="width: 100%; padding: 12px 15px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255, 255, 255, 0.9); box-sizing: border-box;">
+        <div class="step-item">
+            <div class="step-dot">3</div>
+            <div class="step-info">
+                <div class="step-label">Step 3</div>
+                <div class="step-name">상세 정보</div>
+            </div>
         </div>
+    </aside>
 
-        <div class="field-group">
-            <label>아이디 <span class="required-star">(필수)</span></label>
-            <div class="input-with-btn">
-                <input type="text" name="username" id="username" placeholder="영문/숫자 4~16자" required>
-            <p id="id_check_msg" style="font-size: 12px; margin-top: 5px;"></p>
-        </div>
+    <!-- 메인 카드 -->
+    <div class="register-card">
+        <p class="card-eyebrow">Sign Up</p>
+        <h1 class="card-title">기본 정보</h1>
+        <p class="card-subtitle">본인 확인 및 로그인에 사용되는 정보입니다.</p>
 
-        <div class="field-group">
-            <label>비밀번호 <span class="required-star">(필수)</span></label>
-            <input type="password" name="password" placeholder="비밀번호를 입력해 주세요." required>
-        </div>
+        <form method="post" action="{% url 'policy:register_step2' %}" id="registerForm">
+            {% csrf_token %}
+
+            <!-- 계정 정보 -->
+            <div class="input-section-card">
+                <div class="section-card-title">계정 정보</div>
+
+                <div class="field-with-btn">
+                    <div class="field-group">
+                        <label>아이디 <span class="req">*</span></label>
+                        <i class="fas fa-user field-icon"></i>
+                        <input type="text" name="username" id="username" placeholder="영문/숫자 4~16자" required>
+                        <div class="field-msg" id="id_check_msg"></div>
+                    </div>
+                    <button type="button" class="btn-inline" onclick="checkId()">중복확인</button>
+                </div>
+
+                <div class="field-group">
+                    <label>비밀번호 <span class="req">*</span></label>
+                    <i class="fas fa-lock field-icon"></i>
+                    <input type="password" name="password" id="password" placeholder="8자 이상 영문+숫자" required>
+                </div>
+
+                <div class="field-group">
+                    <label>비밀번호 확인 <span class="req">*</span></label>
+                    <i class="fas fa-lock field-icon"></i>
+                    <input type="password" name="password_confirm" id="password_confirm" placeholder="비밀번호를 다시 입력하세요" required>
+                    <div class="field-msg" id="pw_match_msg"></div>
+                </div>
+
+                <div class="field-group">
+                    <label>이메일 <span class="req">*</span></label>
+                    <i class="fas fa-envelope field-icon"></i>
+                    <input type="email" name="email" placeholder="결과 리포트를 받을 이메일" required>
+                </div>
+            </div>
+
+            <!-- 본인 정보 -->
+            <div class="input-section-card">
+                <div class="section-card-title">본인 정보</div>
+
+                <div class="field-group">
+                    <label>이름 <span class="req">*</span></label>
+                    <i class="fas fa-id-card field-icon"></i>
+                    <input type="text" name="name" placeholder="실명을 입력하세요" required>
+                </div>
+
+                <div class="field-group no-icon">
+                    <label>주민등록번호 <span class="req">*</span></label>
+                    <div class="dual-input">
+                        <input type="text" name="resident_num_front" placeholder="앞 6자리" maxlength="6" required>
+                        <span>—</span>
+                        <input type="password" name="resident_num_back" placeholder="뒤 7자리" maxlength="7" required>
+                    </div>
+                </div>
+
+                <div class="field-group no-icon">
+                    <label>거주 지역 <span class="req">*</span></label>
+                    <div class="field-with-btn" style="margin-bottom: 8px;">
+                        <div class="field-group" style="margin-bottom:0;">
+                            <input type="text" id="display_address" placeholder="주소를 검색해 주세요" readonly required style="padding-left:0;">
+                        </div>
+                        <button type="button" class="btn-address" onclick="execDaumPostcode()">
+                            <i class="fas fa-search"></i> 검색
+                        </button>
+                    </div>
+                    <input type="text" name="detail_address" placeholder="상세 주소"
+                        style="width:100%; padding:8px 0; border:none; border-bottom:1.5px solid rgba(99,102,241,.20); background:transparent; font-size:0.93rem; outline:none; font-family:inherit; box-sizing:border-box; color:#0f172a;">
+                    <input type="hidden" name="sido" id="sido">
+                    <input type="hidden" name="sigungu" id="sigungu">
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <a href="{% url 'policy:register_step1' %}" class="btn-secondary">← 이전</a>
+                <button type="submit" class="btn-primary">다음 단계로 →</button>
+            </div>
+        </form>
     </div>
+</div>
+{% endblock %}
 
-    <div class="button-group">
-        <a href="{% url 'policy:login' %}" class="btn btn-secondary">취소</a>
-        <button type="submit" class="btn btn-primary">다음 단계로 (1/2)</button>
-    </div>
-</form>
- <script src="{% static 'js/address.js' %}"></script>
-</body>
+{% block extra_js %}
+<script src="{% static 'js/address.js' %}"></script>
+<script>
+    /* 아이디 중복 확인 */
+    function checkId() {
+        const username = document.getElementById('username').value.trim();
+        const msg = document.getElementById('id_check_msg');
+        if (!username) { msg.textContent = '아이디를 입력해주세요.'; msg.className = 'field-msg error'; return; }
 
-</html>
+        fetch(`{% url 'policy:check_id' %}?username=${encodeURIComponent(username)}`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.is_taken) {
+                    msg.innerHTML = '<i class="fas fa-times-circle"></i> 이미 사용 중인 아이디입니다.';
+                    msg.className = 'field-msg error';
+                } else {
+                    msg.innerHTML = '<i class="fas fa-check-circle"></i> 사용 가능한 아이디입니다.';
+                    msg.className = 'field-msg success';
+                }
+            });
+    }
+
+    /* 비밀번호 확인 */
+    document.getElementById('password_confirm').addEventListener('input', function() {
+        const msg = document.getElementById('pw_match_msg');
+        if (this.value === document.getElementById('password').value) {
+            msg.innerHTML = '<i class="fas fa-check-circle"></i> 비밀번호가 일치합니다.';
+            msg.className = 'field-msg success';
+        } else {
+            msg.innerHTML = '<i class="fas fa-times-circle"></i> 비밀번호가 일치하지 않습니다.';
+            msg.className = 'field-msg error';
+        }
+    });
+
+    /* 폼 제출 전 비밀번호 확인 */
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        const pw = document.getElementById('password').value;
+        const pc = document.getElementById('password_confirm').value;
+        if (pw !== pc) {
+            e.preventDefault();
+            alert('비밀번호가 일치하지 않습니다.');
+        }
+    });
+</script>
+{% endblock %}

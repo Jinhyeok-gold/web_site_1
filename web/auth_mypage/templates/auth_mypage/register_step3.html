@@ -1,114 +1,171 @@
-{% load static %}<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>회원가입 Step 3 | 청춘로</title>
-    <style>
-        /* 기존 register_step2.html의 스타일과 동일하게 설정 */
-        body {
-            background: #ffffff;
-            margin: 0; display: flex; justify-content: center; align-items: center;
-            min-height: 120vh; padding: 50px 0; font-family: 'Pretendard', sans-serif;
-        }
-        .register-container { width: 100%; max-width: 500px; padding: 20px; }
-        .glass-card-wide {
-            background: #ffffff;
-            padding: 40px; border-radius: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
-        }
-        .field-group { margin-bottom: 20px; }
-        .field-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #444; font-size: 14px; }
-        input, select {
-            width: 100%; padding: 12px 15px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1);
-            background: rgba(255, 255, 255, 0.9); box-sizing: border-box;
-        }
-        .step-indicator { text-align: center; margin-bottom: 20px; color: #1a4f8b; font-weight: bold; }
-        h3 { border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px; margin-bottom: 20px; color: #333; }
-        .btn-group { display: flex; gap: 10px; margin-top: 30px; }
-        .btn { flex: 1; padding: 15px; border-radius: 10px; text-align: center; font-weight: bold; border: none; cursor: pointer; }
-        .btn-primary { background: #1a4f8b; color: white; }
-    </style>
-</head>
-<body>
-<div class="register-container">
-    <div class="step-indicator">STEP 3. 상세 정보 입력 (마지막)</div>
-    <form method="post" action="{% url 'policy:register_step3' %}" class="glass-card-wide">
-        {% csrf_token %}
-        
-        <h3>경제 및 가구 정보</h3>
-        
-        <div class="field-group">
-            <label>나이 (만)</label>
-            <input type="number" name="age" placeholder="만 나이를 입력하세요" required min="0" max="120">
-        </div>
+{% extends 'mainwindow/base.html' %}
+{% load static %}
 
-        <div class="field-group">
-            <label>연소득 (가구 합산, 만원)</label>
-            <input type="number" name="income" placeholder="예: 4000" required min="0">
-        </div>
+{% block title %}회원가입 — 상세 정보 | 딱맞춤{% endblock %}
 
-        <div class="field-group">
-            <label>순자산 규모 (만원)</label>
-            <input type="number" name="net_assets" placeholder="예: 15000" required min="0">
-        </div>
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'auth_mypage/css/register.css' %}">
+{% endblock %}
 
-        <div class="field-group">
-            <label>부채 규모 (만원)</label>
-            <input type="number" name="debt" value="0" required min="0">
-        </div>
+{% block content %}
+<div class="register-page">
 
-        <div class="field-group">
-            <label>청약통장 납입 횟수 (회)</label>
-            <input type="number" name="subscription_count" required min="0">
-        </div>
-
-        <div class="field-group">
-            <label>혼인상황</label>
-            <select name="marital_status" required>
-                <option value="미혼">미혼</option>
-                <option value="결혼예정">결혼예정</option>
-                <option value="신혼부부">신혼부부</option>
-            </select>
-        </div>
-
-        <div class="field-group">
-            <label>자녀수</label>
-            <input type="number" name="children_count" value="0" required min="0">
-        </div>
-
-        <div class="field-group">
-            <label>무주택기간 (년)</label>
-            <input type="number" name="homeless_period" required min="0">
-        </div>
-
-        <div class="field-group" style="display: flex; gap: 20px; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 140px;">
-                <label>임신 여부</label>
-                <select name="is_pregnant">
-                    <option value="False">미해당</option>
-                    <option value="True">임신중</option>
-                </select>
-            </div>
-            <div style="flex: 1; min-width: 140px;">
-                <label>생애최초 주택구입</label>
-                <select name="is_first_home">
-                    <option value="True">해당</option>
-                    <option value="False">미해당</option>
-                </select>
-            </div>
-            <div style="flex: 1; min-width: 140px;">
-                <label>현재 무주택 여부</label>
-                <select name="is_homeless">
-                    <option value="True">무주택</option>
-                    <option value="False">유주택</option>
-                </select>
+    <!-- 좌측 스텝 인디케이터 -->
+    <aside class="step-sidebar">
+        <div class="step-item done">
+            <div class="step-dot"><i class="fas fa-check" style="font-size:0.7rem;"></i></div>
+            <div class="step-info">
+                <div class="step-label">Step 1</div>
+                <div class="step-name">약관 동의</div>
             </div>
         </div>
-
-        <div class="btn-group">
-            <button type="submit" class="btn btn-primary">가입 완료하기</button>
+        <div class="step-item done">
+            <div class="step-dot"><i class="fas fa-check" style="font-size:0.7rem;"></i></div>
+            <div class="step-info">
+                <div class="step-label">Step 2</div>
+                <div class="step-name">기본 정보</div>
+            </div>
         </div>
-    </form>
+        <div class="step-item active">
+            <div class="step-dot">3</div>
+            <div class="step-info">
+                <div class="step-label">Step 3</div>
+                <div class="step-name">상세 정보</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 메인 카드 -->
+    <div class="register-card">
+        <p class="card-eyebrow">Sign Up</p>
+        <h1 class="card-title">상세 정보</h1>
+        <p class="card-subtitle">정책 매칭에 사용되는 경제·가구 정보입니다.</p>
+
+        <div class="info-box">
+            <i class="fas fa-shield-alt"></i>
+            <span>입력하신 정보는 암호화되어 안전하게 저장되며, 정책 매칭 목적으로만 사용됩니다.</span>
+        </div>
+
+        <form method="post" action="{% url 'policy:register_step3' %}">
+            {% csrf_token %}
+
+            <!-- 개인 기본 정보 -->
+            <div class="input-section-card">
+                <div class="section-card-title">개인 기본 정보</div>
+
+                <div class="field-row">
+                    <div class="field-group no-icon">
+                        <label>나이 (만) <span class="req">*</span></label>
+                        <input type="number" name="age" placeholder="예: 28" required min="0" max="120">
+                    </div>
+                    <div class="field-group no-icon">
+                        <label>혼인 상황 <span class="req">*</span></label>
+                        <select name="marital_status" required>
+                            <option value="미혼">미혼</option>
+                            <option value="결혼예정">결혼예정</option>
+                            <option value="신혼부부">신혼부부</option>
+                            <option value="기혼">기혼</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="field-row">
+                    <div class="field-group no-icon">
+                        <label>자녀 수</label>
+                        <input type="number" name="children_count" value="0" min="0" placeholder="0">
+                    </div>
+                    <div class="field-group no-icon">
+                        <label>무주택 기간 (년)</label>
+                        <input type="number" name="homeless_period" min="0" placeholder="예: 3">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 경제 정보 -->
+            <div class="input-section-card">
+                <div class="section-card-title">경제 정보</div>
+
+                <div class="field-row">
+                    <div class="field-group no-icon">
+                        <label>연소득 (만원) <span class="req">*</span></label>
+                        <input type="number" name="income" placeholder="예: 4000" required min="0">
+                    </div>
+                    <div class="field-group no-icon">
+                        <label>순자산 (만원) <span class="req">*</span></label>
+                        <input type="number" name="net_assets" placeholder="예: 15000" required min="0">
+                    </div>
+                </div>
+
+                <div class="field-row">
+                    <div class="field-group no-icon">
+                        <label>부채 (만원)</label>
+                        <input type="number" name="debt" value="0" min="0">
+                    </div>
+                    <div class="field-group no-icon">
+                        <label>청약 납입 횟수 (회)</label>
+                        <input type="number" name="subscription_count" min="0" placeholder="예: 24">
+                    </div>
+                </div>
+
+                <div class="field-group no-icon">
+                    <label>청약 총 납입액 (만원)</label>
+                    <input type="number" name="subscription_amount" min="0" placeholder="예: 600">
+                </div>
+            </div>
+
+            <!-- 주택 상황 -->
+            <div class="input-section-card">
+                <div class="section-card-title">주택 상황</div>
+
+                <div class="field-group no-icon" style="margin-bottom: 16px;">
+                    <label style="margin-bottom: 10px; display: block;">현재 무주택 여부</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="is_homeless" id="homeless_yes" value="True" checked>
+                            <label for="homeless_yes"><i class="fas fa-home" style="margin-right:6px; opacity:0.5;"></i> 무주택</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="is_homeless" id="homeless_no" value="False">
+                            <label for="homeless_no"><i class="fas fa-building" style="margin-right:6px; opacity:0.5;"></i> 유주택</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field-group no-icon" style="margin-bottom: 16px;">
+                    <label style="margin-bottom: 10px; display: block;">생애최초 주택구입</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="is_first_home" id="first_yes" value="True" checked>
+                            <label for="first_yes">해당</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="is_first_home" id="first_no" value="False">
+                            <label for="first_no">미해당</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field-group no-icon">
+                    <label style="margin-bottom: 10px; display: block;">임신 여부</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="is_pregnant" id="pregnant_no" value="False" checked>
+                            <label for="pregnant_no">미해당</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="is_pregnant" id="pregnant_yes" value="True">
+                            <label for="pregnant_yes">임신 중</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <a href="{% url 'policy:register_step1' %}" class="btn-secondary">← 처음으로</a>
+                <button type="submit" class="btn-primary">가입 완료하기 ✓</button>
+            </div>
+        </form>
+    </div>
 </div>
-</body>
-</html>
+{% endblock %}
