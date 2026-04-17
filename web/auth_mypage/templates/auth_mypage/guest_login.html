@@ -5,6 +5,7 @@
 
 {% block extra_css %}
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="{% static 'auth_mypage/css/guest_login.css' %}">
 {% endblock %}
 
@@ -13,75 +14,80 @@
     <form method="POST" action="{% url 'policy:guest_login' %}">
         {% csrf_token %}
         <div class="glass-container">
+
+            <div class="avatar-badge">
+                <i class="fas fa-user-secret"></i>
+            </div>
+
+            <p class="login-eyebrow">Guest Access</p>
             <h2>비회원 로그인</h2>
 
-            <div class="section-box">
-                <span class="section-title">유의사항</span>
+            <div class="section-divider"><span>유의사항</span></div>
+            <div class="notice-box">
                 <ul class="notice-list">
                     <li>비회원 로그인은 회원 가입 없이 딱맞춤 서비스를 이용하실 수 있습니다.</li>
-                    <li>비회원 로그인 방식으로 신청한 서비스 내역 확인은 동일하게 비회원 로그인으로 로그인해야 확인이 가능합니다.</li>
+                    <li>비회원으로 신청한 서비스 내역 확인은 동일하게 비회원 로그인으로만 가능합니다.</li>
                 </ul>
             </div>
 
-            <div class="section-box">
-                <span class="section-title">약관동의</span>
-                <div class="agree-item" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 15px;">
-                    <label><input type="checkbox" id="checkAll"> <strong>동의합니다.</strong></label>
-                </div>
-                <div class="agree-item">
-                    <label><input type="checkbox" class="agree" required> 개인정보 수집 및 이용 동의<span class="required">(필수)</span></label>
-                    <button type="button" class="btn-view">내용보기</button>
-                </div>
-                <div class="agree-item">
-                    <label><input type="checkbox" class="agree" required> 서비스 이용약관 동의<span class="required">(필수)</span></label>
-                    <button type="button" class="btn-view">내용보기</button>
+            <div class="section-divider"><span>약관동의</span></div>
+            <div class="agree-all">
+                <label><input type="checkbox" id="checkAll"> 전체 동의합니다.</label>
+            </div>
+            <div class="agree-item">
+                <label><input type="checkbox" class="agree" required> 개인정보 수집 및 이용 동의<span class="required">(필수)</span></label>
+                <button type="button" class="btn-view">보기</button>
+            </div>
+            <div class="agree-item">
+                <label><input type="checkbox" class="agree" required> 서비스 이용약관 동의<span class="required">(필수)</span></label>
+                <button type="button" class="btn-view">보기</button>
+            </div>
+
+            <div class="section-divider"><span>정보 입력</span></div>
+
+            <div class="input-group">
+                <label>이름 <span class="required">*</span></label>
+                <input type="text" name="guest_name" placeholder="성함을 입력하세요" required>
+                <i class="fas fa-user input-icon"></i>
+            </div>
+
+            <div class="input-group">
+                <label>주민등록번호 <span class="required">*</span></label>
+                <div class="row-inputs">
+                    <input type="text" name="ssn1" maxlength="6" placeholder="앞 6자리" required>
+                    <span>—</span>
+                    <input type="password" name="ssn2" maxlength="7" placeholder="뒤 7자리" required>
                 </div>
             </div>
 
-            <div class="section-box">
-                <span class="section-title">비회원 신청 정보 입력</span>
-
-                <div class="input-group">
-                    <label>이름<span class="required">(필수)</span></label>
-                    <input type="text" name="guest_name" placeholder="성함을 입력하세요" required>
+            <div class="input-group">
+                <label>거주 지역 <span class="required">*</span></label>
+                <div class="row-inputs" style="margin-bottom: 10px;">
+                    <input type="text" id="display_address" placeholder="주소를 검색해 주세요" readonly required style="text-align:left; padding-left:0;">
+                    <button type="button" class="btn-address" onclick="execDaumPostcode()">
+                        <i class="fas fa-search"></i> 검색
+                    </button>
                 </div>
+                <input type="text" name="guest_detail_address" placeholder="상세 주소"
+                    style="width:100%; padding:8px 0; border:none; border-bottom:1.5px solid rgba(255,91,91,.20); background:transparent; font-size:0.93rem; color:#0f172a; outline:none; font-family:inherit; box-sizing:border-box;">
+                <input type="hidden" name="sido" id="sido">
+                <input type="hidden" name="sigungu" id="sigungu">
+            </div>
 
-                <div class="input-group">
-                    <label>주민등록번호(외국인등록번호)<span class="required">(필수)</span></label>
-                    <div class="row-inputs">
-                        <input type="text" name="ssn1" maxlength="6" required>
-                        <span>-</span>
-                        <input type="password" name="ssn2" maxlength="7" required>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label>거주 지역<span class="required">(필수)</span></label>
-                    <div class="row-inputs" style="margin-bottom: 8px;">
-                        <input type="text" id="display_address" placeholder="주소를 검색해 주세요" readonly required style="flex: 3;">
-                        <button type="button" onclick="execDaumPostcode()" style="flex: 1; padding: 12px; font-size: 0.85rem; background: #475569; color: white; border: none; border-radius: 10px; cursor: pointer;">주소 찾기</button>
-                    </div>
-                    <input type="text" name="guest_detail_address" placeholder="상세 주소를 입력하세요" style="width:100%; padding:12px 15px; border-radius:10px; border:1px solid #e2e8f0; box-sizing:border-box; margin-top:8px;">
-                    <input type="hidden" name="sido" id="sido">
-                    <input type="hidden" name="sigungu" id="sigungu">
-                </div>
-
-                <div class="input-group">
-                    <label>휴대폰번호</label>
-                    <div class="row-inputs">
-                        <input type="text" name="hp1" value="010" maxlength="3">
-                        <span>-</span>
-                        <input type="text" name="hp2" maxlength="4">
-                        <span>-</span>
-                        <input type="text" name="hp3" maxlength="4">
-                    </div>
+            <div class="input-group">
+                <label>휴대폰번호</label>
+                <div class="row-inputs">
+                    <input type="text" name="hp1" value="010" maxlength="3" style="text-align:center;">
+                    <span>—</span>
+                    <input type="text" name="hp2" maxlength="4" placeholder="0000" style="text-align:center;">
+                    <span>—</span>
+                    <input type="text" name="hp3" maxlength="4" placeholder="0000" style="text-align:center;">
                 </div>
             </div>
 
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <a href="javascript:history.back()" style="flex:1; padding:15px; border-radius:12px; border:1px solid #e2e8f0; text-align:center; font-weight:700; color:#64748b; text-decoration:none;">취소하기</a>
-                <button type="submit" class="submit-btn" style="flex:1; margin-top:0;">비회원 로그인</button>
-            </div>
+            <button type="submit" class="submit-btn">비회원 로그인</button>
+            <a href="javascript:history.back()" class="btn-cancel-action">취소하기</a>
+
         </div>
     </form>
 </div>

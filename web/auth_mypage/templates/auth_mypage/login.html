@@ -14,12 +14,15 @@
     <p class="page-sub">딱맞춤 서비스를 이용하려면 로그인이 필요합니다.</p>
 
     <div class="card-container">
-        <div class="login-card" onclick="location.href='{% url 'policy:id_login' %}'">
-            <span class="icon"><i class="fas fa-user-circle"></i></span>
+        <!-- 아이디 로그인 카드 -->
+        <div class="login-card login-card--id" onclick="location.href='{% url 'policy:id_login' %}'">
+            <div class="icon-wrapper"><i class="fas fa-user"></i></div>
             <div class="card-title">아이디 로그인</div>
         </div>
-        <div class="login-card" onclick="location.href='{% url 'policy:guest_login' %}'">
-            <span class="icon"><i class="fas fa-user-secret"></i></span>
+
+        <!-- 비회원 로그인 카드 -->
+        <div class="login-card login-card--guest" onclick="location.href='{% url 'policy:guest_login' %}'">
+            <div class="icon-wrapper"><i class="fas fa-user-secret"></i></div>
             <div class="card-title">비회원 로그인</div>
         </div>
     </div>
