@@ -4,25 +4,30 @@
 {% block title %}신혼부부 정책 | 딱맞춤{% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="{% static 'auth_mypage/css/newlywed_page.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="newlywed-page">
-    <h1>신혼부부를 위한 맞춤 정책</h1>
+    <h1>나에게 맞는 <span class="highlight">신혼부부</span> 정책</h1>
+    <p class="page-sub">신혼·출산·육아 조건에 맞는 맞춤형 지원 정책을 확인하세요.</p>
 
     <div class="card-container">
         <div class="policy-card">
             <span class="icon">🏠</span>
             <div class="card-title">신혼부부 주거 지원</div>
+            <div class="card-desc">신혼특별공급·전세자금 대출</div>
         </div>
         <div class="policy-card">
             <span class="icon">💰</span>
             <div class="card-title">신혼부부 금융 지원</div>
+            <div class="card-desc">저금리 대출·자산형성 지원</div>
         </div>
         <div class="policy-card">
             <span class="icon">👶</span>
             <div class="card-title">출산·육아 지원</div>
+            <div class="card-desc">출산장려금·육아휴직 혜택</div>
         </div>
     </div>
 </div>

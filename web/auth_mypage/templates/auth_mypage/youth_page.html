@@ -4,25 +4,30 @@
 {% block title %}청년 정책 | 딱맞춤{% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="{% static 'auth_mypage/css/youth_page.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="youth-page">
-    <h1>청년을 위한 맞춤 정책</h1>
+    <h1>나에게 맞는 <span class="highlight">청년</span> 정책</h1>
+    <p class="page-sub">AI가 분석한 나의 조건에 꼭 맞는 청년 정책을 한눈에 확인하세요.</p>
 
     <div class="card-container">
         <div class="policy-card">
             <span class="icon">💼</span>
             <div class="card-title">청년 복지 지원</div>
+            <div class="card-desc">취업·생활 안정 관련 복지 혜택</div>
         </div>
         <div class="policy-card">
             <span class="icon">🏠</span>
             <div class="card-title">청년 주거 지원</div>
+            <div class="card-desc">전세·월세·공공주택 지원 정책</div>
         </div>
         <div class="policy-card">
             <span class="icon">🚀</span>
             <div class="card-title">청년 금융 지원</div>
+            <div class="card-desc">저금리 대출·저축 상품 안내</div>
         </div>
     </div>
 </div>

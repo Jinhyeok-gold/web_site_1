@@ -1,5 +1,5 @@
 /* ==========================================================================
-   qr_login.css — QR 로그인 페이지
+   qr_login.css — QR코드 로그인 페이지
    ========================================================================== */
 
 .qr-login-page {
@@ -7,37 +7,62 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 70vh;
+    min-height: 80vh;
     padding: 60px 20px;
     text-align: center;
+    background:
+        radial-gradient(ellipse 60% 50% at 50% 0%,
+            rgba(99, 102, 241, 0.09), transparent 65%),
+        linear-gradient(160deg, #fafbff 0%, #f4f3ff 55%, #fdf4ff 100%);
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    width: 100vw;
+}
+
+/* eyebrow */
+.qr-login-page::before {
+    content: 'QUICK ACCESS';
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: #6366f1;
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
 }
 
 .qr-login-page .page-title {
-    font-size: 2rem;
-    font-weight: 800;
-    color: #1e293b;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 900;
+    letter-spacing: -1.2px;
+    color: #0f172a;
     margin-bottom: 10px;
 }
 
 .qr-login-page .page-sub {
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: #64748b;
-    margin-bottom: 40px;
+    margin-bottom: 48px;
+    line-height: 1.6;
 }
 
-/* 컨테이너 */
+/* QR 컨테이너 */
 .qr-container {
     display: flex;
     width: 100%;
     max-width: 960px;
-    background: #ffffff;
-    border-radius: 30px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.06);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1.5px solid rgba(255, 255, 255, 0.7);
+    border-radius: 32px;
     overflow: hidden;
+    box-shadow: 0 24px 60px rgba(99, 102, 241, 0.10),
+                0 4px 16px rgba(0, 0, 0, 0.04);
+    text-align: left;
 }
 
-/* 좌측 */
+/* 좌측 QR */
 .qr-section {
     flex: 1;
     padding: 60px;
@@ -45,33 +70,44 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-right: 1px solid #e2e8f0;
+    border-right: 1.5px solid #f1f5f9;
+    background: #ffffff;
 }
 
 .qr-box {
-    width: 220px;
-    height: 220px;
-    background: #f8fafc;
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(135deg, #f4f3ff 0%, #fdf4ff 100%);
     border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    border: 1.5px solid rgba(99, 102, 241, 0.15);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.08);
 }
 
 .qr-box i {
-    font-size: 160px;
-    color: #334155;
+    font-size: 140px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
+/* 타이머 — myreport 배지 스타일 */
 .timer {
-    font-size: 1.2rem;
-    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1rem;
+    font-weight: 800;
     color: #ef4444;
     background: #fef2f2;
-    padding: 6px 18px;
-    border-radius: 20px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    font-family: 'JetBrains Mono', monospace;
 }
 
 .btn-reissue {
@@ -80,60 +116,75 @@
     border: none;
     color: #94a3b8;
     cursor: pointer;
-    text-decoration: underline;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    font-family: inherit;
+    transition: color 0.2s;
 }
 
-/* 우측 */
+.btn-reissue:hover {
+    color: #6366f1;
+}
+
+/* 우측 가이드 */
 .guide-section {
     flex: 1.5;
-    padding: 50px;
-    text-align: left;
+    padding: 52px 48px;
+    background: linear-gradient(160deg, #f4f3ff 0%, #fdf4ff 100%);
 }
 
 .guide-title {
     display: block;
-    font-size: 1.2rem;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 800;
     color: #1e293b;
-    margin-bottom: 10px;
+    letter-spacing: -0.3px;
+    margin-bottom: 8px;
     text-align: center;
 }
 
 .guide-sub {
     display: block;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: #64748b;
-    margin-bottom: 30px;
+    margin-bottom: 32px;
     text-align: center;
+    line-height: 1.6;
 }
 
 .guide-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 14px;
 }
 
 .guide-item {
-    background: #f8fafc;
-    padding: 20px;
-    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.82);
+    padding: 22px 18px;
+    border-radius: 20px;
     text-align: center;
-    font-size: 0.85rem;
+    font-size: 0.83rem;
     line-height: 1.6;
     color: #475569;
-    border: 1px solid #e2e8f0;
+    border: 1.5px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 2px 10px rgba(99, 102, 241, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.guide-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.10);
 }
 
 .guide-item .step-img {
-    width: 56px;
-    height: 56px;
-    background: #e0e7ff;
+    width: 52px;
+    height: 52px;
+    background: linear-gradient(135deg, #ede9fe, #faf5ff);
     border-radius: 50%;
     margin: 0 auto 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.4rem;
-    color: #4f46e5;
+    font-size: 1.3rem;
+    color: #6366f1;
+    border: 1px solid rgba(99, 102, 241, 0.15);
 }

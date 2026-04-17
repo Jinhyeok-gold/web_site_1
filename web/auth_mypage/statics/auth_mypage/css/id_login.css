@@ -6,113 +6,183 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 70vh;
+    min-height: 80vh;
     padding: 60px 20px;
+    background:
+        radial-gradient(ellipse 60% 50% at 50% 0%,
+            rgba(99, 102, 241, 0.09), transparent 65%),
+        linear-gradient(160deg, #fafbff 0%, #f4f3ff 55%, #fdf4ff 100%);
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    width: 100vw;
 }
 
+/* 카드 컨테이너 */
 .login-detail-container {
     display: flex;
-    border: 1px solid #e2e8f0;
-    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1.5px solid rgba(255, 255, 255, 0.7);
+    border-radius: 32px;
     overflow: hidden;
     width: 100%;
-    max-width: 800px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.06);
+    max-width: 820px;
+    box-shadow: 0 24px 60px rgba(99, 102, 241, 0.10),
+                0 4px 16px rgba(0, 0, 0, 0.04);
 }
 
 /* 좌측 폼 */
 .login-form-side {
     flex: 1;
-    padding: 60px;
+    padding: 60px 52px;
     background: #ffffff;
 }
 
-.login-form-side h2 {
-    font-size: 1.8rem;
+/* 상단 eyebrow 레이블 — myreport의 .mr-eyebrow 스타일 차용 */
+.login-form-side::before {
+    content: 'SIGN IN';
+    display: block;
+    font-size: 10px;
     font-weight: 700;
-    margin-bottom: 30px;
-    color: #1e293b;
+    letter-spacing: 0.2em;
+    color: #6366f1;
+    margin-bottom: 10px;
+    font-family: 'JetBrains Mono', monospace;
 }
 
+.login-form-side h2 {
+    font-size: 1.9rem;
+    font-weight: 900;
+    letter-spacing: -1px;
+    color: #0f172a;
+    margin-bottom: 36px;
+}
+
+/* 입력 그룹 */
 .input-group {
     margin-bottom: 20px;
+    position: relative;
 }
 
 .input-group label {
     display: block;
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: 0.82rem;
+    font-weight: 700;
     color: #475569;
     margin-bottom: 8px;
+    letter-spacing: 0.02em;
 }
 
 .input-group input {
     width: 100%;
     padding: 14px 16px;
-    border-radius: 10px;
-    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    border: 1.5px solid #e2e8f0;
     background: #f8fafc;
     font-size: 0.95rem;
+    color: #0f172a;
     outline: none;
-    transition: 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
     box-sizing: border-box;
+    font-family: inherit;
+}
+
+.input-group input::placeholder {
+    color: #cbd5e1;
 }
 
 .input-group input:focus {
     border-color: #6366f1;
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.10);
 }
 
+/* 로그인 옵션 */
 .login-options {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.85rem;
+    font-size: 0.83rem;
     color: #64748b;
-    margin-top: 5px;
+    margin-top: 6px;
 }
 
 .save-id {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
+    cursor: pointer;
 }
 
+.save-id input[type="checkbox"] {
+    accent-color: #6366f1;
+    width: 14px;
+    height: 14px;
+}
+
+/* 제출 버튼 — home.css .hero-cta-btn과 동일한 그라디언트 */
 .submit-btn {
     width: 100%;
-    padding: 15px;
-    background: #4f46e5;
+    padding: 16px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
     color: white;
     border: none;
-    border-radius: 10px;
-    font-weight: 700;
+    border-radius: 14px;
+    font-weight: 800;
     font-size: 1rem;
-    margin-top: 30px;
+    margin-top: 28px;
     cursor: pointer;
-    transition: 0.2s;
+    transition: transform 0.25s cubic-bezier(0.165, 0.84, 0.44, 1),
+                box-shadow 0.25s;
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.30);
+    letter-spacing: -0.2px;
+    font-family: inherit;
 }
 
 .submit-btn:hover {
-    background: #4338ca;
-    transform: translateY(-1px);
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 14px 36px rgba(99, 102, 241, 0.40);
 }
 
+/* 에러 메시지 */
 .error-msg {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     color: #ef4444;
     font-size: 0.85rem;
-    margin-top: 10px;
     font-weight: 600;
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: #fef2f2;
+    border-radius: 10px;
+    border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 /* 우측 안내 */
 .login-info-side {
     flex: 1;
-    padding: 60px;
-    background: #f8fafc;
-    font-size: 0.9rem;
+    padding: 60px 48px;
+    background: linear-gradient(160deg, #f4f3ff 0%, #fdf4ff 100%);
+    font-size: 0.88rem;
     color: #64748b;
-    line-height: 2.0;
+    line-height: 1.9;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* 안내 제목 */
+.login-info-side::before {
+    content: '안내사항';
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: #8b5cf6;
+    margin-bottom: 20px;
+    font-family: 'JetBrains Mono', monospace;
 }
 
 .login-info-side ul {
@@ -121,5 +191,19 @@
 }
 
 .login-info-side li {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
+    padding-left: 16px;
+    position: relative;
+}
+
+/* 불릿을 인디고 dot으로 */
+.login-info-side li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
 }

@@ -4,59 +4,114 @@
 
 .guest-login-page {
     width: 100%;
-    max-width: 800px;
+    max-width: 760px;
     margin: 0 auto;
-    padding: 60px 20px;
+    padding: 60px 20px 80px;
     box-sizing: border-box;
 }
 
+/* 페이지 타이틀 영역 */
+.guest-login-page .page-header {
+    margin-bottom: 32px;
+}
+
+.guest-login-page .page-header::before {
+    content: 'GUEST ACCESS';
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: #6366f1;
+    margin-bottom: 8px;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* 메인 카드 */
 .glass-container {
     background: #ffffff;
     border-radius: 30px;
-    padding: 40px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+    padding: 44px 48px;
+    border: 1.5px solid #e2e8f0;
+    box-shadow: 0 20px 50px rgba(99, 102, 241, 0.07),
+                0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .glass-container h2 {
-    color: #1e293b;
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: -0.8px;
+    color: #0f172a;
     text-align: center;
-    margin-bottom: 30px;
-    font-size: 1.8rem;
-    font-weight: 700;
+    margin-bottom: 32px;
 }
 
+/* 섹션 박스 — myreport 위젯 스타일 차용 */
 .section-box {
     background: #f8fafc;
-    border-radius: 16px;
-    padding: 25px;
-    margin-bottom: 20px;
-    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+    border: 1.5px solid #e2e8f0;
 }
 
 .section-title {
-    font-weight: 700;
-    font-size: 1rem;
-    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    margin-bottom: 14px;
     color: #1e293b;
-    display: block;
+    letter-spacing: -0.2px;
+}
+
+/* 섹션 타이틀 앞 인디고 dot */
+.section-title::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    flex-shrink: 0;
 }
 
 .notice-list {
     margin: 0;
-    padding-left: 20px;
-    font-size: 0.9rem;
+    padding-left: 0;
+    list-style: none;
+    font-size: 0.88rem;
     line-height: 1.8;
     color: #64748b;
 }
 
+.notice-list li {
+    padding-left: 14px;
+    position: relative;
+    margin-bottom: 6px;
+}
+
+.notice-list li::before {
+    content: '·';
+    position: absolute;
+    left: 4px;
+    color: #94a3b8;
+}
+
+/* 약관 동의 항목 */
 .agree-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
-    font-size: 0.9rem;
+    padding: 10px 0;
+    font-size: 0.88rem;
     color: #475569;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.agree-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
 }
 
 .agree-item label {
@@ -66,87 +121,145 @@
     cursor: pointer;
 }
 
+.agree-item input[type="checkbox"] {
+    accent-color: #6366f1;
+    width: 15px;
+    height: 15px;
+}
+
 .btn-view {
-    font-size: 0.8rem;
-    color: #94a3b8;
-    text-decoration: underline;
-    background: none;
+    font-size: 0.78rem;
+    color: #6366f1;
+    text-decoration: none;
+    background: #ede9fe;
     border: none;
+    border-radius: 6px;
+    padding: 3px 10px;
     cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.btn-view:hover {
+    background: #ddd6fe;
 }
 
 .required {
-    color: #ef4444;
-    margin-left: 4px;
-    font-size: 0.8rem;
+    color: #6366f1;
+    margin-left: 2px;
+    font-size: 0.78rem;
+    font-weight: 700;
 }
 
+/* 입력 그룹 */
 .input-group {
-    margin-bottom: 18px;
+    margin-bottom: 16px;
 }
 
 .input-group label {
     display: block;
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: 0.82rem;
+    font-weight: 700;
     color: #475569;
-    margin-bottom: 8px;
+    margin-bottom: 7px;
+    letter-spacing: 0.02em;
 }
 
 .input-group input[type="text"],
 .input-group input[type="password"] {
     width: 100%;
-    padding: 12px 15px;
-    border-radius: 10px;
-    border: 1px solid #e2e8f0;
-    background: #ffffff;
+    padding: 13px 15px;
+    border-radius: 12px;
+    border: 1.5px solid #e2e8f0;
+    background: #f8fafc;
     box-sizing: border-box;
     outline: none;
-    transition: 0.2s;
-    font-size: 0.95rem;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    font-size: 0.93rem;
+    color: #0f172a;
+    font-family: inherit;
 }
 
 .input-group input:focus {
     border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.10);
 }
 
 .row-inputs {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     align-items: center;
 }
 
 .row-inputs input {
     flex: 1;
-    padding: 12px 15px;
-    border-radius: 10px;
-    border: 1px solid #e2e8f0;
-    background: #ffffff;
+    padding: 13px 15px;
+    border-radius: 12px;
+    border: 1.5px solid #e2e8f0;
+    background: #f8fafc;
     outline: none;
-    transition: 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-size: 0.93rem;
+    font-family: inherit;
 }
 
 .row-inputs input:focus {
     border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.10);
 }
 
+.row-inputs span {
+    color: #cbd5e1;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+/* 제출 버튼 */
 .submit-btn {
     width: 100%;
     padding: 16px;
-    background: #4f46e5;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
     color: white;
     border: none;
-    border-radius: 12px;
-    font-weight: 700;
+    border-radius: 14px;
+    font-weight: 800;
     font-size: 1rem;
-    margin-top: 10px;
+    margin-top: 8px;
     cursor: pointer;
-    transition: 0.2s;
+    transition: transform 0.25s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.25s;
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.28);
+    letter-spacing: -0.2px;
+    font-family: inherit;
 }
 
 .submit-btn:hover {
-    background: #4338ca;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 36px rgba(99, 102, 241, 0.38);
+}
+
+/* 취소 버튼 */
+.btn-cancel-action {
+    flex: 1;
+    padding: 16px;
+    border-radius: 14px;
+    border: 1.5px solid #e2e8f0;
+    background: #ffffff;
+    color: #64748b;
+    font-weight: 700;
+    font-size: 1rem;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    font-family: inherit;
+}
+
+.btn-cancel-action:hover {
+    border-color: #cbd5e1;
+    color: #1e293b;
 }

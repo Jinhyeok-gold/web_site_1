@@ -1,69 +1,113 @@
 /* ==========================================================================
    login.css — 로그인 방식 선택 페이지
+   mainwindow 디자인 시스템 기반 (인디고 #6366f1, 라벤더 배경, 미니멀 카드)
    ========================================================================== */
 
+/* 페이지 배경 — home.css의 aura 그라디언트와 동일한 톤 */
 .login-select-page {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 70vh;
-    padding: 60px 20px;
+    min-height: 80vh;
+    padding: 80px 20px 60px;
     text-align: center;
+    background:
+        radial-gradient(ellipse 70% 50% at 50% 0%,
+            rgba(99, 102, 241, 0.10), transparent 65%),
+        radial-gradient(ellipse 40% 40% at 90% 90%,
+            rgba(139, 92, 246, 0.07), transparent 65%),
+        linear-gradient(160deg, #fafbff 0%, #f4f3ff 50%, #fdf4ff 100%);
+    /* 배경을 container wide 밖으로 확장 — mainwindow의 view-hero-fullwidth와 동일 패턴 */
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    width: 100vw;
 }
 
+/* 페이지 타이틀 */
 .login-select-page h1 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin-bottom: 40px;
-    color: #1e293b;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    color: #0f172a;
+    margin-bottom: 12px;
 }
 
+/* 서브타이틀 */
+.login-select-page .page-sub {
+    font-size: 1rem;
+    color: #64748b;
+    margin-bottom: 56px;
+    line-height: 1.6;
+}
+
+/* 카드 컨테이너 */
 .card-container {
     display: flex;
     justify-content: center;
-    gap: 25px;
+    gap: 24px;
     flex-wrap: wrap;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
 }
 
+/* 로그인 선택 카드 */
 .login-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    width: 200px;
-    padding: 50px 20px;
-    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    width: 210px;
+    padding: 52px 24px 44px;
+    border-radius: 28px;
     cursor: pointer;
-    transition: 0.3s ease;
-    box-sizing: border-box;
+    transition: transform 0.25s cubic-bezier(0.165, 0.84, 0.44, 1),
+                box-shadow 0.25s cubic-bezier(0.165, 0.84, 0.44, 1),
+                border-color 0.2s;
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.06),
+                0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 .login-card:hover {
-    transform: translateY(-8px);
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 48px rgba(99, 102, 241, 0.16),
+                0 4px 12px rgba(0, 0, 0, 0.06);
+    border-color: rgba(99, 102, 241, 0.35);
     background: #ffffff;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-    border-color: #c7d2fe;
 }
 
+/* 아이콘 영역 */
 .login-card .icon {
-    font-size: 3.5rem;
-    margin-bottom: 25px;
+    font-size: 3rem;
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 80px;
-    color: #4f46e5;
+    height: 72px;
+    /* 인디고 그라디언트 아이콘 */
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .login-card .card-title {
-    font-size: 1.1rem;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 800;
     color: #1e293b;
+    letter-spacing: -0.3px;
     line-height: 1.4;
 }
 
+/* 안내 메시지 */
 .info-msg {
-    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
     color: #94a3b8;
-    margin-top: 10px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.12);
+    border-radius: 999px;
+    padding: 6px 16px;
+    backdrop-filter: blur(8px);
 }

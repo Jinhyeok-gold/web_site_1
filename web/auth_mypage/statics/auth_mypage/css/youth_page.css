@@ -1,5 +1,6 @@
 /* ==========================================================================
    youth_page.css — 청년 정책 페이지
+   home.css의 hero 섹션 아우라 배경 + 카드 스타일 통일
    ========================================================================== */
 
 .youth-page {
@@ -7,51 +8,107 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 70vh;
-    padding: 60px 20px;
+    min-height: 80vh;
+    padding: 80px 20px 80px;
     text-align: center;
+    background:
+        radial-gradient(ellipse 80% 55% at 50% 0%,
+            rgba(99, 102, 241, 0.12), transparent 62%),
+        radial-gradient(ellipse 40% 45% at 90% 90%,
+            rgba(139, 92, 246, 0.07), transparent 65%),
+        linear-gradient(170deg, #fafbff 0%, #f4f3ff 45%, #fdf4ff 100%);
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    width: 100vw;
+}
+
+/* eyebrow */
+.youth-page::before {
+    content: 'YOUTH POLICY';
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: #6366f1;
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
 }
 
 .youth-page h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 10px;
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    color: #0f172a;
+    margin-bottom: 12px;
+    word-break: keep-all;
 }
 
+/* 그라디언트 텍스트 — home.css .hero-color-word와 동일 */
+.youth-page h1 .highlight {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.youth-page .page-sub {
+    font-size: 1rem;
+    color: #64748b;
+    margin-bottom: 60px;
+    line-height: 1.7;
+    word-break: keep-all;
+}
+
+/* 카드 컨테이너 */
 .card-container {
     display: flex;
     justify-content: center;
-    gap: 25px;
+    gap: 22px;
     flex-wrap: wrap;
-    margin-top: 50px;
 }
 
+/* 정책 카드 — home.css glassmorphism 카드 스타일 */
 .policy-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    width: 240px;
-    padding: 50px 20px;
-    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1.5px solid rgba(255, 255, 255, 0.65);
+    width: 220px;
+    padding: 48px 24px 40px;
+    border-radius: 28px;
     cursor: pointer;
-    transition: 0.3s ease;
+    transition: transform 0.25s cubic-bezier(0.165, 0.84, 0.44, 1),
+                box-shadow 0.25s, border-color 0.2s;
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.06),
+                0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 .policy-card:hover {
-    transform: translateY(-8px);
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 24px 52px rgba(99, 102, 241, 0.16),
+                0 4px 12px rgba(0, 0, 0, 0.06);
+    border-color: rgba(99, 102, 241, 0.35);
     background: #ffffff;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-    border-color: #c7d2fe;
 }
 
 .policy-card .icon {
-    font-size: 3.5rem;
-    margin-bottom: 20px;
+    font-size: 3rem;
+    margin-bottom: 18px;
     display: block;
+    line-height: 1;
 }
 
 .policy-card .card-title {
-    font-size: 1.1rem;
-    font-weight: 700;
+    font-size: 0.95rem;
+    font-weight: 800;
     color: #1e293b;
+    letter-spacing: -0.3px;
+    line-height: 1.4;
+}
+
+.policy-card .card-desc {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 6px;
+    line-height: 1.5;
 }
