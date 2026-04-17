@@ -1,9 +1,6 @@
-/* ==========================================================================
-   login.css — 로그인 방식 선택 페이지
-   mainwindow 디자인 시스템 기반 (인디고 #6366f1, 라벤더 배경, 미니멀 카드)
-   ========================================================================== */
+/* login.css — 로그인 방식 선택 페이지 */
+/* 배경은 base.css의 main.container.wide가 담당 */
 
-/* 페이지 배경 — home.css의 aura 그라디언트와 동일한 톤 */
 .login-select-page {
     display: flex;
     flex-direction: column;
@@ -12,19 +9,8 @@
     min-height: calc(100vh - 80px);
     padding: 80px 20px 60px;
     text-align: center;
-    background:
-        radial-gradient(ellipse 70% 50% at 50% 0%,
-            rgba(99, 102, 241, 0.10), transparent 65%),
-        radial-gradient(ellipse 40% 40% at 90% 90%,
-            rgba(139, 92, 246, 0.07), transparent 65%),
-        linear-gradient(160deg, #fafbff 0%, #f4f3ff 50%, #fdf4ff 100%);
-    /* 배경을 container wide 밖으로 확장 — mainwindow의 view-hero-fullwidth와 동일 패턴 */
-    margin-left: calc(-50vw + 50%);
-    margin-right: calc(-50vw + 50%);
-    width: 100vw;
 }
 
-/* 페이지 타이틀 */
 .login-select-page h1 {
     font-size: clamp(1.8rem, 3vw, 2.4rem);
     font-weight: 900;
@@ -33,7 +19,6 @@
     margin-bottom: 12px;
 }
 
-/* 서브타이틀 */
 .login-select-page .page-sub {
     font-size: 1rem;
     color: #64748b;
@@ -41,7 +26,6 @@
     line-height: 1.6;
 }
 
-/* 카드 컨테이너 */
 .card-container {
     display: flex;
     justify-content: center;
@@ -50,7 +34,6 @@
     margin-bottom: 40px;
 }
 
-/* 로그인 선택 카드 */
 .login-card {
     background: rgba(255, 255, 255, 0.88);
     backdrop-filter: blur(20px);
@@ -61,8 +44,7 @@
     border-radius: 28px;
     cursor: pointer;
     transition: transform 0.25s cubic-bezier(0.165, 0.84, 0.44, 1),
-                box-shadow 0.25s cubic-bezier(0.165, 0.84, 0.44, 1),
-                border-color 0.2s;
+                box-shadow 0.25s, border-color 0.2s;
     box-shadow: 0 4px 20px rgba(99, 102, 241, 0.06),
                 0 1px 4px rgba(0, 0, 0, 0.04);
 }
@@ -75,7 +57,6 @@
     background: #ffffff;
 }
 
-/* 아이콘 영역 */
 .login-card .icon {
     font-size: 3rem;
     margin-bottom: 20px;
@@ -83,7 +64,6 @@
     align-items: center;
     justify-content: center;
     height: 72px;
-    /* 인디고 그라디언트 아이콘 */
     background: linear-gradient(135deg, #6366f1, #8b5cf6);
     -webkit-background-clip: text;
     background-clip: text;
@@ -98,7 +78,6 @@
     line-height: 1.4;
 }
 
-/* 안내 메시지 */
 .info-msg {
     display: inline-flex;
     align-items: center;

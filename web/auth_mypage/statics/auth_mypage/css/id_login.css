@@ -1,6 +1,4 @@
-/* ==========================================================================
-   id_login.css — 아이디 로그인 페이지
-   ========================================================================== */
+/* id_login.css — 아이디 로그인 페이지 */
 
 .id-login-page {
     display: flex;
@@ -8,16 +6,8 @@
     justify-content: center;
     min-height: calc(100vh - 80px);
     padding: 60px 20px;
-    background:
-        radial-gradient(ellipse 60% 50% at 50% 0%,
-            rgba(99, 102, 241, 0.09), transparent 65%),
-        linear-gradient(160deg, #fafbff 0%, #f4f3ff 55%, #fdf4ff 100%);
-    margin-left: calc(-50vw + 50%);
-    margin-right: calc(-50vw + 50%);
-    width: 100vw;
 }
 
-/* 카드 컨테이너 */
 .login-detail-container {
     display: flex;
     background: rgba(255, 255, 255, 0.92);
@@ -32,14 +22,12 @@
                 0 4px 16px rgba(0, 0, 0, 0.04);
 }
 
-/* 좌측 폼 */
 .login-form-side {
     flex: 1;
     padding: 60px 52px;
     background: #ffffff;
 }
 
-/* 상단 eyebrow 레이블 — myreport의 .mr-eyebrow 스타일 차용 */
 .login-form-side::before {
     content: 'SIGN IN';
     display: block;
@@ -48,7 +36,6 @@
     letter-spacing: 0.2em;
     color: #6366f1;
     margin-bottom: 10px;
-    font-family: 'JetBrains Mono', monospace;
 }
 
 .login-form-side h2 {
@@ -59,11 +46,7 @@
     margin-bottom: 36px;
 }
 
-/* 입력 그룹 */
-.input-group {
-    margin-bottom: 20px;
-    position: relative;
-}
+.input-group { margin-bottom: 20px; }
 
 .input-group label {
     display: block;
@@ -88,9 +71,7 @@
     font-family: inherit;
 }
 
-.input-group input::placeholder {
-    color: #cbd5e1;
-}
+.input-group input::placeholder { color: #cbd5e1; }
 
 .input-group input:focus {
     border-color: #6366f1;
@@ -98,7 +79,6 @@
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.10);
 }
 
-/* 로그인 옵션 */
 .login-options {
     display: flex;
     justify-content: space-between;
@@ -108,20 +88,9 @@
     margin-top: 6px;
 }
 
-.save-id {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-}
+.save-id { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.save-id input[type="checkbox"] { accent-color: #6366f1; width: 14px; height: 14px; }
 
-.save-id input[type="checkbox"] {
-    accent-color: #6366f1;
-    width: 14px;
-    height: 14px;
-}
-
-/* 제출 버튼 — home.css .hero-cta-btn과 동일한 그라디언트 */
 .submit-btn {
     width: 100%;
     padding: 16px;
@@ -133,8 +102,7 @@
     font-size: 1rem;
     margin-top: 28px;
     cursor: pointer;
-    transition: transform 0.25s cubic-bezier(0.165, 0.84, 0.44, 1),
-                box-shadow 0.25s;
+    transition: transform 0.25s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.25s;
     box-shadow: 0 8px 24px rgba(99, 102, 241, 0.30);
     letter-spacing: -0.2px;
     font-family: inherit;
@@ -145,7 +113,6 @@
     box-shadow: 0 14px 36px rgba(99, 102, 241, 0.40);
 }
 
-/* 에러 메시지 */
 .error-msg {
     display: flex;
     align-items: center;
@@ -160,7 +127,6 @@
     border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
-/* 우측 안내 */
 .login-info-side {
     flex: 1;
     padding: 60px 48px;
@@ -173,7 +139,6 @@
     justify-content: center;
 }
 
-/* 안내 제목 */
 .login-info-side::before {
     content: '안내사항';
     display: block;
@@ -182,13 +147,9 @@
     letter-spacing: 0.2em;
     color: #8b5cf6;
     margin-bottom: 20px;
-    font-family: 'JetBrains Mono', monospace;
 }
 
-.login-info-side ul {
-    padding-left: 0;
-    list-style: none;
-}
+.login-info-side ul { padding-left: 0; list-style: none; }
 
 .login-info-side li {
     margin-bottom: 18px;
@@ -196,7 +157,6 @@
     position: relative;
 }
 
-/* 불릿을 인디고 dot으로 */
 .login-info-side li::before {
     content: '';
     position: absolute;

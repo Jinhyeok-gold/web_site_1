@@ -1,6 +1,4 @@
-/* ==========================================================================
-   edit_profile.css — 정보 수정 페이지
-   ========================================================================== */
+/* edit_profile.css — 정보 수정 페이지 */
 
 .edit-profile-page {
     display: flex;
@@ -8,16 +6,8 @@
     justify-content: center;
     min-height: calc(100vh - 80px);
     padding: 56px 20px 80px;
-    background:
-        radial-gradient(ellipse 50% 40% at 50% 0%,
-            rgba(99, 102, 241, 0.07), transparent 65%),
-        linear-gradient(160deg, #fafbff 0%, #f4f3ff 55%, #fdf4ff 100%);
-    margin-left: calc(-50vw + 50%);
-    margin-right: calc(-50vw + 50%);
-    width: 100vw;
 }
 
-/* 카드 */
 .edit-card {
     background: #ffffff;
     padding: 44px 48px;
@@ -29,7 +19,6 @@
                 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
-/* eyebrow */
 .edit-card::before {
     content: 'EDIT PROFILE';
     display: block;
@@ -38,7 +27,6 @@
     letter-spacing: 0.2em;
     color: #6366f1;
     margin-bottom: 8px;
-    font-family: 'JetBrains Mono', monospace;
 }
 
 .edit-card h2 {
@@ -49,10 +37,7 @@
     margin-bottom: 32px;
 }
 
-/* 입력 그룹 */
-.input-group {
-    margin-bottom: 16px;
-}
+.input-group { margin-bottom: 16px; }
 
 .input-group label {
     display: block;
@@ -94,14 +79,12 @@
     padding-right: 40px;
 }
 
-/* 2열 그리드 */
 .input-grid-2col {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 14px;
 }
 
-/* 주소 검색 버튼 */
 .btn-zip {
     display: block;
     width: 100%;
@@ -114,22 +97,12 @@
     margin-top: 8px;
     font-weight: 700;
     font-size: 0.88rem;
-    letter-spacing: -0.1px;
     transition: background 0.2s, border-color 0.2s;
     font-family: inherit;
 }
+.btn-zip:hover { background: linear-gradient(135deg, #ddd6fe, #ede9fe); border-color: rgba(99, 102, 241, 0.45); }
 
-.btn-zip:hover {
-    background: linear-gradient(135deg, #ddd6fe, #ede9fe);
-    border-color: rgba(99, 102, 241, 0.45);
-}
-
-/* 버튼 그룹 */
-.btn-group {
-    display: flex;
-    gap: 10px;
-    margin-top: 32px;
-}
+.btn-group { display: flex; gap: 10px; margin-top: 32px; }
 
 .btn {
     flex: 1;
@@ -154,20 +127,11 @@
     color: white;
     box-shadow: 0 6px 20px rgba(99, 102, 241, 0.28);
 }
-
-.btn-save:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 28px rgba(99, 102, 241, 0.38);
-}
+.btn-save:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(99, 102, 241, 0.38); }
 
 .btn-cancel {
     background: #ffffff;
     color: #64748b;
     border: 1.5px solid #e2e8f0;
 }
-
-.btn-cancel:hover {
-    border-color: #cbd5e1;
-    color: #1e293b;
-    transform: translateY(-1px);
-}
+.btn-cancel:hover { border-color: #cbd5e1; color: #1e293b; transform: translateY(-1px); }

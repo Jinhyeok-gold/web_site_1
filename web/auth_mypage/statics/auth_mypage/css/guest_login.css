@@ -1,6 +1,4 @@
-/* ==========================================================================
-   guest_login.css — 비회원 로그인 페이지
-   ========================================================================== */
+/* guest_login.css — 비회원 로그인 페이지 */
 
 .guest-login-page {
     width: 100%;
@@ -10,23 +8,6 @@
     box-sizing: border-box;
 }
 
-/* 페이지 타이틀 영역 */
-.guest-login-page .page-header {
-    margin-bottom: 32px;
-}
-
-.guest-login-page .page-header::before {
-    content: 'GUEST ACCESS';
-    display: block;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    color: #6366f1;
-    margin-bottom: 8px;
-    font-family: 'JetBrains Mono', monospace;
-}
-
-/* 메인 카드 */
 .glass-container {
     background: #ffffff;
     border-radius: 30px;
@@ -45,7 +26,6 @@
     margin-bottom: 32px;
 }
 
-/* 섹션 박스 — myreport 위젯 스타일 차용 */
 .section-box {
     background: #f8fafc;
     border-radius: 18px;
@@ -65,7 +45,6 @@
     letter-spacing: -0.2px;
 }
 
-/* 섹션 타이틀 앞 인디고 dot */
 .section-title::before {
     content: '';
     display: inline-block;
@@ -85,20 +64,9 @@
     color: #64748b;
 }
 
-.notice-list li {
-    padding-left: 14px;
-    position: relative;
-    margin-bottom: 6px;
-}
+.notice-list li { padding-left: 14px; position: relative; margin-bottom: 6px; }
+.notice-list li::before { content: '·'; position: absolute; left: 4px; color: #94a3b8; }
 
-.notice-list li::before {
-    content: '·';
-    position: absolute;
-    left: 4px;
-    color: #94a3b8;
-}
-
-/* 약관 동의 항목 */
 .agree-item {
     display: flex;
     justify-content: space-between;
@@ -108,29 +76,13 @@
     color: #475569;
     border-bottom: 1px solid #f1f5f9;
 }
-
-.agree-item:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-}
-
-.agree-item label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-}
-
-.agree-item input[type="checkbox"] {
-    accent-color: #6366f1;
-    width: 15px;
-    height: 15px;
-}
+.agree-item:last-child { border-bottom: none; padding-bottom: 0; }
+.agree-item label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.agree-item input[type="checkbox"] { accent-color: #6366f1; width: 15px; height: 15px; }
 
 .btn-view {
     font-size: 0.78rem;
     color: #6366f1;
-    text-decoration: none;
     background: #ede9fe;
     border: none;
     border-radius: 6px;
@@ -139,22 +91,11 @@
     font-weight: 600;
     transition: background 0.2s;
 }
+.btn-view:hover { background: #ddd6fe; }
 
-.btn-view:hover {
-    background: #ddd6fe;
-}
+.required { color: #6366f1; margin-left: 2px; font-size: 0.78rem; font-weight: 700; }
 
-.required {
-    color: #6366f1;
-    margin-left: 2px;
-    font-size: 0.78rem;
-    font-weight: 700;
-}
-
-/* 입력 그룹 */
-.input-group {
-    margin-bottom: 16px;
-}
+.input-group { margin-bottom: 16px; }
 
 .input-group label {
     display: block;
@@ -186,11 +127,7 @@
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.10);
 }
 
-.row-inputs {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
+.row-inputs { display: flex; gap: 8px; align-items: center; }
 
 .row-inputs input {
     flex: 1;
@@ -210,13 +147,8 @@
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.10);
 }
 
-.row-inputs span {
-    color: #cbd5e1;
-    font-weight: 700;
-    flex-shrink: 0;
-}
+.row-inputs span { color: #cbd5e1; font-weight: 700; flex-shrink: 0; }
 
-/* 제출 버튼 */
 .submit-btn {
     width: 100%;
     padding: 16px;
@@ -237,29 +169,4 @@
 .submit-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 14px 36px rgba(99, 102, 241, 0.38);
-}
-
-/* 취소 버튼 */
-.btn-cancel-action {
-    flex: 1;
-    padding: 16px;
-    border-radius: 14px;
-    border: 1.5px solid #e2e8f0;
-    background: #ffffff;
-    color: #64748b;
-    font-weight: 700;
-    font-size: 1rem;
-    text-align: center;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
-    font-family: inherit;
-}
-
-.btn-cancel-action:hover {
-    border-color: #cbd5e1;
-    color: #1e293b;
 }
