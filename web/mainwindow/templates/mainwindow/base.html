@@ -12,6 +12,31 @@
 </head>
 
 <body>
+    <!-- Real Estate Market Ticker -->
+    <div class="market-ticker-wrapper">
+        <div class="market-ticker">
+            <div class="ticker-content">
+                {% for item in real_estate_ticker %}
+                <span class="ticker-item">
+                    <span class="region">{{ item.name }}</span>
+                    <span class="price">{{ item.price }}</span>
+                    <span class="trend {% if item.is_up %}up{% else %}down{% endif %}">
+                        {% if item.is_up %}▲{% else %}▼{% endif %} {{ item.trend }}%
+                    </span>
+                </span>
+                {% endfor %}
+                {% for item in real_estate_ticker %}
+                <span class="ticker-item">
+                    <span class="region">{{ item.name }}</span>
+                    <span class="price">{{ item.price }}</span>
+                    <span class="trend {% if item.is_up %}up{% else %}down{% endif %}">
+                        {% if item.is_up %}▲{% else %}▼{% endif %} {{ item.trend }}%
+                    </span>
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 
     <header class="main-header">
         <div class="container header-inner">
@@ -23,9 +48,11 @@
             <nav class="main-nav">
                 <ul class="nav-list">
                     <li class="nav-item"><a href="{% url 'myreport' %}">마이리포트</a></li>
+                    <li class="nav-item"><a href="{% url 'market_trends' %}">부동산 시세</a></li>
                     <li class="nav-item">
                         <a href="javascript:void(0)" onclick="goToDiagnosis()">자가진단</a>
                     </li>
+                </ul>
             </nav>
             <div class="header-util">
                 <!-- Header Kakao Search Bar -->
@@ -38,9 +65,11 @@
                 <a href="{% url 'support:support_home' %}" class="qna-btn">고객센터</a>
                 {% if user.is_authenticated %}
                     <span style="color: #475569; font-weight: 600; font-size: 14px;">{{ user.last_name|default:user.username }}님</span>
+                    <a href="{% url 'policy:mypage' %}" class="login-btn" style="border:none; background:none; padding:0 10px;">마이페이지</a>
                     <a href="{% url 'policy:logout' %}" class="join-btn">로그아웃</a>
                 {% elif request.session.is_guest %}
-                    <span style="color: #475569; font-weight: 600; font-size: 14px;">{{ request.session.guest_name }}님 <small>(게스트)</small></span>
+                    <span style="color: #666; font-weight: 600; font-size: 13px; margin-right: 10px;">{{ request.session.guest_name }}님 <small>(게스트)</small></span>
+                    <a href="{% url 'policy:mypage' %}" class="login-btn" style="border:none; background:none; padding:0 10px;">마이페이지</a>
                     <a href="{% url 'policy:logout' %}" class="join-btn">로그아웃</a>
                 {% else %}
                     <a href="{% url 'policy:login' %}" class="login-btn">로그인</a>

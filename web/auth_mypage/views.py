@@ -220,11 +220,13 @@ def edit_profile_view(request):
     if not request.user.is_authenticated:
         return redirect('policy:login')
     
-    profile = UserProfile.objects.get(user=request.user)
-
+    # [v22] 프로필이 없으면 생성, 있으면 가져옴
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    
     if request.method == "POST":
-        # 1. User 모델 정보 업데이트 (이름)
+        # 1. User 모델 정보 업데이트 (이름, 이메일)
         request.user.last_name = request.POST.get('name')
+        request.user.email = request.POST.get('email', request.user.email)
         request.user.save()
         
         # 2. UserProfile 모델 정보 업데이트 (보안 검증 적용)

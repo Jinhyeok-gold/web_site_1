@@ -29,6 +29,7 @@ urlpatterns = [
     path('auth/', include('auth_mypage.urls', namespace='policy')),
     path('accounts/', include('allauth.urls')),
     path('myreport/', views.myreport, name='myreport'),
+    path('market-trends/', views.market_trends, name='market_trends'),
     path('support/', include('support.urls')),
 ]
 

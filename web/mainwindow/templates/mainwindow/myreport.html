@@ -161,6 +161,10 @@
 {% endblock %}
 
 {% block extra_js %}
+<script>
+  // 서버에서 전달받은 최신 진단 데이터 (있을 경우 localStorage보다 우선함)
+  const serverReportData = {{ report_json|safe|default:"null" }};
+</script>
 <script src="{% static 'mainwindow/js/form.js' %}"></script>
 <script src="{% static 'mainwindow/js/recap.js' %}"></script>
 <script src="{% static 'mainwindow/js/myreport.js' %}"></script>

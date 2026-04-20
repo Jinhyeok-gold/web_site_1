@@ -1155,3 +1155,46 @@ main.container.wide {
     color: #94a3b8;
     font-style: italic;
 }
+
+/* ==========================================================================
+   X. Real Estate Market Ticker (상단 시세 티커)
+   ========================================================================== */
+.market-ticker-wrapper {
+    background: #1e293b;
+    color: #f1f5f9;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    font-size: 13px;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    z-index: 1001;
+}
+.market-ticker { display: flex; white-space: nowrap; width: 100%; }
+.ticker-content { display: inline-flex; animation: scroll-ticker 40s linear infinite; padding-left: 100%; }
+.ticker-item { display: flex; align-items: center; padding: 0 40px; gap: 10px; }
+.ticker-item .region { color: #94a3b8; font-weight: 700; }
+.ticker-item .price { color: #f8fafc; font-weight: 600; }
+.ticker-item .trend.up { color: #ef4444; }
+.ticker-item .trend.down { color: #3b82f6; }
+@keyframes scroll-ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+.market-ticker-wrapper:hover .ticker-content { animation-play-state: paused; }
+
+/* ==========================================================================
+   Y. Market Trends Dashboard Global Styles
+   ========================================================================== */
+.trends-dashboard { padding: 40px 0; max-width: 1440px; margin: 0 auto; }
+.dashboard-header { margin-bottom: 40px; text-align: center; }
+.dashboard-header h1 { font-size: 32px; font-weight: 900; color: #0f172a; margin-bottom: 15px; }
+.dashboard-header p { color: #64748b; font-size: 16px; }
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px; }
+.data-table-section { background: #fff; border-radius: 25px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+.data-table-section table { width: 100%; border-collapse: collapse; }
+.data-table-section th { text-align: left; padding: 15px; border-bottom: 2px solid #f1f5f9; }
+.data-table-section td { padding: 15px; border-bottom: 1px solid #f8fafc; }
+.trend-indicator { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 800; }
+.trend-indicator.up { background: #fef2f2; color: #ef4444; }
+.trend-indicator.down { background: #eff6ff; color: #3b82f6; }
+@media (max-width: 1024px) { .chart-grid { grid-template-columns: 1fr; } }

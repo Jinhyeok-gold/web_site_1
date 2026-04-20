@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .services import ask_expert_ai, generate_expert_report
-from .models import UserProfile
+from .models import UserProfile as ChatbotProfile
+from auth_mypage.models import UserProfile as PolicyProfile
 from youth_road.models import UserDiagnostic, HousingProduct, FinanceProduct, WelfareProduct
 from youth_road.matching_service import MatchingEngine
 
@@ -45,7 +46,32 @@ def match_policies(request):
             if request.user.is_authenticated:
                 diag.user = request.user
                 diag.save()
-                u['diagnostic_id'] = diag.id # ID 저장해서 나중에 이메일 보낼 때 참조 가능
+                u['diagnostic_id'] = diag.id 
+
+                # [SYNC] auth_mypage의 UserProfile 동기화 (사이드바 및 전역 연동용)
+                p_prof, _ = PolicyProfile.objects.get_or_create(user=request.user)
+                p_prof.age = diag.age
+                p_prof.income = diag.total_income
+                p_prof.net_assets = diag.assets
+                p_prof.debt = diag.debt
+                p_prof.sido = MatchingEngine.get_hangeul_region(diag.region)
+                p_prof.sigungu = diag.sub_region
+                p_prof.subscription_count = diag.subscription_count
+                p_prof.subscription_amount = diag.subscription_amount
+                p_prof.marital_status = "신혼부부" if diag.marital_status == "Married" else "미혼"
+                p_prof.children_count = diag.kids_count
+                p_prof.is_pregnant = diag.is_pregnant
+                p_prof.is_first_home = diag.is_first_home
+                p_prof.is_homeless = diag.is_homeless
+                p_prof.save()
+
+                # [SYNC] chatbot.core의 UserProfile 동기화 (AI 비서용)
+                c_prof, _ = ChatbotProfile.objects.get_or_create(user=request.user)
+                c_prof.age = diag.age
+                c_prof.income = diag.total_income
+                c_prof.region = diag.region
+                c_prof.sub_region = diag.sub_region
+                c_prof.save()
             
             # 세션에 최신 진단 데이터 캐싱 (AI 리포트 호출 시 사용)
             request.session['latest_diagnostic_data'] = u
@@ -63,20 +89,33 @@ from django.utils.html import strip_tags
 
 @login_required
 def send_user_report_email(request):
-    """현재 로그인된 사용자에게 정밀 분석 보고서 이메일 발송"""
+    """현재 로그인된 사용자에게 정밀 분석 보고서 이메일 발송 (DB 폴백 탑재)"""
     if request.method == 'POST':
         try:
+            # 1. 세션에서 데이터 우선 확인
             user_data = request.session.get('latest_diagnostic_data')
             report_data = request.session.get('latest_report_data')
             
+            # 2. [v22] 세션에 없으면 DB에서 최신 진단 결과 조회 (폴백)
             if not user_data or not report_data:
-                return JsonResponse({'error': '진단 데이터가 세션에 없습니다. 다시 시도해주세요.'}, status=400)
+                latest_diag = UserDiagnostic.objects.filter(user=request.user).order_by('-created_at').first()
+                if latest_diag:
+                    # 매칭 엔진을 다시 가동하여 리포트 생성
+                    report_data = MatchingEngine.get_full_report(latest_diag)
+                    user_data = {
+                        'age': latest_diag.age,
+                        'region': latest_diag.region,
+                        'income': latest_diag.total_income,
+                        # 필요한 다른 필드들도 여기에 추가 가능
+                    }
+                else:
+                    return JsonResponse({'error': '저장된 진단 데이터가 없습니다. 먼저 자가진단을 진행해 주세요.'}, status=400)
             
             user_email = request.user.email
             if not user_email:
-                return JsonResponse({'error': '계정에 등록된 이메일 주소가 없습니다.'}, status=400)
+                return JsonResponse({'error': '계정에 등록된 이메일 주소가 없습니다. [회원정보 수정]에서 이메일을 등록해 주세요.'}, status=400)
 
-            # HTML 이메일 템플릿 렌더링 (chatbot/email_report.html)
+            # HTML 이메일 템플릿 렌더링
             context = {
                 'user': request.user,
                 'data': user_data,
@@ -94,12 +133,15 @@ def send_user_report_email(request):
                 settings.DEFAULT_FROM_EMAIL,
                 [user_email],
                 html_message=html_message,
+                fail_silently=False  # 오류 발생 시 예외 발생 (디버깅용)
             )
             
-            return JsonResponse({'status': 'success', 'message': f'{user_email}로 리포트가 전송되었습니다.'})
+            return JsonResponse({'status': 'success', 'message': f'{user_email}로 리포트가 전송되었습니다. (진단 데이터: {"공급원 - 세션" if request.session.get("latest_diagnostic_data") else "공급원 - DB"})'})
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-    return JsonResponse({'error': 'Invalid method'}, status=400)
+            import traceback
+            print(traceback.format_exc()) # 서버 로그에 상세 오류 출력
+            return JsonResponse({'error': f'메일 발송 중 오류가 발생했습니다: {str(e)}'}, status=500)
+    return JsonResponse({'error': '잘못된 요청 방식입니다.'}, status=400)
 
 @csrf_exempt
 def chat_gemini(request):
@@ -120,8 +162,12 @@ def chat_gemini(request):
             
             user_api_key = None
             if request.user.is_authenticated:
-                p = request.user.userprofile
-                user_api_key = p.personal_api_key
+                try:
+                    p = getattr(request.user, 'userprofile', None)
+                    if p:
+                        user_api_key = p.personal_api_key
+                except Exception:
+                    pass
 
             chat_history = request.session.get('chat_history', [])
             reply = ask_expert_ai(user_msg, user_data, report_data, user_api_key=user_api_key, history=chat_history)
@@ -174,7 +220,7 @@ def update_profile(request):
     if request.method == 'POST':
         # [v22] 프로필 존재 여부 확인 (없으면 생성)
         if not hasattr(request.user, 'userprofile'):
-            UserProfile.objects.create(user=request.user, name=request.user.username)
+            ChatbotProfile.objects.create(user=request.user, name=request.user.username)
         
         profile = request.user.userprofile
         profile.name = request.POST.get('name', profile.name)

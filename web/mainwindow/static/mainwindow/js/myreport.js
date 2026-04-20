@@ -7,17 +7,32 @@ const savedAt = localStorage.getItem('myreport_saved_at');
 const DEFAULT_ORDER = ['gauge','sim-limit','sim-interest','radar','housing','finance','welfare'];
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (saved) {
+  // 1. 데이터 소스 결정: 서버 데이터(로그인 시) > 로컬 데이터
+  let dataToRender = null;
+  let dataSource = 'local';
+
+  if (typeof serverReportData !== 'undefined' && serverReportData !== null) {
+    dataToRender = serverReportData;
+    dataSource = 'server';
+    // 서버 데이터를 로컬에도 동기화 (오프라인/캐시 대비)
+    localStorage.setItem('myreport_data', JSON.stringify(serverReportData));
+    localStorage.setItem('myreport_saved_at', new Date().toISOString());
+  } else if (saved) {
+    dataToRender = JSON.parse(saved);
+  }
+
+  if (dataToRender) {
     document.getElementById('mr-empty').style.display = 'none';
     document.getElementById('mr-grid').classList.remove('hidden');
-    if (savedAt) {
-      const d = new Date(savedAt);
-      document.getElementById('mr-meta-date').style.display = 'flex';
-      document.getElementById('mr-saved-date').textContent =
-        d.toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' }) + ' 저장';
-    }
-    currentReport = JSON.parse(saved);
-    renderResultsForMyReport(currentReport);
+    
+    // 저장 시점 표시
+    const displayDate = dataSource === 'server' ? new Date() : (savedAt ? new Date(savedAt) : new Date());
+    document.getElementById('mr-meta-date').style.display = 'flex';
+    document.getElementById('mr-saved-date').textContent =
+      displayDate.toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' }) + 
+      (dataSource === 'server' ? ' (실시간 동기화)' : ' 저장');
+
+    renderResultsForMyReport(dataToRender);
     restoreLayout();
   }
   initDrag();
@@ -76,6 +91,51 @@ function renderResultsForMyReport(report) {
   renderWidgetCards('mr-welfare-container', welfare,  'Welfare');
 }
 
+/**
+ * Radar 차트를 그리는 통합 함수 (Chart.js 활용)
+ */
+function renderVisuals(chart_data, sim) {
+  const radarData = chart_data.radar;
+  const radarCtx = document.getElementById('radarChartCanvas')?.getContext('2d');
+  if (!radarCtx) return;
+
+  // 기존 차트가 있으면 파괴 (메모리 관리 및 오버랩 방지)
+  if (window.activeCharts && window.activeCharts.radar) {
+    window.activeCharts.radar.destroy();
+  } else if (!window.activeCharts) {
+    window.activeCharts = { radar: null };
+  }
+
+  window.activeCharts.radar = new Chart(radarCtx, {
+    type: 'radar',
+    data: {
+      labels: Object.keys(radarData),
+      datasets: [{
+        label: '추천 적합도',
+        data: Object.values(radarData),
+        backgroundColor: 'rgba(91, 94, 244, 0.2)',
+        borderColor: '#5b5ef4',
+        pointBackgroundColor: '#5b5ef4',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        r: {
+          beginAtZero: true,
+          max: 100,
+          ticks: { display: false },
+          grid: { color: 'rgba(0,0,0,0.05)' },
+          pointLabels: { font: { size: 11, weight: '600' }, color: '#6e6e8a' }
+        }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
 /* SVG 게이지 애니메이션 */
 function animateSvgGauge(score) {
   const arc = document.getElementById('mr-gauge-arc');
@@ -122,6 +182,30 @@ function renderWidgetCards(containerId, data, type) {
     ${(data.list || []).slice(0,2).map(p => renderPolicyCard(p, type)).join('')}
   </div>`;
   el.innerHTML = html;
+}
+
+function renderPolicyCard(p, type, isTop = false) {
+  if (!p) return '';
+  const score = p.score || 85;
+  const officialUrl = (p.url && p.url !== '#') ? p.url : 'https://www.youthcenter.go.kr';
+  const topMatchClass = isTop ? 'top-match' : '';
+  const badgeText = isTop ? '1순위' : '추천';
+  const iconHtml = ``; // Bento uses CSS borders to differentiate
+
+  return `
+      <div class="policy-card-modern ${topMatchClass}">
+          <div class="card-badge">${badgeText}</div>
+          <div class="card-score">${score}% 일치</div>
+          <h4>${p.title || p.name}</h4>
+          <div class="org-name">${p.org || p.bank_nm || '정책 거버넌스'}</div>
+          <p class="card-summary">${p.summary || p.benefit || '사용자님의 프로필에 최적화된 맞춤형 지원 정책입니다.'}</p>
+          <div class="card-footer">
+              <a href="${officialUrl}" target="_blank" rel="noopener noreferrer" class="card-link">
+                  공고 확인하기 <i class="fas fa-external-link-alt"></i>
+              </a>
+          </div>
+      </div>
+  `;
 }
 
 /* ==========================================================================

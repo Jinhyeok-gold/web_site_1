@@ -353,6 +353,7 @@ async function fetchAIReport(userData, reportData) {
 async function sendEmailToUser() {
     console.log("Attempting to send report via email...");
     const btn = document.querySelector('.btn-email-user');
+    if (!btn) return;
     const originalHtml = btn.innerHTML;
     
     try {
@@ -368,16 +369,19 @@ async function sendEmailToUser() {
         });
         
         const data = await res.json();
-        if (data.status === 'success') {
+        if (res.ok && data.status === 'success') {
             alert("📩 " + data.message);
             btn.innerHTML = '<i class="fas fa-check"></i> 전송 완료';
             btn.style.background = '#059669';
+            btn.style.borderColor = '#059669';
         } else {
-            throw new Error(data.error);
+            // 서버에서 보낸 구체적인 에러 메시지 활용
+            const errorMsg = data.error || "알 수 없는 오류가 발생했습니다.";
+            throw new Error(errorMsg);
         }
     } catch(e) {
         console.error("Email send failed:", e);
-        alert("이메일 전송 실패: " + e.message);
+        alert("이메일 전송 실패\n\n이유: " + e.message);
         btn.innerHTML = originalHtml;
         btn.disabled = false;
     }

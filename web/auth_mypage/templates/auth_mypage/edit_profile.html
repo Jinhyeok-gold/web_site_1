@@ -4,12 +4,14 @@
 {% block title %}프로필 수정 | 딱맞춤{% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
     .edit-page-container {
-        max-width: 700px;
-        margin: 60px auto 100px;
-        padding: 0 20px;
+        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        max-width: 760px;
+        margin: 60px auto 120px;
+        padding: 0 24px;
     }
 
     .edit-card {
@@ -27,10 +29,10 @@
     }
 
     .edit-header h1 {
-        font-size: 1.8rem;
-        font-weight: 900;
+        font-size: 2rem;
+        font-weight: 800;
         color: #1e293b;
-        letter-spacing: -1px;
+        letter-spacing: -0.04em;
     }
 
     .edit-header p {
@@ -168,11 +170,20 @@
             
             <div class="section-title">기본 정보</div>
             
-            <div class="field-group">
-                <label>이름</label>
-                <div class="input-wrapper">
-                    <i class="fas fa-user-tag"></i>
-                    <input type="text" name="name" class="form-input" value="{{ user.last_name }}" required>
+            <div class="field-row">
+                <div class="field-group">
+                    <label>이름</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user-tag"></i>
+                        <input type="text" name="name" class="form-input" value="{{ user.last_name }}" required>
+                    </div>
+                </div>
+                <div class="field-group">
+                    <label>이메일 주소</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="email" class="form-input" value="{{ user.email }}" placeholder="example@email.com">
+                    </div>
                 </div>
             </div>
 

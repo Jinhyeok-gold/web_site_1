@@ -92,6 +92,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'youth_road.context_processors.global_matching_results',
+                'youth_road.context_processors.real_estate_market_ticker',
             ],
         },
     },
@@ -165,4 +166,5 @@ LOGIN_URL = 'policy:login'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Email Settings
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='noreply@ddak-match.com')
