@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
-from web_for_youth.chatbot.core.models import Policy
+from chatbot.core.models import Policy
+
 
 class Command(BaseCommand):
     help = 'Seed initial policy data into the database'

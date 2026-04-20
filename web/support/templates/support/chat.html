@@ -234,25 +234,28 @@
     .bot-row  { align-self: flex-start; align-items: flex-start; }
 
     .bubble {
-      padding: 11px 16px;
-      border-radius: var(--r-xl);
+      padding: 12px 18px;
+      border-radius: 20px;
       font-size: 14px; line-height: 1.6;
       word-break: break-word;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     }
-    /* 사용자 버블 — violet */
+    /* 사용자 버블 — violet glass */
     .user-row .bubble {
-      background: var(--violet);
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
       color: #fff;
-      border-bottom-right-radius: var(--r-sm);
-      box-shadow: 0 4px 16px rgba(91,94,244,.25);
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
     }
-    /* 상담사 버블 — white card */
+    /* 상담사 버블 — white glass */
     .bot-row .bubble {
-      background: var(--card);
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       color: var(--ink-2);
-      border-bottom-left-radius: var(--r-sm);
-      border: 1px solid var(--line);
-      box-shadow: 0 2px 8px rgba(0,0,0,.04);
+      border-bottom-left-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
     }
 
     .time {
@@ -400,10 +403,13 @@
   <main class="chat-main">
     <header class="chat-p-header">
       <div class="chat-status">
-        <span class="chat-status-dot"></span>
-        실시간 상담 연결됨
+        <span class="chat-status-dot" id="statusDot"></span>
+        <span id="statusText">실시간 상담 연결됨</span>
       </div>
-      <span class="room-id-tag">ROOM #{{ room.id }}</span>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <span class="room-id-tag">ROOM #{{ room.id }}</span>
+        <button class="btn-send" style="background: var(--ink-3); padding: 6px 14px;" onclick="closeChat()">상담 종료</button>
+      </div>
     </header>
 
     <div class="chat-history" id="chatHistory">
@@ -432,6 +438,34 @@
     const sendBtn = document.getElementById('sendBtn');
     let lastMessageId = 0;
 
+    const closeChatUrl = "{% url 'support:api_close_chat' room.id %}";
+
+    async function closeChat() {
+      if (!confirm('정말 상담을 종료하시겠습니까?')) return;
+      try {
+        const response = await fetch(closeChatUrl, { method: 'POST' });
+        if (response.ok) {
+          disableChat();
+          fetchMessages();
+        }
+      } catch (error) { console.error("Error closing chat:", error); }
+    }
+
+    function disableChat() {
+      messageInput.disabled = true;
+      messageInput.placeholder = "상담이 종료되었습니다. 곧 메인으로 이동합니다...";
+      sendBtn.disabled = true;
+      document.getElementById('statusDot').style.background = '#94a3b8';
+      document.getElementById('statusDot').style.boxShadow = 'none';
+      document.getElementById('statusDot').style.animation = 'none';
+      document.getElementById('statusText').innerText = "상담 종료됨";
+      
+      // 2초 뒤 자동 퇴장
+      setTimeout(() => {
+        location.href = "{% url 'support:support_home' %}";
+      }, 2000);
+    }
+
     async function fetchMessages() {
       try {
         const response = await fetch(`${getMessagesUrl}?last_id=${lastMessageId}`);
@@ -440,6 +474,10 @@
           data.messages.forEach(msg => {
             appendMessage(msg);
             lastMessageId = Math.max(lastMessageId, msg.id);
+            // 시스템 종료 메시지가 오면 화면 비활성화
+            if (msg.message.includes('[시스템] 상담이 종료되었습니다.')) {
+              disableChat();
+            }
           });
           scrollToBottom();
         }
@@ -448,11 +486,16 @@
 
     function appendMessage(msg) {
       const row = document.createElement('div');
-      row.className = `message-row ${msg.is_me ? 'user-row' : 'bot-row'}`;
-      row.innerHTML = `
-        <div class="bubble">${msg.message}</div>
-        <div class="time">${msg.timestamp}</div>
-      `;
+      if (msg.message.includes('[시스템]')) {
+        row.className = 'system-msg';
+        row.innerText = msg.message;
+      } else {
+        row.className = `message-row ${msg.is_me ? 'user-row' : 'bot-row'}`;
+        row.innerHTML = `
+          <div class="bubble">${msg.message}</div>
+          <div class="time">${msg.timestamp}</div>
+        `;
+      }
       chatHistory.appendChild(row);
     }
 

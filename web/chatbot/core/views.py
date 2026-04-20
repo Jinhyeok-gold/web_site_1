@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 import json
-from .services import get_all_policies, ask_expert_ai, generate_expert_report
+from .services import ask_expert_ai, generate_expert_report
 from .models import UserProfile
 from youth_road.models import UserDiagnostic, HousingProduct, FinanceProduct, WelfareProduct
 from youth_road.matching_service import MatchingEngine
@@ -76,35 +76,22 @@ def send_user_report_email(request):
             if not user_email:
                 return JsonResponse({'error': '계정에 등록된 이메일 주소가 없습니다.'}, status=400)
 
-            # HTML 이메일 템플릿 렌더링 (나중에 템플릿 파일 생성 필요)
+            # HTML 이메일 템플릿 렌더링 (chatbot/email_report.html)
             context = {
                 'user': request.user,
                 'data': user_data,
                 'report': report_data,
             }
             
-            # 우선은 간단하게 구성
-            subject = f"[딱맞춤] {request.user.username}님의 정밀 분석 보고서입니다."
-            html_message = f"""
-            <h2>안녕하세요, {request.user.username}님! 딱맞춤입니다.</h2>
-            <p>사용자 정보 기반 정밀 분석 결과가 도착했습니다.</p>
-            <hr>
-            <h3>📊 분석 요약</h3>
-            <ul>
-                <li>종합 평점: {report_data.get('radar_scores', {}).get('주거', 0)}점 (예제)</li>
-                <li>최대 대출 한도: {report_data.get('financial_simulation', {}).get('max_limit', 0)}만원</li>
-            </ul>
-            <h3>🏠 주요 추천 정책</h3>
-            <p>1. {report_data.get('housing', {}).get('top_1', {}).get('title', '정보 없음')}</p>
-            <p>2. {report_data.get('finance', {}).get('top_1', {}).get('title', '정보 없음')}</p>
-            <p>자세한 내용은 딱맞춤 홈페이지 마이리포트에서 확인하실 수 있습니다.</p>
-            """
+            subject = f"[딱맞춤] {request.user.last_name or request.user.username}님의 정밀 분석 보고서입니다."
+            html_message = render_to_string('chatbot/email_report.html', context)
             plain_message = strip_tags(html_message)
             
+            from django.conf import settings
             send_mail(
                 subject,
                 plain_message,
-                'noreply@ddak-match.com',
+                settings.DEFAULT_FROM_EMAIL,
                 [user_email],
                 html_message=html_message,
             )
@@ -185,16 +172,20 @@ def get_ai_report(request):
 def update_profile(request):
     """사용자 프로필 실시간 업데이트"""
     if request.method == 'POST':
+        # [v22] 프로필 존재 여부 확인 (없으면 생성)
+        if not hasattr(request.user, 'userprofile'):
+            UserProfile.objects.create(user=request.user, name=request.user.username)
+        
         profile = request.user.userprofile
         profile.name = request.POST.get('name', profile.name)
-        profile.age = int(request.POST.get('age', profile.age))
-        profile.income = int(request.POST.get('income', profile.income))
-        profile.region = request.POST.get('region', profile.region)
+        profile.age = int(request.POST.get('age', profile.age or 29))
+        profile.income = int(request.POST.get('income', profile.income or 3000))
+        profile.region = request.POST.get('region', profile.region or 'Seoul')
         profile.sub_region = request.POST.get('sub_region', profile.sub_region)
         profile.personal_api_key = request.POST.get('personal_api_key', profile.personal_api_key)
         profile.save()
-        return redirect('index')
-    return redirect('index')
+        return redirect('home') # home으로 변경 (mainwindow)
+    return redirect('home')
 
 @csrf_exempt
 def get_product_detail(request):
@@ -211,6 +202,11 @@ def get_product_detail(request):
         product = FinanceProduct.objects.filter(product_id=product_id).first()
     elif product_id.startswith('WEL_'):
         product = WelfareProduct.objects.filter(policy_id=product_id).first()
+    else:
+        # [Fallback] 접두어 없이 들어온 경우 전체 테이블 검색
+        product = HousingProduct.objects.filter(manage_no=product_id).first() or \
+                  FinanceProduct.objects.filter(product_id=product_id).first() or \
+                  WelfareProduct.objects.filter(policy_id=product_id).first()
     
     if product:
         return JsonResponse({

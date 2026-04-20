@@ -10,10 +10,12 @@ try:
 except ImportError:
     HAS_GENAI = False
     
-from dotenv import load_dotenv
-# --- [Environment v20] Force Local .env over System Variables ---
-load_dotenv(override=True)
+import logging
 from .models import Policy
+
+logger = logging.getLogger(__name__)
+
+# --- [Environment v20] Force Local .env over System Variables ---
 
 # --- [Performance v20] Global Cache Layer ---
 API_CACHE = {
@@ -108,7 +110,9 @@ def fetch_housing_policies():
             'id': f"HOU_{i.get('pblancId')}", 'category': 'Housing', 'title': i.get('pblancNm') or '주거공고',
             'summary': i.get('insttNm'), 'ageMax': 39, 'incomeLimit': 6000
         } for i in items]
-    except: return []
+    except Exception as e:
+        logger.error(f"Housing API Error: {e}")
+        return []
 
 def fetch_welfare_policies():
     try:
@@ -120,7 +124,9 @@ def fetch_welfare_policies():
             'id': f"WEL_{i.get('servId')}", 'category': 'Welfare', 'title': i.get('servNm'),
             'summary': i.get('jurMnstNm'), 'ageMax': 60, 'incomeLimit': 4000
         } for i in items]
-    except: return []
+    except Exception as e:
+        logger.error(f"Welfare API Error: {e}")
+        return []
 
 def get_all_policies(user_data=None):
     """DB와 실시간 API 데이터를 결합하여 정밀 점수를 매긴 리스트 반환 (병렬 최적화 v20)"""
@@ -172,7 +178,13 @@ def get_all_policies(user_data=None):
     combined = formatted_db + housing + welfare
     if not combined: combined = FALLBACK_POLICIES
     
+    # [v22] MatchingEngine을 통한 점수 계산 통합
+    from youth_road.matching_service import MatchingEngine
+    
     for p in combined:
+        # 가벼운 매칭을 위해 최소 점수 로직만 수행하거나 MatchingEngine 활용
+        # 여기서는 기존 calculate_score를 MatchingEngine의 로직을 참고하여 최소화된 형태로 유지하거나 
+        # 직접 MatchingEngine의 정규화 전 점술를 호출할 수 있음.
         p['score'] = calculate_score(user_data, p)
         
     return sorted(combined, key=lambda x: x['score'], reverse=True)
@@ -296,10 +308,10 @@ def ask_expert_ai(user_message, user_data=None, report_data=None, user_api_key=N
         
         # 🎯 [Contextual Chat] 세션 생성 및 대화
         try:
-            # Try gemini-2.5-flash as primary (Confirmed available for this key)
+            # Try gemini-1.5-flash as primary
             try:
                 chat = local_client.chats.create(
-                    model='gemini-2.5-flash',
+                    model='gemini-1.5-flash',
                     config=types.GenerateContentConfig(
                         system_instruction=SYSTEM_INSTRUCTION,
                         temperature=0.7

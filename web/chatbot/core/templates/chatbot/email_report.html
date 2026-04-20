@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            line-height: 1.6;
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+            background-color: #f8fafc;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .header {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            padding: 40px 30px;
+            text-align: center;
+            color: #ffffff;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+        .header p {
+            margin: 10px 0 0;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #4f46e5;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+        .summary-card {
+            background-color: #f1f5f9;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .summary-label {
+            color: #64748b;
+            font-weight: 600;
+        }
+        .summary-value {
+            color: #1e293b;
+            font-weight: 800;
+        }
+        .policy-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        .policy-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background-color: #e0e7ff;
+            color: #4f46e5;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .policy-title {
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #1e293b;
+        }
+        .policy-desc {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+        .policy-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4f46e5;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .footer {
+            background-color: #f1f5f9;
+            padding: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+        .btn-home {
+            display: block;
+            width: 200px;
+            margin: 30px auto 0;
+            padding: 15px;
+            background-color: #1e293b;
+            color: #ffffff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 99px;
+            font-weight: 800;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <p>청년·신혼부부 정책 매칭 플랫폼</p>
+            <h1>딱맞춤 정밀 분석 보고서</h1>
+        </div>
+        <div class="content">
+            <p>안녕하세요, <strong>{{ user.last_name|default:user.username }}</strong>님!</p>
+            <p>요청하신 사용자 맞춤 정책 정밀 분석 결과가 아래와 같이 도착했습니다.</p>
+
+            <div class="section-title">📊 분석 요약</div>
+            <div class="summary-card">
+                <div class="summary-item">
+                    <span class="summary-label">최대 예상 대출 한도</span>
+                    <span class="summary-value">{{ report.financial_simulation.max_limit }}만원</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">예상 적용 금리 (우대 포함)</span>
+                    <span class="summary-value">{{ report.financial_simulation.expected_rate }}%</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">거주 지역</span>
+                    <span class="summary-value">{{ data.region }} {{ data.sub_region }}</span>
+                </div>
+            </div>
+
+            <div class="section-title">🏠 추천 정책</div>
+            
+            {% if report.housing.top_1 %}
+            <div class="policy-card">
+                <span class="policy-tag">주거복지</span>
+                <div class="policy-title">{{ report.housing.top_1.title }}</div>
+                <div class="policy-desc">{{ report.housing.reason }}</div>
+                <a href="{{ report.housing.top_1.url }}" class="policy-btn">자세히 보기</a>
+            </div>
+            {% endif %}
+
+            {% if report.finance.top_1 %}
+            <div class="policy-card">
+                <span class="policy-tag">금융지원</span>
+                <div class="policy-title">{{ report.finance.top_1.name }}</div>
+                <div class="policy-desc">{{ report.finance.reason }}</div>
+                <a href="{{ report.finance.top_1.url }}" class="policy-btn">자세히 보기</a>
+            </div>
+            {% endif %}
+
+            {% if report.welfare.top_1 %}
+            <div class="policy-card">
+                <span class="policy-tag">생활발전</span>
+                <div class="policy-title">{{ report.welfare.top_1.name }}</div>
+                <div class="policy-desc">{{ report.welfare.reason }}</div>
+                <a href="{{ report.welfare.top_1.url }}" class="policy-btn">자세히 보기</a>
+            </div>
+            {% endif %}
+
+            <a href="http://localhost:8000/myreport/" class="btn-home">상세 리포트 확인하기</a>
+        </div>
+        <div class="footer">
+            <p>본 메일은 {{ user.last_name|default:user.username }}님의 요청에 의해 발송되었습니다.</p>
+            <p>© 딱맞춤. All Rights Reserved.</p>
+            <p>문의: support@ddak-matchum.com</p>
+        </div>
+    </div>
+</body>
+</html>

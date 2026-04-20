@@ -332,10 +332,10 @@
   <main class="chat-main">
     <header class="chat-p-header">
       <div class="chat-status-info">
-        <span class="status-dot"></span>
-        <span class="chat-status-text">실시간 상담 중 ({{ room.customer.username }})</span>
+        <span class="status-dot" id="statusDot"></span>
+        <span class="chat-status-text" id="statusText">실시간 상담 중 ({{ room.customer.username }})</span>
       </div>
-      <button class="end-btn" onclick="alert('상담 종료 기능은 준비 중입니다.')">
+      <button class="end-btn" id="endBtn" onclick="closeChat()">
         <i class="fas fa-phone-slash"></i> 상담 종료
       </button>
     </header>
@@ -363,6 +363,35 @@
     const sendBtn = document.getElementById('sendBtn');
     let lastMessageId = 0;
 
+    const closeChatUrl = "{% url 'support:api_close_chat' room.id %}";
+
+    async function closeChat() {
+      if (!confirm('정말 상담을 종료하시겠습니까?')) return;
+      try {
+        const response = await fetch(closeChatUrl, { method: 'POST' });
+        if (response.ok) {
+          disableChat();
+          fetchMessages();
+        }
+      } catch (error) { console.error("Error closing chat:", error); }
+    }
+
+    function disableChat() {
+      messageInput.disabled = true;
+      messageInput.placeholder = "상담이 종료되었습니다. 2초 뒤 목록으로 이동합니다...";
+      sendBtn.disabled = true;
+      document.getElementById('statusDot').style.background = '#94a3b8';
+      document.getElementById('statusDot').style.boxShadow = 'none';
+      document.getElementById('statusDot').style.animation = 'none';
+      document.getElementById('statusText').innerText = "상담 종료됨";
+      document.getElementById('endBtn').style.display = 'none';
+
+      // 2초 뒤 자동 퇴장 (목록으로 이동)
+      setTimeout(() => {
+        location.href = "{% url 'support:admin_chat_list' %}";
+      }, 2000);
+    }
+
     async function fetchMessages() {
       try {
         const response = await fetch(`${getMessagesUrl}?last_id=${lastMessageId}`);
@@ -371,6 +400,10 @@
           data.messages.forEach(msg => {
             appendMessage(msg);
             lastMessageId = Math.max(lastMessageId, msg.id);
+            // 시스템 종료 메시지가 오면 화면 비활성화
+            if (msg.message.includes('[시스템] 상담이 종료되었습니다.')) {
+              disableChat();
+            }
           });
           scrollToBottom();
         }
@@ -379,13 +412,23 @@
 
     function appendMessage(msg) {
       const row = document.createElement('div');
-      row.className = `message-row ${msg.is_me ? 'user-row' : 'bot-row'}`;
-      const senderTag = msg.is_me ? '나 (상담사)' : msg.sender;
-      row.innerHTML = `
-        <div class="sender-name">${senderTag}</div>
-        <div class="bubble">${msg.message}</div>
-        <div class="time">${msg.timestamp}</div>
-      `;
+      if (msg.message.includes('[시스템]')) {
+        row.className = 'system-msg';
+        row.style.alignSelf = 'center';
+        row.style.background = 'rgba(0,0,0,0.05)';
+        row.style.padding = '4px 12px';
+        row.style.borderRadius = '20px';
+        row.style.fontSize = '11px';
+        row.innerText = msg.message;
+      } else {
+        row.className = `message-row ${msg.is_me ? 'user-row' : 'bot-row'}`;
+        const senderTag = msg.is_me ? '나 (상담사)' : msg.sender;
+        row.innerHTML = `
+          <div class="sender-name">${senderTag}</div>
+          <div class="bubble">${msg.message}</div>
+          <div class="time">${msg.timestamp}</div>
+        `;
+      }
       chatHistory.appendChild(row);
     }
 

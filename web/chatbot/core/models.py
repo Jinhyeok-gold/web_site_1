@@ -52,7 +52,7 @@ class Policy(models.Model):
 
 class UserProfile(models.Model):
     """DB에 등록된 '그 사람들'을 위한 프로필 모델"""
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='chatbot_profile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='userprofile')
     name = models.CharField(max_length=50, verbose_name="이름/식별자", blank=True)
     age = models.IntegerField(default=29, verbose_name="만 나이")
     income = models.IntegerField(default=5000, verbose_name="연소득 (만원)")

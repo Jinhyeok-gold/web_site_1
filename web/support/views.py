@@ -202,6 +202,11 @@ def api_send_message(request, room_id):
                 return JsonResponse({'error': 'Content is missing'}, status=400)
                 
             room = ChatRoom.objects.get(id=room_id)
+            
+            # [v22] 종료된 상담방 방어 로직
+            if room.status == 'CLOSED':
+                return JsonResponse({'error': '이미 종료된 상담입니다.'}, status=403)
+                
             ChatMessage.objects.create(
                 room=room,
                 sender=request.user,
@@ -232,3 +237,29 @@ def api_get_messages(request, room_id):
             'timestamp': m.timestamp.strftime('%H:%M')
         })
     return JsonResponse({'messages': data})
+
+@csrf_exempt
+@login_required
+def api_close_chat(request, room_id):
+    """상담 종료 API (v22)"""
+    if request.method == 'POST':
+        try:
+            room = ChatRoom.objects.get(id=room_id)
+            # 고객 본인이거나 상담사인 경우에만 종료 가능
+            if room.customer == request.user or (request.user.is_staff and room.counselor == request.user):
+                room.status = 'CLOSED'
+                room.save()
+                
+                # 시스템 종료 메시지 기록
+                ChatMessage.objects.create(
+                    room=room,
+                    sender=request.user,
+                    message="[시스템] 상담이 종료되었습니다."
+                )
+                
+                return JsonResponse({'status': 'success'})
+            else:
+                return JsonResponse({'error': '권한이 없습니다.'}, status=403)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    return JsonResponse({'error': 'Invalid request'}, status=400)

@@ -29,7 +29,6 @@ urlpatterns = [
     path('auth/', include('auth_mypage.urls', namespace='policy')),
     path('accounts/', include('allauth.urls')),
     path('myreport/', views.myreport, name='myreport'),
-    path('welfare_map/', views.welfare_map, name='welfare_map'),
     path('support/', include('support.urls')),
 ]
 

@@ -1,0 +1,286 @@
+{% extends 'mainwindow/base.html' %}
+{% load static %}
+
+{% block title %}프로필 수정 | 딱맞춤{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    .edit-page-container {
+        max-width: 700px;
+        margin: 60px auto 100px;
+        padding: 0 20px;
+    }
+
+    .edit-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 32px;
+        padding: 48px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+    }
+
+    .edit-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .edit-header h1 {
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: #1e293b;
+        letter-spacing: -1px;
+    }
+
+    .edit-header p {
+        color: #64748b;
+        font-size: 0.9rem;
+        margin-top: 8px;
+    }
+
+    .section-title {
+        font-size: 0.8rem;
+        font-weight: 800;
+        color: #6366f1;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin: 32px 0 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .section-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(99, 102, 241, 0.1);
+    }
+
+    .field-group {
+        margin-bottom: 24px;
+    }
+
+    .field-group label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #475569;
+        margin-bottom: 8px;
+    }
+
+    .input-wrapper {
+        position: relative;
+    }
+
+    .input-wrapper i {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 0.9rem;
+    }
+
+    .form-input, .form-select {
+        width: 100%;
+        padding: 12px 16px 12px 44px;
+        background: rgba(255, 255, 255, 0.5);
+        border: 1.5px solid #e2e8f0;
+        border-radius: 14px;
+        font-size: 0.95rem;
+        color: #1e293b;
+        outline: none;
+        transition: all 0.2s;
+        font-family: inherit;
+    }
+
+    .form-input:focus, .form-select:focus {
+        border-color: #6366f1;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+
+    .field-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 12px;
+        margin-top: 40px;
+    }
+
+    .btn-submit {
+        flex: 2;
+        padding: 16px;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        color: white;
+        border: none;
+        border-radius: 16px;
+        font-weight: 800;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn-cancel {
+        flex: 1;
+        padding: 16px;
+        background: #f1f5f9;
+        color: #64748b;
+        border: none;
+        border-radius: 16px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .btn-cancel:hover {
+        background: #e2e8f0;
+        color: #1e293b;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-page-container">
+    <div class="edit-card">
+        <div class="edit-header">
+            <h1>프로필 수정</h1>
+            <p>회원님의 정보를 최신으로 유지하면 더 정확한 정책 매칭이 가능합니다.</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="section-title">기본 정보</div>
+            
+            <div class="field-group">
+                <label>이름</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-user-tag"></i>
+                    <input type="text" name="name" class="form-input" value="{{ user.last_name }}" required>
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="field-group">
+                    <label>나이 (만)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input type="number" name="age" class="form-input" value="{{ profile.age }}" required>
+                    </div>
+                </div>
+                <div class="field-group">
+                    <label>혼인 상황</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-heart"></i>
+                        <select name="marital_status" class="form-select" style="padding-left: 44px;">
+                            <option value="미혼" {% if profile.marital_status == "미혼" %}selected{% endif %}>미혼</option>
+                            <option value="결혼예정" {% if profile.marital_status == "결혼예정" %}selected{% endif %}>결혼예정</option>
+                            <option value="신혼부부" {% if profile.marital_status == "신혼부부" %}selected{% endif %}>신혼부부</option>
+                            <option value="기혼" {% if profile.marital_status == "기혼" %}selected{% endif %}>기혼</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="field-group">
+                    <label>시/도</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input type="text" name="sido" class="form-input" value="{{ profile.sido }}" required>
+                    </div>
+                </div>
+                <div class="field-group">
+                    <label>시/군/구</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-map-pin"></i>
+                        <input type="text" name="sigungu" class="form-input" value="{{ profile.sigungu }}" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title">경제 정보</div>
+
+            <div class="field-row">
+                <div class="field-group">
+                    <label>연소득 (만원)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-coins"></i>
+                        <input type="number" name="income" class="form-input" value="{{ profile.income }}" required>
+                    </div>
+                </div>
+                <div class="field-group">
+                    <label>순자산 (만원)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-vault"></i>
+                        <input type="number" name="net_assets" class="form-input" value="{{ profile.net_assets }}" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="field-group">
+                    <label>부채 (만원)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-credit-card"></i>
+                        <input type="number" name="debt" class="form-input" value="{{ profile.debt }}">
+                    </div>
+                </div>
+                <div class="field-group">
+                    <label>자녀 수</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-baby"></i>
+                        <input type="number" name="children_count" class="form-input" value="{{ profile.children_count }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="field-group">
+                    <label>청약 횟수 (회)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-piggy-bank"></i>
+                        <input type="number" name="subscription_count" class="form-input" value="{{ profile.subscription_count }}">
+                    </div>
+                </div>
+                <div class="field-group">
+                    <label>청약 총액 (만원)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <input type="number" name="subscription_amount" class="form-input" value="{{ profile.subscription_amount }}">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="field-group">
+                <label>무주택 기간 (년)</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-home"></i>
+                    <input type="number" name="homeless_period" class="form-input" value="{{ profile.homeless_period }}">
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <a href="{% url 'policy:mypage' %}" class="btn-cancel">취소</a>
+                <button type="submit" class="btn-submit">저장하기</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

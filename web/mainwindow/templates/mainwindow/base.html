@@ -175,9 +175,15 @@
         }
 
         function showCustomerService() {
-            alert("📞 딱맞춤 콜센터 안내\n\n- 대표 콜센터: 1600-1004 (평일 09:00 - 18:00)\n\n지금 바로 궁금한 점이 있으시다면 우측 하단의 AI 챗봇을 이용해 보세요!\n확인을 누르시면 24시간 대기 중인 AI 챗봇 창이 열립니다.");
-            if(typeof toggleChatbot === 'function') {
-                toggleChatbot();
+            const choice = confirm("📞 딱맞춤 고객센터 안내\n\n확인: 상담사와 1:1 직접 상담하기\n취소: 24시간 대기 중인 AI 챗봇 이용하기");
+            if (choice) {
+                // 상담사 연결 (support:chat_room)
+                window.location.href = "{% url 'support:chat_room' %}";
+            } else {
+                // AI 챗봇 열기
+                if(typeof toggleChatbot === 'function') {
+                    toggleChatbot();
+                }
             }
         }
 

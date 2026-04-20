@@ -15,13 +15,7 @@ from pathlib import Path
 import environ
 from datetime import timedelta
 
-# Initialize environ
-from dotenv import load_dotenv
-
-# --- [CRITICAL v20] Force Bypass all network interference and Fix Environment Overrides ---
-os.environ['NO_PROXY'] = 'www.youthcenter.go.kr,generativelanguage.googleapis.com,apis.data.go.kr,finlife.fss.or.kr'
-load_dotenv(override=True)
-
+# --- [v21] Modern Environment Initialization ---
 env = environ.Env(
     DEBUG=(bool, False)
 )
@@ -29,7 +23,11 @@ env = environ.Env(
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
+# Force Bypass all network interference
+os.environ['NO_PROXY'] = 'www.youthcenter.go.kr,generativelanguage.googleapis.com,apis.data.go.kr,finlife.fss.or.kr'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -64,8 +62,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'support',
-    'data_storage',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -150,7 +148,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
-    BASE_DIR / "auth_mypage" / "statics",
+    BASE_DIR / "auth_mypage" / "static",
 ]
 
 # Media files (User uploaded files)
@@ -165,3 +163,6 @@ LOGIN_URL = 'policy:login'
 
 # 창을 닫을 때 자동으로 로그아웃 되도록 세션 설정 추가
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Email Settings
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='noreply@ddak-match.com')

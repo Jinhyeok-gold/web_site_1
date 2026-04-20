@@ -21,7 +21,9 @@ class MatchingEngine:
     @staticmethod
     def get_hangeul_region(key):
         return MatchingEngine.REGION_KEYWORD_MAP.get(key, "전국")
+    @staticmethod
     def map_profile_to_instance(profile):
+
         """[Adapter] UserProfile(auth_mypage) 객체를 MatchingEngine용 가상 인스턴스로 변환"""
         # 간단한 가상 클래스 생성 (getattr 대응용)
         class VirtualInstance:

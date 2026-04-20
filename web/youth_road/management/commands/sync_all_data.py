@@ -1,7 +1,8 @@
 import time
 from django.core.management.base import BaseCommand
-from web_for_youth.youth_road.services import RegionMapper, PublicDataHousingService, SubscriptionHomeService, OntongWelfareService
-# from web_for_youth.youth_road.firebase_service import FirebaseManager (Removed)
+from youth_road.services import RegionMapper, PublicDataHousingService, SubscriptionHomeService, OntongWelfareService
+# from youth_road.firebase_service import FirebaseManager (Removed)
+
 
 class Command(BaseCommand):
     help = '🧭 전국의 모든 주거 및 정책 데이터를 Firebase Firestore에 대량으로 동기화합니다.'
