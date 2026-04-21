@@ -24,6 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (dataToRender) {
     document.getElementById('mr-empty').style.display = 'none';
     document.getElementById('mr-grid').classList.remove('hidden');
+    // 수출(Export) 영역 보이기
+    const exportHeader = document.getElementById('mr-export-header');
+    if (exportHeader) exportHeader.classList.remove('hidden');
     
     // 저장 시점 표시
     const displayDate = dataSource === 'server' ? new Date() : (savedAt ? new Date(savedAt) : new Date());
@@ -405,3 +408,109 @@ function openRecapModal() {
   renderRecap(JSON.parse(saved)); Recap.init(JSON.parse(saved));
 }
 function closeRecapModal() { document.getElementById('recap-modal').classList.add('hidden'); }
+
+/* ==========================================================================
+   수출(Export) 기능
+   ========================================================================== */
+
+/** 📧 이메일 발송 */
+async function sendMyReportEmail() {
+  const btn = document.querySelector('.btn-email-user');
+  if (!btn) return;
+  const originalHtml = btn.innerHTML;
+  
+  try {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 전송 중...';
+    
+    // CSRF 토큰 가져오기 (HTML에 포함됨)
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    
+    const res = await fetch('/chatbot/api/send-email/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken || ''
+      }
+    });
+    
+    const data = await res.json();
+    if (res.ok && data.status === 'success') {
+      alert("📩 " + data.message);
+      btn.innerHTML = '<i class="fas fa-check"></i> 전송 완료';
+      btn.style.background = '#10b981'; // Success Green
+      btn.style.color = '#fff';
+    } else {
+      throw new Error(data.error || "이메일 전송에 실패했습니다.");
+    }
+  } catch(e) {
+    console.error("Email send error:", e);
+    alert("이메일 발송 오류\n\n이유: " + e.message);
+    btn.innerHTML = originalHtml;
+    btn.disabled = false;
+  }
+}
+
+/** 📄 PDF 저장 (html2canvas + jsPDF 활용 고도화) */
+async function saveAsPDF() {
+  const btn = document.querySelector('.btn-pdf-save');
+  if (!btn) return;
+  const originalHtml = btn.innerHTML;
+
+  try {
+    // 1. 로딩 상태 UI 반영
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PDF 생성 중...';
+
+    // 2. 캡처 대상 지정 (그리드 영역)
+    const target = document.getElementById('mr-grid');
+    if (!target) return;
+
+    // 3. html2canvas로 화면 캡처
+    // window.scrollTo(0, 0) 없이도 최신 버전은 scrollY 옵션으로 제어 가능
+    const canvas = await html2canvas(target, {
+      scale: 2,           // 고해상도 (Retina 대응)
+      useCORS: true,       // 외부 이미지 허용
+      logging: false,
+      backgroundColor: '#f2f2f7', // 기존 배경색 유지
+      scrollY: -window.scrollY,    // 스크롤 위치에 따른 잘림 방지
+      windowWidth: target.scrollWidth,
+      windowHeight: target.scrollHeight
+    });
+
+    // 4. jsPDF로 변환 및 저장
+    const { jsPDF } = window.jspdf;
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'mm', 'a4');
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const imgWidth = pageWidth - 20; // 좌우 여백 10mm씩
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    // 만약 내용이 너무 길어 페이지를 넘길 경우 (v1에서는 한 페이지에 최적화하여 삽입)
+    pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+
+    // 파일 이름에 현재 일시 포함
+    const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    pdf.save(`딱맞춤_리포트_${today}.pdf`);
+
+    // 5. 버튼 상태 복구
+    btn.innerHTML = '<i class="fas fa-check"></i> 저장 완료';
+    btn.style.background = '#10b981';
+    btn.style.color = '#fff';
+
+    setTimeout(() => {
+      btn.innerHTML = originalHtml;
+      btn.style.background = '';
+      btn.style.color = '';
+      btn.disabled = false;
+    }, 3000);
+
+  } catch (err) {
+    console.error('PDF 생성 실패:', err);
+    alert('PDF 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+    btn.innerHTML = originalHtml;
+    btn.disabled = false;
+  }
+}

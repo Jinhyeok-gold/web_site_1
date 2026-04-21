@@ -149,6 +149,25 @@
 
   </div>
 
+  <!-- 하단 수출(Export) 액션 영역 -->
+  <div class="mr-export-header hidden" id="mr-export-header">
+    <div class="mr-export-divider"></div>
+    <div class="mr-export-actions">
+      <button class="mr-btn-export btn-email-user" onclick="sendMyReportEmail()">
+        <i class="fas fa-envelope"></i> 이메일로 보고서 받기
+      </button>
+      <button class="mr-btn-export btn-pdf-save" onclick="saveAsPDF()">
+        <i class="fas fa-file-pdf"></i> PDF로 저장하기
+      </button>
+    </div>
+    <div class="mr-export-notice">
+      <i class="fas fa-info-circle"></i> PDF 저장 시 '설정 더보기'에서 <strong>배경 그래픽</strong>을 체크하시면 더 깔끔하게 저장됩니다.
+    </div>
+  </div>
+
+  <!-- CSRF Token for JS use -->
+  {% csrf_token %}
+
   <!-- 리캡 모달 -->
   <div id="recap-modal" class="recap-modal-overlay hidden">
     <div class="recap-modal-inner">
@@ -156,6 +175,7 @@
       <button class="recap-modal-close" onclick="closeRecapModal()">✕ 닫기</button>
     </div>
   </div>
+
 
 </div>
 {% endblock %}
@@ -165,6 +185,8 @@
   // 서버에서 전달받은 최신 진단 데이터 (있을 경우 localStorage보다 우선함)
   const serverReportData = {{ report_json|safe|default:"null" }};
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="{% static 'mainwindow/js/form.js' %}"></script>
 <script src="{% static 'mainwindow/js/recap.js' %}"></script>
 <script src="{% static 'mainwindow/js/myreport.js' %}"></script>

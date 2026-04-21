@@ -235,7 +235,7 @@
 {% block content %}
 <div class="trends-dashboard container">
     <div class="dashboard-header fade-in">
-        <h1> 부동산 <span style="color: var(--primary-color);">시장 동향</span> 대시보드</h1>
+        <h1>📊 부동산 <span style="color: var(--primary-color);">시장 동향</span> 대시보드</h1>
         <p>전국 주요 거점의 실시간 시세와 주거 데이터를 3D 입체 지도로 한눈에 확인하세요.</p>
     </div>
 
@@ -254,7 +254,7 @@
     {% if show_map %}
     <!-- 🇰🇷 National 3D Map View -->
     <div class="map-section fade-in">
-        <h3 style="margin-bottom: 60px; font-weight: 900; color: var(--text-main); font-size: 1.8rem;"> 시도별 아파트 평균 매매
+        <h3 style="margin-bottom: 60px; font-weight: 900; color: var(--text-main); font-size: 1.8rem;">🏢 시도별 아파트 평균 매매
             거래가 대시보드</h3>
         <div class="map-container" id="mapContainer">
             <div id="mapBadges"></div>
@@ -265,14 +265,14 @@
     <div class="row g-4" style="margin-top: 30px;">
         <div class="col-md-6">
             <div class="chart-card fade-in">
-                <h3> <span style="color: var(--primary-color);">{{ selected_region_kor }}</span> 평균가 추이 <span
+                <h3>📈 <span style="color: var(--primary-color);">{{ selected_region_kor }}</span> 평균가 추이 <span
                         class="unit-tag">단위: 억</span></h3>
                 <div style="height: 420px; margin-top:30px;"><canvas id="priceChart"></canvas></div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="chart-card fade-in" style="animation-delay: 0.1s;">
-                <h3> 경쟁률 현황 <span class="unit-tag">단위: :1</span></h3>
+                <h3>📊 경쟁률 현황 <span class="unit-tag">단위: :1</span></h3>
                 <div style="height: 420px; margin-top:30px;"><canvas id="competitionChart"></canvas></div>
             </div>
         </div>

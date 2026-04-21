@@ -323,6 +323,34 @@
 .mr-resize-preview { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--prime-bg); color:var(--prime-accent); font-size:12px; font-weight:700; padding:8px 20px; border-radius:var(--r-pill); pointer-events:none; z-index:20; white-space:nowrap; box-shadow:0 4px 16px rgba(30,27,75,.3); font-family:var(--mono); letter-spacing:.06em; }
 
 /* =========================================================
+   수출(Export) 섹션 및 인쇄 테마 (v26 Optimization)
+   ========================================================= */
+.mr-export-header { margin-top:60px; text-align:center; padding-bottom:56px; }
+.mr-export-divider { height:1px; background:linear-gradient(to right, transparent, var(--line-2), transparent); margin-bottom:48px; }
+.mr-export-actions { display:flex; justify-content:center; gap:16px; margin-bottom:20px; }
+.mr-btn-export {
+  display:inline-flex; align-items:center; gap:10px; padding:16px 32px;
+  background:var(--card); border:1.5px solid var(--line-2); border-radius:var(--r-lg);
+  font-size:15px; font-weight:700; color:var(--ink-2); cursor:pointer;
+  transition:all .16s ease; box-shadow:var(--shadow-sm); font-family:var(--font);
+}
+.mr-btn-export:hover { border-color:var(--violet); color:var(--violet); background:var(--violet-pale); transform:translateY(-2px); box-shadow:0 8px 24px rgba(91,94,244,0.12); }
+.btn-pdf-save { background:var(--ink); color:#fff; border-color:var(--ink); }
+.btn-pdf-save:hover { background:var(--ink-2); color:#fff; border-color:var(--ink-2); }
+.mr-export-notice { font-size:12px; color:var(--ink-3); font-weight:500; font-family:var(--mono); }
+.mr-export-notice strong { color:var(--violet); font-weight:800; }
+
+/* 🖨️ 인쇄 시 불필요한 UI 숨김 */
+@media print {
+  .main-header, .main-footer, .quick-menu, .chatbot-modal,
+  .market-ticker-wrapper, .mr-export-header, .mr-btn-edit,
+  .mr-edit-banner, .recap-modal-overlay { display: none !important; }
+  body { background: #fff !important; background-image: none !important; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+}
+
+
+/* =========================================================
    유틸
    ========================================================= */
 .hidden { display:none !important; }
