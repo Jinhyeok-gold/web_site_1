@@ -59,7 +59,7 @@ class UserDiagnostic(models.Model):
     ]
 
     age = models.IntegerField(verbose_name="연령", default=29)
-    region = models.CharField(max_length=20, choices=REGION_CHOICES, default='Seoul', verbose_name="거주지 (시/도)")
+    region = models.CharField(max_length=20, choices=REGION_CHOICES, default='Seoul', verbose_name="거주지 (시/도)", db_index=True)
     sub_region = models.CharField(max_length=50, null=True, blank=True, verbose_name="세부 지역 (시/군/구)")
     marital_status = models.CharField(max_length=20, choices=MARITAL_CHOICES, default='Single', verbose_name="혼인상태")
     kids_count = models.IntegerField(default=0, verbose_name="자녀 수")
@@ -95,17 +95,17 @@ class HousingProduct(models.Model):
     pblanc_no = models.CharField(max_length=100, null=True, blank=True, verbose_name="공고번호")
     title = models.CharField(max_length=255, verbose_name="주택명")
     category = models.CharField(max_length=100, null=True, blank=True, verbose_name="주택구분")
-    region = models.CharField(max_length=100, null=True, blank=True, verbose_name="공급지역")
+    region = models.CharField(max_length=100, null=True, blank=True, verbose_name="공급지역", db_index=True)
     location = models.TextField(null=True, blank=True, verbose_name="공급위치")
     
-    notice_date = models.DateField(null=True, blank=True, verbose_name="모집공고일")
+    notice_date = models.DateField(null=True, blank=True, verbose_name="모집공고일", db_index=True)
     start_date = models.DateField(null=True, blank=True, verbose_name="접수시작일")
-    end_date = models.DateField(null=True, blank=True, verbose_name="접수종료일")
+    end_date = models.DateField(null=True, blank=True, verbose_name="접수종료일", db_index=True)
     
     url = models.URLField(max_length=500, null=True, blank=True, verbose_name="공고상세URL")
     org = models.CharField(max_length=100, null=True, blank=True, verbose_name="시행/시공사")
     
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True, db_index=True)
     raw_data = models.JSONField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -130,11 +130,11 @@ class FinanceProduct(models.Model):
     limit_amt = models.BigIntegerField(default=0, verbose_name="대출한도(원)")
     
     target_desc = models.TextField(null=True, blank=True, verbose_name="지원대상")
-    notice_date = models.DateField(null=True, blank=True, verbose_name="공고일")
-    end_date = models.DateField(null=True, blank=True, verbose_name="종료일")
+    notice_date = models.DateField(null=True, blank=True, verbose_name="공고일", db_index=True)
+    end_date = models.DateField(null=True, blank=True, verbose_name="종료일", db_index=True)
     url = models.URLField(max_length=500, null=True, blank=True, verbose_name="상세URL")
     
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True, db_index=True)
     raw_data = models.JSONField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -156,13 +156,13 @@ class WelfareProduct(models.Model):
     benefit_desc = models.TextField(verbose_name="지원내용")
     target_desc = models.TextField(verbose_name="지원대상")
     age_limit = models.CharField(max_length=100, null=True, blank=True, verbose_name="연령제한")
-    region = models.CharField(max_length=100, null=True, blank=True, verbose_name="지원지역")
-    notice_date = models.DateField(null=True, blank=True, verbose_name="공고일")
-    end_date = models.DateField(null=True, blank=True, verbose_name="종료일")
+    region = models.CharField(max_length=100, null=True, blank=True, verbose_name="지원지역", db_index=True)
+    notice_date = models.DateField(null=True, blank=True, verbose_name="공고일", db_index=True)
+    end_date = models.DateField(null=True, blank=True, verbose_name="종료일", db_index=True)
     
     url = models.URLField(max_length=500, null=True, blank=True, verbose_name="상세URL")
     
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True, db_index=True)
     raw_data = models.JSONField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -3,9 +3,9 @@ import environ
 import urllib.parse
 import xml.etree.ElementTree as ET
 import os
-# from .firebase_service import FirebaseManager (Removed)
 from django.conf import settings
 from .models import HousingProduct, FinanceProduct, WelfareProduct
+from django.core.cache import cache
 
 # Initialize environ
 from dotenv import load_dotenv
@@ -82,6 +82,13 @@ class PublicDataHousingService:
 
     @staticmethod
     def get_lh_sh_notices(region_name, type_code='05'):
+        # --- [v30] Performance Cache Layer ---
+        cache_key = f"lh_sh_notices_{region_name}_{type_code}"
+        cached_res = cache.get(cache_key)
+        if cached_res:
+            # print(f"🚀 Cache Hit: {cache_key}")
+            return cached_res
+
         # 1. Local Archive 로드 (Firebase 제거됨)
         items = [] 
         
@@ -106,7 +113,7 @@ class PublicDataHousingService:
             response = requests.get(full_url, headers=headers, timeout=10, proxies={'http': None, 'https': None})
             
             if response.status_code != 200 or "SERVICE_KEY_IS_NOT_REGISTERED" in response.text:
-                print(f"LH API Primary Fail ({response.status_code}), trying Alternative...")
+                # print(f"LH API Primary Fail ({response.status_code}), trying Alternative...")
                 # MyHome API로 폴백
                 response = requests.get(f"{alt_url}?serviceKey={decoded_key}&numOfRows=10&pageNo=1", headers=headers, timeout=10, proxies={'http': None, 'https': None})
             
@@ -166,6 +173,9 @@ class PublicDataHousingService:
         except Exception as e:
             print(f"SH API Error: {e}")
 
+        # --- [v30] Save to Cache (15 min) ---
+        if items:
+            cache.set(cache_key, items, 60 * 15)
         return items
 
 class SubscriptionHomeService:
@@ -196,6 +206,12 @@ class SubscriptionHomeService:
 
     @staticmethod
     def get_subscription_notices(region_name):
+        # --- [v30] Performance Cache Layer ---
+        cache_key = f"subscription_notices_{region_name}"
+        cached_res = cache.get(cache_key)
+        if cached_res:
+            return cached_res
+
         # 1. Local Archive 먼저 로드
         items = []
         
@@ -247,6 +263,9 @@ class SubscriptionHomeService:
         except Exception as e:
             print(f"ApplyHome API Error: {e}")
         
+        # --- [v30] Save to Cache (15 min) ---
+        if items:
+            cache.set(cache_key, items, 60 * 15)
         return items
 
 class FssFinanceService:
@@ -271,6 +290,12 @@ class FssFinanceService:
 
     @staticmethod
     def get_loan_products(income, marital_status):
+        # --- [v30] Performance Cache Layer ---
+        cache_key = f"loan_products_{income}_{marital_status}"
+        cached_res = cache.get(cache_key)
+        if cached_res:
+            return cached_res
+
         # 1. 고정 데이터 + Firebase 데이터 로드
         policy_loans = [
             {"id": "P_01", "name": "신생아 특례 대출", "base_rate": 1.2, "target": "Kids", "limit": 50000, "org": "정부지원", "url": "https://nhuf.molit.go.kr/"},
@@ -278,7 +303,7 @@ class FssFinanceService:
             {"id": "P_03", "name": "버팀목 전세자금", "base_rate": 1.8, "target": "Rent", "limit": 20000, "org": "정부지원", "url": "https://nhuf.molit.go.kr/"},
             {"id": "P_04", "name": "청년 전용 보증부월세", "base_rate": 1.0, "target": "LowIncome", "limit": 5000, "org": "정부지원", "url": "https://nhuf.molit.go.kr/"}
         ]
-        items = policy_loans # Firebase 제거됨
+        items = policy_loans
         
         # 2. API 호출 시도
         api_key = env('FSS_FINANCE_KEY', default='').strip()
@@ -308,11 +333,9 @@ class FssFinanceService:
                     })
                 
                 if api_loans:
-                    # FirebaseManager.sync_data('loan_products', api_loans, id_field='id')
                     existing_ids = {i.get('id') for i in items}
                     items += [al for al in api_loans if al.get('id') not in existing_ids]
-            else:
-                print(f"FSS API Response Error: Received HTML or Invalid JSON (Status: {res.status_code})")
+            # else: print(f"FSS API Response Error: Received HTML or Invalid JSON (Status: {res.status_code})")
         except Exception as e:
             print(f"FSS API Logic Error: {e}")
 
@@ -336,6 +359,9 @@ class FssFinanceService:
             except Exception as e:
                 print(f"HUG API Error: {e}")
             
+        # --- [v30] Save to Cache (1 hour) ---
+        if items:
+            cache.set(cache_key, items, 60 * 60)
         return items
 
 class OntongWelfareService:
@@ -362,6 +388,12 @@ class OntongWelfareService:
 
     @staticmethod
     def get_welfare_policies(age, region_name):
+        # --- [v30] Performance Cache Layer ---
+        cache_key = f"welfare_policies_{age}_{region_name}"
+        cached_res = cache.get(cache_key)
+        if cached_res:
+            return cached_res
+
         # 1. Local Archive 로드
         items = []
         
@@ -391,12 +423,16 @@ class OntongWelfareService:
                             "benefit": benefit_txt,
                             "url": s.findtext('servDtlLink', 'https://www.bokjiro.go.kr/') # [v20] 실시간 링크 추출
                         })
-            except Exception as e:
-                print(f"Bokjiro Fallback Error: {e}")
+            except Exception:
+                pass
 
         # 🎯 온통청년 API (최종 병기: 초강력 소켓 우회 로직)
         # 일반적인 라이브러리가 사용자 환경의 8080 프록시에 납치되므로, 최하단 소켓 통신을 수행합니다.
         items = OntongWelfareService._fetch_youth_center_socket_resilient(api_key, items)
+        
+        # --- [v30] Save to Cache (30 min) ---
+        if items:
+            cache.set(cache_key, items, 60 * 30)
         return items
 
     @staticmethod

@@ -638,12 +638,13 @@
       </div>
     </div>
     <div class="sp-chat-actions">
+      {% if user.is_staff %}
+      <a href="{% url 'support:admin_chat_list' %}" class="sp-btn-primary" style="background: #0f172a; border: 1px solid var(--prime-accent);">
+        <i class="fas fa-clipboard-list"></i> 상담 대기열 관리하기
+      </a>
+      {% else %}
       <a href="{% url 'support:chat_room' %}" class="sp-btn-primary">
         <i class="fas fa-comment-dots"></i> 상담사 연결하기
-      </a>
-      {% if user.is_staff %}
-      <a href="{% url 'support:admin_chat_list' %}" class="sp-admin-link">
-        관리자: 상담 대기열 보기
       </a>
       {% endif %}
     </div>

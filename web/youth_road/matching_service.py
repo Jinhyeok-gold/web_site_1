@@ -1,5 +1,4 @@
 from .models import HousingProduct, FinanceProduct, WelfareProduct
-# from .firebase_service import FirebaseManager (Removed)
 import random
 from datetime import datetime, date, timedelta
 from django.db.models import Q

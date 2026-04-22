@@ -1,7 +1,7 @@
 import time
 from django.core.management.base import BaseCommand
 from youth_road.services import RegionMapper, PublicDataHousingService, SubscriptionHomeService, OntongWelfareService
-# from youth_road.firebase_service import FirebaseManager (Removed)
+
 
 
 class Command(BaseCommand):
@@ -44,4 +44,4 @@ class Command(BaseCommand):
             except Exception as e:
                 self.stdout.write(self.style.ERROR(f'    ❌ 온통청년 에러: {e}'))
 
-        self.stdout.write(self.style.SUCCESS('✨ 모든 데이터 동기화가 완료되었습니다. Firebase 콘솔에서 확인하세요!'))
+        self.stdout.write(self.style.SUCCESS('✨ 모든 데이터 동기화가 완료되었습니다!'))

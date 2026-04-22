@@ -5,11 +5,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from django.core.management.base import BaseCommand
 from youth_road.models import HousingProduct, FinanceProduct, WelfareProduct
-# from youth_road.firebase_service import FirebaseManager (Removed)
 from urllib.parse import unquote
-
-import os
-from django.core.management.base import BaseCommand
 from youth_road.services import (
     PublicDataHousingService, 
     SubscriptionHomeService, 
