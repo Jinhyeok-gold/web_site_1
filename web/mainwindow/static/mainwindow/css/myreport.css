@@ -309,8 +309,24 @@
 .recap-modal-overlay { position:fixed; inset:0; background:rgba(5,5,18,.8); z-index:9000; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(8px); }
 .recap-modal-overlay.hidden { display:none; }
 .recap-modal-inner { position:relative; width:420px; height:85vh; border-radius:26px; overflow:hidden; box-shadow:0 40px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.06); }
-.recap-modal-close { position:absolute; top:14px; right:14px; z-index:9100; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18); color:#fff; border-radius:var(--r-pill); padding:6px 14px; cursor:pointer; font-size:12px; font-weight:600; backdrop-filter:blur(12px); font-family:var(--font); transition:background .14s; }
-.recap-modal-close:hover { background:rgba(255,255,255,.22); }
+.recap-modal-close {
+    position: fixed;
+    top: 20px;
+    right: calc(50% - 210px - 48px);  /* 모달 width(420px) 절반 + 여백 */
+    z-index: 9200;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.18);
+    color: #fff;
+    border-radius: var(--r-pill);
+    padding: 6px 14px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    backdrop-filter: blur(12px);
+    font-family: var(--font);
+    transition: background .14s;
+}
+.recap-modal-close:hover { background: rgba(255,255,255,.22); }
 
 /* =========================================================
    Placeholder / 리사이즈

@@ -25,7 +25,13 @@ const Recap = (() => {
         dots().forEach((d, i) => d.classList.toggle('on', i === cur));
         progEl().style.width = ((cur + 1) / TOTAL * 100) + '%';
         prevBtn().style.visibility = cur === 0 ? 'hidden' : 'visible';
-        nextBtn().textContent = cur === TOTAL - 1 ? '전체 리포트 보기 →' : '다음 →';
+
+        // 마이리포트 모달 안인지 홈 리캡인지 구분
+        const isModal = !!document.getElementById('recap-modal') &&
+                        !document.getElementById('recap-modal').classList.contains('hidden');
+        nextBtn().textContent = cur === TOTAL - 1
+            ? (isModal ? '마이리포트로 돌아가기' : '전체 리포트 보기 →')
+            : '다음 →';
     }
 
     /* ── 카드 1: 숫자 카운트업 ── */
@@ -123,7 +129,12 @@ const Recap = (() => {
 
         // 마지막 카드에서 다음 → 전체 리포트
         if (next >= TOTAL) {
-            setView('result');
+            const modal = document.getElementById('recap-modal');
+            if (modal && !modal.classList.contains('hidden')) {
+                closeRecapModal();
+            } else {
+                setView('result');
+            }
             return;
         }
         if (next < 0) return;

@@ -403,11 +403,24 @@ function resetLayout() {
    리캡 모달
    ========================================================================== */
 function openRecapModal() {
-  if (!saved) return alert('저장된 리포트가 없어요.');
-  document.getElementById('recap-modal').classList.remove('hidden');
-  renderRecap(JSON.parse(saved)); Recap.init(JSON.parse(saved));
+    if (!saved) return alert('저장된 리포트가 없어요.');
+    const report = JSON.parse(saved);
+    const radar = report?.chart_data?.radar || {};
+    const vals = Object.values(radar).filter(v => typeof v === 'number');
+    const score = vals.length
+        ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length)
+        : 0;
+
+    document.getElementById('recap-modal').classList.remove('hidden');
+
+    // renderRecap 대신 데이터만 주입 (setView 호출 방지)
+    renderRecap(report);
+    // Recap.init에 score와 radar 직접 전달
+    Recap.init({ score, radar });
 }
-function closeRecapModal() { document.getElementById('recap-modal').classList.add('hidden'); }
+function closeRecapModal() {
+    document.getElementById('recap-modal').classList.add('hidden');
+}
 
 /* ==========================================================================
    수출(Export) 기능
