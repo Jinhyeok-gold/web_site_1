@@ -1407,3 +1407,150 @@
 .form-select {
     color: #3730a3 !important;
 }
+
+/* ==========================================================================
+   RESULT DASHBOARD PATCH — 홈/auth 그라디언트 컬러 통일
+   인디고는 포인트만, 배경 장악 없음
+   ========================================================================== */
+
+/* 대시보드 카드 — 흰 단색 → 연한 glassmorphism */
+.dashboard-unit {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(16px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow:
+        0 4px 24px rgba(99, 102, 241, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+/* unit-title — 좌측 그라디언트 점 포인트 */
+.unit-title {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+.unit-title::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6, #d946ef);
+    flex-shrink: 0;
+}
+
+/* 카테고리 섹션 — 흰 배경 → 연한 라벤더 glassmorphism */
+.category-section {
+    background: rgba(255, 255, 255, 0.72) !important;
+    backdrop-filter: blur(20px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.55) !important;
+    box-shadow:
+        0 8px 32px rgba(99, 102, 241, 0.07),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+    border-radius: 28px !important;
+}
+
+/* 분야별 추천 상세 목록 타이틀 — 좌측 세로선 그라디언트 */
+.results-sub-title {
+    border-left: none !important;
+    position: relative !important;
+    padding-left: 16px !important;
+}
+.results-sub-title::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 999px;
+    background: linear-gradient(to bottom, #6366f1, #8b5cf6, #d946ef);
+}
+
+/* 카테고리 타이틀 이모지 옆 텍스트 */
+.category-title {
+    font-size: 20px !important;
+    letter-spacing: -0.4px !important;
+}
+
+/* 1순위 카드 — 그라디언트 테두리, 배경은 흰색 유지 */
+.policy-card-modern.top-match {
+    background: #fff !important;
+    border: 2px solid transparent !important;
+    background-clip: padding-box !important;
+    position: relative !important;
+    /* outline으로 그라디언트 테두리 효과 */
+    box-shadow:
+        0 0 0 2px #8b5cf6,
+        0 12px 32px rgba(99, 102, 241, 0.12) !important;
+}
+
+/* 배지 (1순위/추천) — 그라디언트 */
+.card-badge {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6, #d946ef) !important;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25) !important;
+}
+
+/* % 일치 스코어 배지 */
+.card-score {
+    background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(217,70,239,0.06)) !important;
+    color: #6366f1 !important;
+    border-radius: 8px !important;
+    padding: 3px 10px !important;
+}
+
+/* 공고 확인 링크 */
+.btn-card-link {
+    color: #6366f1 !important;
+    font-weight: 700 !important;
+}
+.btn-card-link:hover {
+    color: #8b5cf6 !important;
+}
+
+/* ── 하단 버튼 3개 ── */
+
+/* 리포트 인쇄 — 테두리형 */
+.btn-print {
+    background: rgba(255, 255, 255, 0.85) !important;
+    border: 1.5px solid rgba(99, 102, 241, 0.2) !important;
+    color: #64748b !important;
+    border-radius: 999px !important;
+    backdrop-filter: blur(8px) !important;
+    transition: all 0.2s !important;
+}
+.btn-print:hover {
+    border-color: rgba(99, 102, 241, 0.45) !important;
+    color: #6366f1 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.1) !important;
+}
+
+/* 이메일 발송 — 홈 CTA 그라디언트 */
+.btn-email-user,
+.btn-email-guest {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 55%, #d946ef 100%) !important;
+    border: none !important;
+    border-radius: 999px !important;
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3) !important;
+    transition: transform 0.2s, box-shadow 0.2s !important;
+}
+.btn-email-user:hover,
+.btn-email-guest:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 14px 32px rgba(99, 102, 241, 0.4) !important;
+}
+
+/* 다시 진단하기 — 딥 슬레이트 (홈 다크 버튼 동일) */
+.btn-restart {
+    background: #1e293b !important;
+    border: none !important;
+    border-radius: 999px !important;
+    color: #fff !important;
+    transition: all 0.2s !important;
+}
+.btn-restart:hover {
+    background: #0f172a !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.25) !important;
+}

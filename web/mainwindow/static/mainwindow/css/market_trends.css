@@ -161,16 +161,6 @@
     overflow: hidden;
 }
 
-/* 상단 accent 라인 */
-.map-section::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--mt-gradient);
-    border-radius: 36px 36px 0 0;
-}
-
 .map-section h3 {
     font-size: 1.5rem;
     font-weight: 900;
@@ -250,15 +240,6 @@
 .chart-card:hover {
     box-shadow: var(--mt-shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
-/* 상단 accent 라인 */
-.chart-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--mt-gradient);
-    border-radius: 28px 28px 0 0;
-}
 
 .chart-card h3 {
     font-size: 1.05rem;
@@ -293,15 +274,6 @@
     position: relative;
     overflow: hidden;
 }
-.market-table-section::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--mt-gradient);
-    border-radius: 28px 28px 0 0;
-}
-
 .market-table-section h3 {
     font-size: 1.1rem;
     font-weight: 900;
@@ -401,4 +373,48 @@
     background: rgba(99, 102, 241, 0.08);
     color: var(--mt-primary);
     border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+/* ------------------------------------------------------------------
+   섹션 타이틀 배지 — 다크 인디고 배경 + 흰 글씨
+   map-section h3 / chart-card h3 / market-table-section h3 공통 적용
+   ------------------------------------------------------------------ */
+.section-title-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    margin-bottom: 36px;
+    box-shadow: 0 6px 20px rgba(30, 27, 75, 0.22);
+}
+.section-title-badge i {
+    font-size: 0.9rem;
+    opacity: 0.85;
+}
+
+/* 차트 카드 타이틀은 인라인으로 쓰므로 별도 소형 variant */
+.section-title-badge--sm {
+    padding: 7px 16px;
+    font-size: 0.88rem;
+    border-radius: 10px;
+    margin-bottom: 0;
+    box-shadow: 0 4px 14px rgba(30, 27, 75, 0.18);
+}
+
+/* 타이틀 뒤에 붙는 단위 태그 — 기존 .unit-tag 보완 */
+.unit-tag {
+    font-size: 0.75rem;
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--mt-primary);
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 700;
+    margin-left: 8px;
+    vertical-align: middle;
 }

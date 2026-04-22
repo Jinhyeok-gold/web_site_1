@@ -334,7 +334,7 @@
   font-size:15px; font-weight:700; color:var(--ink-2); cursor:pointer;
   transition:all .16s ease; box-shadow:var(--shadow-sm); font-family:var(--font);
 }
-.mr-btn-export:hover { border-color:var(--violet); color:var(--violet); background:var(--violet-pale); transform:translateY(-2px); box-shadow:0 8px 24px rgba(91,94,244,0.12); }
+.mr-btn-export:hover { border-color:var(--violet); color:#fff; background:var(--violet); transform:translateY(-2px); box-shadow:0 8px 24px rgba(91,94,244,0.12); }
 .btn-pdf-save { background:var(--ink); color:#fff; border-color:var(--ink); }
 .btn-pdf-save:hover { background:var(--ink-2); color:#fff; border-color:var(--ink-2); }
 .mr-export-notice { font-size:12px; color:var(--ink-3); font-weight:500; font-family:var(--mono); }

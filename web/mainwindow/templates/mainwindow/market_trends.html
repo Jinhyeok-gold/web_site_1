@@ -3,6 +3,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'mainwindow/css/market_trends.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 {% endblock %}
 
 {% block content %}
@@ -33,9 +34,11 @@
     {% if show_map %}
     <!-- 전국 지도 뷰 -->
     <div class="map-section fade-in">
-        <h3>🏢 시도별 아파트 평균 매매 거래가 대시보드</h3>
+        <div class="section-title-badge">
+            <i class="fas fa-building"></i> 시도별 아파트 평균 매매 거래가 대시보드
+        </div>
         <div class="map-container" id="mapContainer"
-            style='background-image: url("{% static 'mainwindow/images/korea_map.png' %}");'>
+             style="background-image: url('{% static 'mainwindow/images/korea_map.png' %}');">
             <div id="mapBadges"></div>
         </div>
     </div>
@@ -45,12 +48,12 @@
     <div class="row g-4" style="margin-top: 32px;">
         <div class="col-md-6">
             <div class="chart-card fade-in">
-                <h3>
-                    📈 <span style="background: var(--mt-gradient); -webkit-background-clip: text;
-                        background-clip: text; -webkit-text-fill-color: transparent;">
+                <div class="section-title-badge section-title-badge--sm">
+                    <i class="fas fa-chart-line"></i>
+                    <span style="background: linear-gradient(135deg,#a5b4fc,#e879f9); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;">
                         {{ selected_region_kor }}</span> 평균가 추이
-                    <span class="unit-tag">단위: 억</span>
-                </h3>
+                    <span class="unit-tag" style="background:rgba(255,255,255,.15); color:#c7d2fe;">단위: 억</span>
+                </div>
                 <div style="height: 400px; margin-top: 28px;">
                     <canvas id="priceChart"></canvas>
                 </div>
@@ -58,10 +61,10 @@
         </div>
         <div class="col-md-6">
             <div class="chart-card fade-in" style="animation-delay: 0.1s;">
-                <h3>
-                    📊 경쟁률 현황
-                    <span class="unit-tag">단위: :1</span>
-                </h3>
+                <div class="section-title-badge section-title-badge--sm">
+                    <i class="fas fa-chart-bar"></i> 경쟁률 현황
+                    <span class="unit-tag" style="background:rgba(255,255,255,.15); color:#c7d2fe;">단위: :1</span>
+                </div>
                 <div style="height: 400px; margin-top: 28px;">
                     <canvas id="competitionChart"></canvas>
                 </div>
@@ -72,10 +75,9 @@
 
     <!-- 상세 분석 테이블 -->
     <div class="market-table-section fade-in">
-        <h3>
-            <i class="fas fa-list-ul"></i>
-            {{ selected_region_kor }} 상세 분석 지표
-        </h3>
+        <div class="section-title-badge">
+            <i class="fas fa-list-ul"></i> {{ selected_region_kor }} 상세 분석 지표
+        </div>
         <table class="market-table table">
             <thead>
                 <tr>

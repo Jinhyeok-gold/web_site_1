@@ -28,7 +28,7 @@
 #view-recap {
     position: fixed;
     inset: 0;
-    top: 91px; /* 헤더 높이 */
+    top: 127px; /* 티커(36px) + 헤더(91px) */
     z-index: 100;
 }
 
@@ -39,7 +39,7 @@
     position: relative;
     flex: 1;
     min-height: 0;
-    height: calc(100vh - 91px); /* 헤더 높이만큼 뺌 */
+    height: calc(100vh - 127px); /* 티커(36px) + 헤더(91px) 높이만큼 뺌 */
     margin-bottom: 0;
 }
 
