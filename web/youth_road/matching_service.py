@@ -117,25 +117,25 @@ class MatchingEngine:
         sales_price = product.get('sales_price', 0)
         income = instance.total_income
         
-        # 1. PIR 기초 필터링 (가용 자본 대비 지나친 고가 매물 제외)
+       
         if sales_price > 0:
             pir = sales_price / income
             if pir > 15: return False 
         
-        # 2. 순자산 컷오프 (엄격 적용)
+       
         net_assets = instance.assets - instance.debt
-        if net_assets > 37900: # 2024년 기준 자산 기준
+        if net_assets > 37900: 
             if any(term in title for term in ["국민임대", "행복주택", "영구임대", "공공분양", "LH", "SH"]): 
                 return False
         
-        # 3. 지역 일치 여부 (핵심 필터)
+      
         target_keyword = MatchingEngine.REGION_KEYWORD_MAP.get(instance.region, '')
         product_region = product.get('region', '')
         
         if target_keyword and target_keyword not in product_region: 
             return False
             
-        # [v20] 세부 지역(시/군/구) 정밀 필터링
+       
         if instance.sub_region:
             prod_title = title or ""
             prod_region = product.get('region') or ""
@@ -231,18 +231,18 @@ class MatchingEngine:
                     score = 1000 - int(pir * 30)
                     prod_cat = p.category or ""
                     prod_title = p.title or ""
-                    # [v23.2] 임대 상품(LH/SH/행복주택) 가중치 대폭 강화 (+7000)
+
                     if "공공" in prod_cat or any(x in prod_title for x in ["LH", "SH", "행복", "임대", "전세"]): 
                         score += 7000
                     if instance.subscription_count >= 24: score += 100
-                    # [v19] 무주택 기간 가점 (최대 150점)
+                   
                     score += min(instance.homeless_years * 10, 150)
                     
-                    # [v24.2] 생애최초 주택 구입자 가점 대폭 상향 (+20000)
+                 
                     if "생애최초" in prod_title and instance.is_first_home:
                         score += 20000
                     
-                    # [v21] 최종 결과 구성 시에만 세션 안전을 위해 문자열 변환
+                  
                     p_data['score'] = score
                     p_data['end_date'] = p.end_date.isoformat() if p.end_date else None
                     p_data['notice_date'] = p.notice_date.isoformat() if p.notice_date else None

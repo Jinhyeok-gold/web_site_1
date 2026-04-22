@@ -115,28 +115,57 @@ def send_user_report_email(request):
             if not user_email:
                 return JsonResponse({'error': '계정에 등록된 이메일 주소가 없습니다. [회원정보 수정]에서 이메일을 등록해 주세요.'}, status=400)
 
-            # HTML 이메일 템플릿 렌더링
-            context = {
-                'user': request.user,
-                'data': user_data,
-                'report': report_data,
-            }
-            
-            subject = f"[딱맞춤] {request.user.last_name or request.user.username}님의 정밀 분석 보고서입니다."
-            html_message = render_to_string('chatbot/email_report.html', context)
-            plain_message = strip_tags(html_message)
-            
+            import json
+            import base64
+            from django.core.mail import EmailMessage
             from django.conf import settings
-            send_mail(
-                subject,
-                plain_message,
-                settings.DEFAULT_FROM_EMAIL,
-                [user_email],
-                html_message=html_message,
-                fail_silently=False  # 오류 발생 시 예외 발생 (디버깅용)
-            )
+
+            body = {}
+            if request.body:
+                try:
+                    body = json.loads(request.body)
+                except:
+                    pass
             
-            return JsonResponse({'status': 'success', 'message': f'{user_email}로 리포트가 전송되었습니다. (진단 데이터: {"공급원 - 세션" if request.session.get("latest_diagnostic_data") else "공급원 - DB"})'})
+            pdf_data = body.get('pdf_data')
+            subject = f"[딱맞춤] {request.user.last_name or request.user.username}님의 정밀 분석 보고서입니다."
+
+            if pdf_data:
+                # PDF 첨부파일 방식
+                try:
+                    format, imgstr = pdf_data.split(';base64,')
+                    data = base64.b64decode(imgstr)
+                    
+                    email = EmailMessage(
+                        subject,
+                        "요청하신 맞춤 정책 정밀 분석 리포트(PDF)가 첨부 파일로 도착했습니다.\n\n첨부된 파일을 다운로드하거나 열어서 확인해 주세요.\n\n감사합니다.",
+                        settings.DEFAULT_FROM_EMAIL,
+                        [user_email]
+                    )
+                    email.attach('Premium_Report.pdf', data, 'application/pdf')
+                    email.send(fail_silently=False)
+                except Exception as e:
+                    return JsonResponse({'error': f'PDF 오류: {str(e)}'}, status=500)
+            else:
+                # 기존 HTML 메일 발송 방식 (Fallback)
+                context = {
+                    'user': request.user,
+                    'data': user_data,
+                    'report': report_data,
+                }
+                html_message = render_to_string('chatbot/email_report.html', context)
+                plain_message = strip_tags(html_message)
+                
+                send_mail(
+                    subject,
+                    plain_message,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [user_email],
+                    html_message=html_message,
+                    fail_silently=False
+                )
+            
+            return JsonResponse({'status': 'success', 'message': f'{user_email}로 리포트가 전송되었습니다.'})
         except Exception as e:
             import traceback
             print(traceback.format_exc()) # 서버 로그에 상세 오류 출력

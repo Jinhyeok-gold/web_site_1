@@ -421,17 +421,33 @@ async function sendMyReportEmail() {
   
   try {
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 전송 중...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PDF 생성 및 전송 중...';
     
     // CSRF 토큰 가져오기 (HTML에 포함됨)
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+    // 1. html2canvas로 화면 캡처 (스케일 및 품질 조정으로 용량 최적화)
+    const targetElement = document.getElementById('mr-grid');
+    const canvas = await html2canvas(targetElement, { scale: 1, useCORS: true });
+    
+    // 2. jsPDF 객체 생성 및 이미지 추가 (PNG 대신 JPEG로 압축률 상승)
+    const imgData = canvas.toDataURL('image/jpeg', 0.7);
+    const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+    
+    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+    
+    // 3. Base64 문자열 추출
+    const pdfBase64 = pdf.output('datauristring');
     
     const res = await fetch('/chatbot/api/send-email/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-CSRFToken': csrfToken || ''
-      }
+      },
+      body: JSON.stringify({ pdf_data: pdfBase64 })
     });
     
     const data = await res.json();

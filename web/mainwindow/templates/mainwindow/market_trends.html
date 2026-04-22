@@ -252,7 +252,6 @@
     </div>
 
     {% if show_map %}
-    <!-- 🇰🇷 National 3D Map View -->
     <div class="map-section fade-in">
         <h3 style="margin-bottom: 60px; font-weight: 900; color: var(--text-main); font-size: 1.8rem;">🏢 시도별 아파트 평균 매매
             거래가 대시보드</h3>
@@ -327,7 +326,7 @@
     const marketData = JSON.parse('{{ market_data_list_json|safe }}' || '[]');
     const isMapMode = '{{ show_map }}' === 'True';
 
-    // 🎯 Geolocation Mapping (Stable Points)
+
     const MARKER_POSITIONS = {
         'Seoul': { x: 37, y: 25 }, 'Gyeonggi': { x: 44, y: 31 }, 'Incheon': { x: 24, y: 25 },
         'Gangwon': { x: 68, y: 22 }, 'Sejong': { x: 44, y: 38 }, 'Daejeon': { x: 48, y: 48 },
@@ -342,7 +341,7 @@
         else initCharts();
     });
 
-    /** 📍 Initialize National Map Markers */
+
     function initMarkerMap() {
         const container = document.getElementById('mapBadges');
         if (!container) return;
