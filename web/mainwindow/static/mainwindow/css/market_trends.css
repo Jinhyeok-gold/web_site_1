@@ -1,0 +1,404 @@
+/* ==========================================================================
+   market_trends.css
+   부동산 시장 동향 대시보드 전용 스타일
+   홈/auth 디자인 시스템 (인디고-바이올렛 그라디언트 + glassmorphism) 통일
+   ========================================================================== */
+
+/* ------------------------------------------------------------------
+   디자인 토큰 — home.css / id_login.css 와 동일 팔레트
+   ------------------------------------------------------------------ */
+:root {
+    --mt-primary:        #6366f1;
+    --mt-primary-dark:   #4f46e5;
+    --mt-primary-light:  rgba(99, 102, 241, 0.08);
+    --mt-violet:         #8b5cf6;
+    --mt-fuchsia:        #d946ef;
+    --mt-gradient:       linear-gradient(135deg, #6366f1 0%, #8b5cf6 55%, #d946ef 100%);
+
+    --mt-bg:             #f4f3ff;   /* home.css --form-section 계열 */
+    --mt-card:           rgba(255, 255, 255, 0.82);
+    --mt-card-border:    rgba(255, 255, 255, 0.55);
+    --mt-line:           #e0e0ec;
+    --mt-text:           #1e293b;
+    --mt-muted:          #64748b;
+
+    --mt-shadow-sm:  0 4px 20px rgba(99, 102, 241, 0.06);
+    --mt-shadow-md:  0 12px 40px rgba(99, 102, 241, 0.10);
+    --mt-shadow-lg:  0 24px 60px rgba(99, 102, 241, 0.14);
+    --mt-glass-blur: blur(24px) saturate(180%);
+}
+
+/* ------------------------------------------------------------------
+   페이지 배경 — home.css auraFloat 계열
+   ------------------------------------------------------------------ */
+@property --mt-h1 { syntax: '<angle>'; inherits: false; initial-value: 240deg; }
+@property --mt-h2 { syntax: '<angle>'; inherits: false; initial-value: 270deg; }
+
+@keyframes mtAura {
+    0%   { --mt-h1: 240deg; --mt-h2: 280deg; }
+    50%  { --mt-h1: 255deg; --mt-h2: 300deg; }
+    100% { --mt-h1: 228deg; --mt-h2: 265deg; }
+}
+
+/* ------------------------------------------------------------------
+   전체 래퍼
+   ------------------------------------------------------------------ */
+.trends-dashboard {
+    padding: 52px 0 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: none;   /* base.css main.container.wide 배경 활용 */
+}
+
+/* ------------------------------------------------------------------
+   페이드 인 애니메이션
+   ------------------------------------------------------------------ */
+@keyframes mtFadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+    animation: mtFadeUp 0.7s cubic-bezier(0.165, 0.84, 0.44, 1) both;
+}
+
+/* ------------------------------------------------------------------
+   헤더 섹션
+   ------------------------------------------------------------------ */
+.dashboard-header {
+    text-align: center;
+    margin-bottom: 52px;
+}
+
+/* eyebrow pill — home.css .form-eyebrow-pill 동일 패턴 */
+.dashboard-eyebrow {
+    display: inline-block;
+    background: linear-gradient(135deg, rgba(99,102,241,.1), rgba(217,70,239,.1));
+    border: 1px solid rgba(99, 102, 241, 0.18);
+    color: var(--mt-primary);
+    border-radius: 999px;
+    padding: 5px 18px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+
+.dashboard-header h1 {
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 900;
+    color: var(--mt-text);
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+    line-height: 1.2;
+}
+
+/* 그라디언트 텍스트 — home.css .hero-color-word 동일 */
+.dashboard-header h1 .gradient-word {
+    background: var(--mt-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.dashboard-header p {
+    color: var(--mt-muted);
+    font-size: 1.05rem;
+    font-weight: 500;
+    word-break: keep-all;
+}
+
+/* ------------------------------------------------------------------
+   지역 셀렉트 박스
+   ------------------------------------------------------------------ */
+.select-wrap {
+    max-width: 460px;
+    margin: 0 auto 52px;
+}
+
+.premium-select {
+    width: 100%;
+    padding: 16px 48px 16px 24px;
+    border-radius: 16px;
+    border: 1.5px solid rgba(99, 102, 241, 0.22);
+    font-weight: 700;
+    font-size: 1rem;
+    appearance: none;
+    background:
+        rgba(255, 255, 255, 0.85)
+        url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%236366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>')
+        no-repeat right 18px center;
+    background-size: 18px;
+    backdrop-filter: var(--mt-glass-blur);
+    -webkit-backdrop-filter: var(--mt-glass-blur);
+    box-shadow: var(--mt-shadow-sm);
+    cursor: pointer;
+    color: var(--mt-text);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.premium-select:focus {
+    outline: none;
+    border-color: var(--mt-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12), var(--mt-shadow-sm);
+}
+
+/* ------------------------------------------------------------------
+   지도 섹션 카드
+   ------------------------------------------------------------------ */
+.map-section {
+    /* glassmorphism 카드 — auth 로그인 카드 동일 레시피 */
+    background: var(--mt-card);
+    backdrop-filter: var(--mt-glass-blur);
+    -webkit-backdrop-filter: var(--mt-glass-blur);
+    border: 1px solid var(--mt-card-border);
+    border-radius: 36px;
+    padding: 52px;
+    box-shadow:
+        var(--mt-shadow-lg),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 상단 accent 라인 */
+.map-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--mt-gradient);
+    border-radius: 36px 36px 0 0;
+}
+
+.map-section h3 {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--mt-text);
+    margin-bottom: 44px;
+    letter-spacing: -0.5px;
+}
+
+.map-container {
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+    min-height: 820px;
+    background:
+        radial-gradient(circle, rgba(99,102,241,0.05) 0%, transparent 70%),
+        url("") no-repeat center;   /* 템플릿에서 static 경로 인라인 처리됨 */
+    background-size: contain;
+    transform: rotateX(12deg);
+    filter: drop-shadow(0 24px 36px rgba(99, 102, 241, 0.12));
+}
+
+/* ------------------------------------------------------------------
+   가격 배지 (지도 마커)
+   ------------------------------------------------------------------ */
+.price-badge {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-bottom: 2.5px solid var(--mt-primary);
+    padding: 7px 14px;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--mt-text);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.14);
+    transform: translate(-50%, -50%);
+    pointer-events: auto;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 76px;
+    cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                box-shadow 0.25s;
+}
+.price-badge:hover {
+    transform: translate(-50%, -64%) scale(1.05);
+    box-shadow: 0 14px 36px rgba(99, 102, 241, 0.22);
+}
+.price-badge span {
+    font-size: 10px;
+    color: var(--mt-primary);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+}
+
+/* ------------------------------------------------------------------
+   차트 카드 (지역별 상세 뷰)
+   ------------------------------------------------------------------ */
+.chart-card {
+    background: var(--mt-card);
+    backdrop-filter: var(--mt-glass-blur);
+    -webkit-backdrop-filter: var(--mt-glass-blur);
+    border: 1px solid var(--mt-card-border);
+    border-radius: 28px;
+    padding: 36px;
+    box-shadow: var(--mt-shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.3s;
+}
+.chart-card:hover {
+    box-shadow: var(--mt-shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+/* 상단 accent 라인 */
+.chart-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--mt-gradient);
+    border-radius: 28px 28px 0 0;
+}
+
+.chart-card h3 {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--mt-text);
+    letter-spacing: -0.3px;
+}
+
+/* 단위 태그 */
+.unit-tag {
+    font-size: 0.78rem;
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--mt-primary);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-weight: 700;
+    margin-left: 8px;
+}
+
+/* ------------------------------------------------------------------
+   데이터 테이블 섹션
+   ------------------------------------------------------------------ */
+.market-table-section {
+    margin-top: 48px;
+    background: var(--mt-card);
+    backdrop-filter: var(--mt-glass-blur);
+    -webkit-backdrop-filter: var(--mt-glass-blur);
+    border: 1px solid var(--mt-card-border);
+    border-radius: 28px;
+    padding: 40px;
+    box-shadow: var(--mt-shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    position: relative;
+    overflow: hidden;
+}
+.market-table-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--mt-gradient);
+    border-radius: 28px 28px 0 0;
+}
+
+.market-table-section h3 {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--mt-text);
+    margin-bottom: 32px;
+    letter-spacing: -0.3px;
+}
+.market-table-section h3 i {
+    color: var(--mt-primary);
+    margin-right: 10px;
+}
+
+.market-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+.market-table th {
+    padding: 14px 20px;
+    color: var(--mt-muted);
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-bottom: 1.5px solid var(--mt-line);
+    text-align: left;
+    white-space: nowrap;
+}
+.market-table td {
+    padding: 18px 20px;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(224, 224, 236, 0.5);
+    transition: background 0.15s;
+}
+.market-table tr:last-child td { border-bottom: none; }
+.market-table tr:hover td {
+    background: rgba(99, 102, 241, 0.03);
+}
+
+/* 지역명 셀 */
+.market-table td:first-child {
+    font-weight: 900;
+    font-size: 1rem;
+    color: var(--mt-text);
+}
+
+/* 평균 매매가 셀 */
+.market-table td:nth-child(2) strong {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--mt-primary);
+}
+
+/* 경쟁률 셀 */
+.market-table td:nth-child(3) {
+    font-weight: 800;
+    color: #475569;
+}
+
+/* ------------------------------------------------------------------
+   프로그레스 바 (주거 성숙도)
+   ------------------------------------------------------------------ */
+.pg-wrap {
+    height: 8px;
+    border-radius: 999px;
+    width: 120px;
+    background: rgba(99, 102, 241, 0.1);
+    overflow: hidden;
+}
+.pg-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(to right, var(--mt-primary), var(--mt-violet));
+    width: var(--pg-width, 0%);
+    transition: width 1s ease-in-out;
+}
+
+/* ------------------------------------------------------------------
+   시장 동향 상태 태그
+   ------------------------------------------------------------------ */
+.status-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+}
+.status-up {
+    background: rgba(239, 68, 68, 0.08);
+    color: #e11d48;
+    border: 1px solid rgba(239, 68, 68, 0.15);
+}
+.status-normal {
+    background: rgba(99, 102, 241, 0.08);
+    color: var(--mt-primary);
+    border: 1px solid rgba(99, 102, 241, 0.15);
+}

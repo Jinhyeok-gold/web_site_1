@@ -178,7 +178,11 @@
     <!-- AI Chatbot Floating UI -->
     <div id="chatbot-modal" class="hidden chatbot-container">
         <div class="chatbot-header">
-            <span>⚖️ 정책/법률 전문 상담</span>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <img src="{% static 'mainwindow/images/logo_2.png' %}" alt="챗봇"
+                    style="width:22px; height:22px; filter:brightness(0) invert(1);">
+                <span>정책/법률 전문 상담</span>
+            </div>
             <button onclick="toggleChatbot()" class="close-btn">✕</button>
         </div>
         <div id="chat-messages" class="chat-messages">

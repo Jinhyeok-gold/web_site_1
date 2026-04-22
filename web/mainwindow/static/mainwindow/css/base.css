@@ -1198,3 +1198,186 @@ main.container.wide {
 .trend-indicator.up { background: #fef2f2; color: #ef4444; }
 .trend-indicator.down { background: #eff6ff; color: #3b82f6; }
 @media (max-width: 1024px) { .chart-grid { grid-template-columns: 1fr; } }
+
+
+/* ==========================================================================
+   CHATBOT REDESIGN — 홈/auth 디자인 시스템 통일
+   인디고-바이올렛 그라디언트 + glassmorphism
+   ========================================================================== */
+
+/* 팝업 등장 애니메이션 */
+@keyframes chatbotSlideUp {
+    from { opacity: 0; transform: translateY(20px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+/* 컨테이너 — glassmorphism 카드 */
+.chatbot-container {
+    position: fixed !important;
+    bottom: 100px !important;
+    right: 150px !important;
+    width: 380px !important;
+    border-radius: 28px !important;
+    border: 1px solid rgba(255, 255, 255, 0.55) !important;
+    background: rgba(255, 255, 255, 0.82) !important;
+    backdrop-filter: blur(28px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+    box-shadow:
+        0 24px 56px rgba(99, 102, 241, 0.18),
+        0 8px 24px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+    overflow: hidden !important;
+    z-index: 10000 !important;
+    animation: chatbotSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both !important;
+}
+
+/* 헤더 — 인디고-바이올렛-퓨시아 그라디언트 */
+.chatbot-header {
+    padding: 18px 22px !important;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 55%, #d946ef 100%) !important;
+    color: white !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    letter-spacing: -0.2px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    /* 헤더 상단 모서리만 둥글게 */
+    border-radius: 28px 28px 0 0 !important;
+    /* 아주 미세한 하단 구분선 */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+/* 닫기 버튼 */
+.close-btn {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 50% !important;
+    font-size: 13px !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: background 0.2s !important;
+}
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.35) !important;
+}
+
+/* 메시지 영역 — 투명 배경으로 글래스 카드 내부가 비치게 */
+.chat-messages {
+    height: 350px !important;
+    overflow-y: auto !important;
+    padding: 20px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    background: rgba(248, 250, 252, 0.6) !important;
+    /* 스크롤바 */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
+}
+.chat-messages::-webkit-scrollbar { width: 5px; }
+.chat-messages::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.25);
+    border-radius: 99px;
+}
+
+/* 사용자 버블 — 인디고-바이올렛 그라디언트 */
+.chat-bubble.chat-user {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+    color: white !important;
+    align-self: flex-end !important;
+    border-bottom-right-radius: 4px !important;
+    border-radius: 16px !important;
+    box-shadow: 0 6px 18px rgba(99, 102, 241, 0.28) !important;
+    border: none !important;
+}
+
+/* 봇 버블 — glassmorphism white */
+.chat-bubble.chat-bot {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    color: #1e293b !important;
+    align-self: flex-start !important;
+    border-bottom-left-radius: 4px !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.85) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* 입력 폼 영역 */
+.chat-input-form {
+    padding: 14px 16px !important;
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border-top: 1px solid rgba(99, 102, 241, 0.1) !important;
+    display: flex !important;
+    gap: 10px !important;
+    align-items: center !important;
+    border-radius: 0 0 28px 28px !important;
+}
+
+/* 입력창 */
+.chat-input-form input {
+    flex: 1 !important;
+    padding: 10px 16px !important;
+    border: 1.5px solid rgba(99, 102, 241, 0.2) !important;
+    border-radius: 12px !important;
+    outline: none !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    font-size: 14px !important;
+    color: #1e293b !important;
+    transition: border-color 0.2s !important;
+}
+.chat-input-form input:focus {
+    border-color: rgba(99, 102, 241, 0.5) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08) !important;
+}
+
+/* 전송 버튼 — 그라디언트 pill */
+.chat-input-form button {
+    padding: 10px 18px !important;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 12px !important;
+    cursor: pointer !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    transition: opacity 0.2s, transform 0.15s !important;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3) !important;
+}
+.chat-input-form button:hover {
+    opacity: 0.9 !important;
+    transform: translateY(-1px) !important;
+}
+
+/* 상품 카드 (appendProductCardToChat) — 파란색 → 바이올렛 */
+.chat-card-type {
+    background: rgba(99, 102, 241, 0.1) !important;
+    color: #6366f1 !important;
+}
+.chat-card-btn {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+    border-radius: 10px !important;
+}
+.chat-card-btn:hover {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+    transform: translateY(-2px) !important;
+}
+.chat-action-btn {
+    border-color: #6366f1 !important;
+    color: #6366f1 !important;
+}
+.chat-action-btn:hover {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+    border-color: transparent !important;
+    color: white !important;
+    box-shadow: 0 5px 15px rgba(99, 102, 241, 0.25) !important;
+}

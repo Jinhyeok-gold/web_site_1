@@ -2,289 +2,83 @@
 {% load static %}
 
 {% block extra_css %}
-<style>
-    /* 🏛️ Design System Tokens */
-    :root {
-        --primary-color: #6366f1;
-        --primary-hover: #4f46e5;
-        --bg-light: #fdfdfd;
-        --card-bg: #ffffff;
-        --border-color: #e2e8f0;
-        --text-main: #1e293b;
-        --text-muted: #64748b;
-        --shadow-sm: 0 10px 25px rgba(0, 0, 0, 0.02);
-        --shadow-md: 0 20px 50px rgba(0, 0, 0, 0.03);
-        --shadow-lg: 0 40px 100px rgba(0, 0, 0, 0.05);
-    }
-
-    .trends-dashboard {
-        padding: 40px 0;
-        background: var(--bg-light);
-    }
-
-    /* 📋 Header Section */
-    .dashboard-header {
-        text-align: center;
-        margin-bottom: 50px;
-    }
-
-    .dashboard-header h1 {
-        font-size: 2.8rem;
-        font-weight: 900;
-        color: var(--text-main);
-        margin-bottom: 15px;
-    }
-
-    .dashboard-header p {
-        color: var(--text-muted);
-        font-size: 1.2rem;
-        font-weight: 500;
-    }
-
-    /* 🏷️ Premium Price Badge */
-    .price-badge {
-        position: absolute;
-        background: rgba(255, 255, 255, 0.98);
-        border: 1px solid var(--border-color);
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-weight: 800;
-        font-size: 14px;
-        color: var(--text-main);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-        transform: translate(-50%, -50%);
-        pointer-events: auto;
-        z-index: 100;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        min-width: 90px;
-        border-bottom: 3px solid var(--primary-color);
-        cursor: pointer;
-        transition: all 0.3s;
-        backdrop-filter: blur(5px);
-    }
-
-    .price-badge:hover {
-        transform: translate(-50%, -60%);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-    }
-
-    .price-badge span {
-        font-size: 11px;
-        color: var(--text-muted);
-        font-weight: 700;
-        margin-bottom: 2px;
-    }
-
-    /* 🗺️ 3D Isometric Map Visuals */
-    .map-section {
-        background: var(--card-bg);
-        padding: 60px;
-        border-radius: 60px;
-        box-shadow: var(--shadow-lg);
-        margin-top: 40px;
-        position: relative;
-        text-align: center;
-        border: 1px solid #f1f5f9;
-        overflow: hidden;
-        perspective: 1000px;
-    }
-
-    .map-container {
-        max-width: 650px;
-        margin: 30px auto;
-        position: relative;
-        min-height: 850px;
-        background: radial-gradient(circle, #f1f5f9 0%, rgba(255, 255, 255, 0) 75%),
-        url("{% static 'mainwindow/images/korea_map.png' %}") no-repeat center;
-        background-size: contain;
-        transform: rotateX(15deg);
-        filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.1));
-    }
-
-    /* 📊 Data Visualization Cards */
-    .chart-card {
-        background: var(--card-bg);
-        padding: 40px;
-        border-radius: 40px;
-        border: 1px solid #f1f5f9;
-        box-shadow: var(--shadow-md);
-        height: 100%;
-    }
-
-    .unit-tag {
-        font-size: 0.85rem;
-        background: #eff6ff;
-        color: #3b82f6;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-weight: 700;
-        margin-left: 10px;
-    }
-
-    /* 📑 Refined Table Styling */
-    .market-table-section {
-        margin-top: 60px;
-        background: var(--card-bg);
-        padding: 45px;
-        border-radius: 40px;
-        box-shadow: var(--shadow-md);
-    }
-
-    .market-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-    }
-
-    .market-table th {
-        padding: 25px;
-        color: var(--text-muted);
-        font-weight: 700;
-        border-bottom: 2px solid #f1f5f9;
-        text-align: left;
-    }
-
-    .market-table td {
-        padding: 25px;
-        vertical-align: middle;
-        border-bottom: 1px solid #f8fafc;
-        transition: background 0.2s;
-    }
-
-    .market-table tr:hover td {
-        background: #f8fafc;
-    }
-
-    /* 🟦 Advanced Progress Bar */
-    .pg-wrap {
-        height: 12px;
-        border-radius: 6px;
-        width: 140px;
-        background: #f1f5f9;
-        overflow: hidden;
-    }
-
-    .pg-fill {
-        height: 100%;
-        border-radius: 6px;
-        background: linear-gradient(to right, var(--primary-color), #3b82f6);
-        transition: width 1s ease-in-out;
-        width: var(--pg-width, 0%);
-    }
-
-    /* 🏷️ Status Tags */
-    .status-tag {
-        padding: 10px 18px;
-        border-radius: 16px;
-        font-weight: 900;
-        font-size: 0.95rem;
-    }
-
-    .status-up {
-        background: #fff1f2;
-        color: #e11d48;
-    }
-
-    .status-normal {
-        background: #f5f3ff;
-        color: #6d28d9;
-    }
-
-    /* 🔽 Select Box Styling */
-    .select-wrap {
-        max-width: 500px;
-        margin: 0 auto 50px;
-    }
-
-    .premium-select {
-        padding: 20px 35px;
-        border-radius: 25px;
-        border: 2px solid #f1f5f9;
-        font-weight: 800;
-        width: 100%;
-        font-size: 1.2rem;
-        appearance: none;
-        background: #fff url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2364748b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>') no-repeat right 25px center;
-        background-size: 20px;
-        box-shadow: var(--shadow-sm);
-        cursor: pointer;
-    }
-
-    /* ✨ Animations */
-    .fade-in {
-        animation: fadeIn 0.8s ease-out forwards;
-        opacity: 0;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-</style>
+<link rel="stylesheet" href="{% static 'mainwindow/css/market_trends.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="trends-dashboard container">
+
+    <!-- 헤더 -->
     <div class="dashboard-header fade-in">
-        <h1>📊 부동산 <span style="color: var(--primary-color);">시장 동향</span> 대시보드</h1>
+        <div class="dashboard-eyebrow">REAL ESTATE MARKET</div>
+        <h1>부동산 <span class="gradient-word">시장 동향</span> 대시보드</h1>
         <p>전국 주요 거점의 실시간 시세와 주거 데이터를 3D 입체 지도로 한눈에 확인하세요.</p>
     </div>
 
-    <!-- 📍 분석 지역 선택 -->
+    <!-- 지역 선택 셀렉트 -->
     <div class="select-wrap fade-in">
-        <select id="sidoSelector" onchange="window.location.href='?region=' + this.value" class="premium-select">
+        <select id="sidoSelector"
+                onchange="window.location.href='?region=' + this.value"
+                class="premium-select">
             <option value="all">전국 주요 거점 통합 지도</option>
             {% for code, name in region_kor_map.items %}
-            {% if code != 'all' %}
-            <option value="{{ code }}" {% if selected_region == code %}selected{% endif %}>{{ name }}</option>
-            {% endif %}
+                {% if code != 'all' %}
+                <option value="{{ code }}"
+                    {% if selected_region == code %}selected{% endif %}>{{ name }}</option>
+                {% endif %}
             {% endfor %}
         </select>
     </div>
 
     {% if show_map %}
+    <!-- 전국 지도 뷰 -->
     <div class="map-section fade-in">
-        <h3 style="margin-bottom: 60px; font-weight: 900; color: var(--text-main); font-size: 1.8rem;">🏢 시도별 아파트 평균 매매
-            거래가 대시보드</h3>
-        <div class="map-container" id="mapContainer">
+        <h3>🏢 시도별 아파트 평균 매매 거래가 대시보드</h3>
+        <div class="map-container" id="mapContainer"
+            style='background-image: url("{% static 'mainwindow/images/korea_map.png' %}");'>
             <div id="mapBadges"></div>
         </div>
     </div>
+
     {% else %}
-    <!-- 📈 Regional Analytical Detail View -->
-    <div class="row g-4" style="margin-top: 30px;">
+    <!-- 지역별 상세 차트 뷰 -->
+    <div class="row g-4" style="margin-top: 32px;">
         <div class="col-md-6">
             <div class="chart-card fade-in">
-                <h3>📈 <span style="color: var(--primary-color);">{{ selected_region_kor }}</span> 평균가 추이 <span
-                        class="unit-tag">단위: 억</span></h3>
-                <div style="height: 420px; margin-top:30px;"><canvas id="priceChart"></canvas></div>
+                <h3>
+                    📈 <span style="background: var(--mt-gradient); -webkit-background-clip: text;
+                        background-clip: text; -webkit-text-fill-color: transparent;">
+                        {{ selected_region_kor }}</span> 평균가 추이
+                    <span class="unit-tag">단위: 억</span>
+                </h3>
+                <div style="height: 400px; margin-top: 28px;">
+                    <canvas id="priceChart"></canvas>
+                </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="chart-card fade-in" style="animation-delay: 0.1s;">
-                <h3>📊 경쟁률 현황 <span class="unit-tag">단위: :1</span></h3>
-                <div style="height: 420px; margin-top:30px;"><canvas id="competitionChart"></canvas></div>
+                <h3>
+                    📊 경쟁률 현황
+                    <span class="unit-tag">단위: :1</span>
+                </h3>
+                <div style="height: 400px; margin-top: 28px;">
+                    <canvas id="competitionChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
     {% endif %}
 
-    <!-- 📑 Detailed Data Table -->
+    <!-- 상세 분석 테이블 -->
     <div class="market-table-section fade-in">
-        <h3 style="font-weight:900; margin-bottom: 40px;"><i class="fas fa-list-ul"
-                style="color: var(--primary-color); margin-right:15px;"></i> {{ selected_region_kor }} 상세 분석 지표</h3>
+        <h3>
+            <i class="fas fa-list-ul"></i>
+            {{ selected_region_kor }} 상세 분석 지표
+        </h3>
         <table class="market-table table">
             <thead>
-                <tr style="color: var(--text-muted); font-weight: 700;">
+                <tr>
                     <th>행정구역명</th>
                     <th>평균 매매가</th>
                     <th>청약 경쟁률</th>
@@ -295,12 +89,13 @@
             <tbody>
                 {% for item in market_data_list %}
                 <tr>
-                    <td style="font-weight:900; font-size:1.2rem; color: var(--text-main);">{{ item.region }}</td>
-                    <td><strong style="font-size: 1.4rem; color: #3b82f6;">{{ item.avg_price }}억</strong></td>
-                    <td style="font-weight: 800; color: #475569;">{{ item.avg_competition }}:1</td>
+                    <td>{{ item.region }}</td>
+                    <td><strong>{{ item.avg_price }}억</strong></td>
+                    <td>{{ item.avg_competition }}:1</td>
                     <td>
                         <div class="pg-wrap">
-                            <div class="pg-fill" style="--pg-width: {{ item.avg_score|default:0 }}%;"></div>
+                            <div class="pg-fill"
+                                 style="--pg-width: {{ item.avg_score|default:0 }}%;"></div>
                         </div>
                     </td>
                     <td>
@@ -315,93 +110,18 @@
             </tbody>
         </table>
     </div>
+
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
-    // 🧠 Context Data Extraction
-    const chartData = JSON.parse('{{ chart_data_json|safe }}');
+    const chartData  = JSON.parse('{{ chart_data_json|safe }}');
     const marketData = JSON.parse('{{ market_data_list_json|safe }}' || '[]');
-    const isMapMode = '{{ show_map }}' === 'True';
-
-
-    const MARKER_POSITIONS = {
-        'Seoul': { x: 37, y: 25 }, 'Gyeonggi': { x: 44, y: 31 }, 'Incheon': { x: 24, y: 25 },
-        'Gangwon': { x: 68, y: 22 }, 'Sejong': { x: 44, y: 38 }, 'Daejeon': { x: 48, y: 48 },
-        'Chungnam': { x: 30, y: 42 }, 'Chungbuk': { x: 62, y: 38 }, 'Busan': { x: 84, y: 75 },
-        'Daegu': { x: 74, y: 55 }, 'Ulsan': { x: 88, y: 60 }, 'Gyeongbuk': { x: 78, y: 42 },
-        'Gyeongnam': { x: 65, y: 75 }, 'Jeonbuk': { x: 40, y: 60 }, 'Jeonnam': { x: 28, y: 80 },
-        'Gwangju': { x: 38, y: 70 }, 'Jeju': { x: 44, y: 92 }
-    };
-
-    document.addEventListener('DOMContentLoaded', () => {
-        if (isMapMode) initMarkerMap();
-        else initCharts();
-    });
-
-
-    function initMarkerMap() {
-        const container = document.getElementById('mapBadges');
-        if (!container) return;
-
-        marketData.forEach(item => {
-            const pos = MARKER_POSITIONS[item.internal_name];
-            if (pos) {
-                const badge = document.createElement('div');
-                badge.className = 'price-badge';
-                badge.style.left = `${pos.x}%`;
-                badge.style.top = `${pos.y}%`;
-                badge.onclick = () => { window.location.href = `?region=${item.internal_name}`; };
-                badge.innerHTML = `<span>${item.region}</span>${item.avg_price.toFixed(1)}억`;
-                container.appendChild(badge);
-            }
-        });
-    }
-
-    /** 📊 Initialize Regional Analytical Charts */
-    function initCharts() {
-        const pEl = document.getElementById('priceChart');
-        const cEl = document.getElementById('competitionChart');
-        if (!pEl || !cEl) return;
-
-        // Price Trend Chart
-        new Chart(pEl.getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: chartData.labels,
-                datasets: [{
-                    label: '가격(억)', data: chartData.prices, borderColor: '#6366f1',
-                    backgroundColor: 'rgba(99, 102, 241, 0.1)', fill: true,
-                    tension: 0.4, borderWidth: 4, pointRadius: 6, pointBackgroundColor: '#fff'
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { grid: { borderDash: [5, 5], color: '#f1f5f9' }, ticks: { font: { weight: 'bold' } } },
-                    x: { grid: { display: false } }
-                }
-            }
-        });
-
-        // Competition Bar Chart
-        new Chart(cEl.getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: chartData.labels,
-                datasets: [{
-                    label: '경쟁률', data: chartData.competition, backgroundColor: '#10b981', borderRadius: 8
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: { y: { grid: { display: false } }, x: { grid: { display: false } } }
-            }
-        });
-    }
+    const isMapMode  = '{{ show_map }}' === 'True';
 </script>
+
+<script src="{% static 'mainwindow/js/market_trends.js' %}"></script>
 {% endblock %}
