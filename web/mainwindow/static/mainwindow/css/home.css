@@ -1554,3 +1554,25 @@
     transform: translateY(-2px) !important;
     box-shadow: 0 8px 20px rgba(15, 23, 42, 0.25) !important;
 }
+
+.card-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 7px 16px !important;
+    background: rgba(99, 102, 241, 0.08) !important;
+    color: #6366f1 !important;
+    border: 1.5px solid rgba(99, 102, 241, 0.2) !important;
+    border-radius: 999px !important;   /* ← 여기서 둥글기 조절 */
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+    transition: all 0.2s !important;
+}
+.card-link:hover {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+    color: #fff !important;
+    border-color: transparent !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.28) !important;
+}

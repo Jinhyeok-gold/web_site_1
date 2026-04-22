@@ -151,14 +151,14 @@
 .mr-edit-active .mr-bento-stat { outline-color:rgba(255,255,255,.3) !important; }
 .mr-edit-active .mr-bento-stat:hover { outline-color:rgba(255,255,255,.6) !important; }
 
-/* Bento 레이블 — 흰색으로 가독성 확보 */
+/* Bento 레이블 */
 .mr-bento-label {
   font-size: 16px;
   font-weight: 700;
   letter-spacing: .12em;
   text-transform: uppercase;
   font-family: var(--mono);
-  color: #f5f5f5;   /* ← 흰색 계열, 충분한 대비 */
+  color: #f5f5f5;
   margin-bottom: 10px;
 }
 
@@ -201,7 +201,7 @@
 .mr-gauge-svg {
   width: 140px;
   height: 140px;
-  transform: rotate(-90deg);   /* 12시 방향에서 시작 */
+  transform: rotate(-90deg);
 }
 .mr-gauge-track {
   fill: none;
@@ -211,7 +211,7 @@
 }
 .mr-gauge-fill {
   fill: none;
-  stroke: var(--prime-teal);   /* 민트 포인트 */
+  stroke: var(--prime-teal);
   stroke-width: 10;
   stroke-linecap: round;
   transition: stroke-dasharray .05s ease;
@@ -222,7 +222,6 @@
   align-items: baseline;
   gap: 3px;
 }
-/* 게이지 안 수치 크기 조정 */
 .mr-gauge-bento .mr-bento-num { font-size: 48px; letter-spacing: -2px; }
 .mr-gauge-bento .mr-bento-unit { font-size: 14px; margin-bottom: 6px; }
 
@@ -235,7 +234,6 @@
   text-transform:uppercase; font-family:var(--mono);
   color:var(--ink-4); margin-bottom:12px;
 }
-/* 레이더 페이드인 */
 .mr-bento-radar canvas {
   animation: radarFadeIn .8s ease both;
 }
@@ -265,9 +263,9 @@
 }
 .mr-cards-container .policy-card-modern:hover { transform:translateY(-4px) !important; box-shadow:0 0 0 3px rgba(91,94,244,.08), 0 8px 32px rgba(0,0,0,.08) !important; border-color:var(--violet) !important; }
 
-/* 1순위 배지 — 카드 내부 왼쪽 정렬 */
+/* 1순위 배지 */
 .mr-cards-container .card-badge {
-  position: static !important;    /* absolute 해제 */
+  position: static !important;
   display: inline-flex !important;
   align-items: center !important;
   margin-bottom: 10px !important;
@@ -282,19 +280,9 @@
 .mr-cards-container .top-match h4 { color:#fff !important; }
 .mr-cards-container .top-match .org-name { color:var(--prime-accent) !important; opacity:.7; }
 .mr-cards-container .top-match .card-summary { color:rgba(255,255,255,.6) !important; }
-.mr-cards-container .top-match .rate { color:var(--prime-teal) !important; }
-.mr-cards-container .top-match .card-score { font-family:var(--mono) !important; font-size:11px !important; color:var(--prime-teal) !important; background:rgba(94,234,212,.15) !important; border-radius:4px !important; padding:3px 8px !important; }
-.mr-cards-container .top-match .card-badge { background:var(--prime-teal) !important; color:#0d2c29 !important; font-size:10px !important; font-weight:800 !important; border-radius:var(--r-pill) !important; padding:4px 12px !important; }
-.mr-cards-container .top-match .card-link { background:rgba(165,180,252,.12) !important; border:1px solid rgba(165,180,252,.25) !important; color:var(--prime-accent) !important; border-radius:var(--r-lg) !important; }
-.mr-cards-container .top-match .card-link:hover { background:rgba(165,180,252,.22) !important; color:#fff !important; }
-
-/* 추천 배지 */
-.mr-cards-container .policy-card-modern:not(.top-match) .card-badge { background:var(--card-3) !important; color:var(--violet) !important; border:1px solid rgba(91,94,244,.2) !important; font-size:10px !important; font-weight:700 !important; border-radius:var(--r-pill) !important; padding:4px 10px !important; }
-.mr-cards-container .policy-card-modern:not(.top-match) .card-score { font-family:var(--mono) !important; font-size:11px !important; color:var(--violet) !important; background:var(--violet-pale) !important; border-radius:4px !important; padding:3px 8px !important; }
-.mr-cards-container .policy-card-modern:not(.top-match) h4 { font-size:15px !important; font-weight:700 !important; color:var(--ink) !important; letter-spacing:-.3px !important; line-height:1.35 !important; }
-.mr-cards-container .org-name { font-size:12px !important; font-weight:500 !important; }
-.mr-cards-container .policy-card-modern:not(.top-match) .card-link { background:var(--card-2) !important; border:1.5px solid var(--line) !important; color:var(--ink-2) !important; border-radius:var(--r-lg) !important; font-size:12px !important; font-weight:600 !important; transition:all .14s !important; }
-.mr-cards-container .policy-card-modern:not(.top-match) .card-link:hover { background:var(--violet) !important; border-color:var(--violet) !important; color:#fff !important; }
+.mr-cards-container .top-match .card-link { color:var(--prime-teal) !important; }
+.mr-cards-container .top-match .card-score { background:rgba(255,255,255,.1) !important; color:var(--prime-accent) !important; }
+.mr-cards-container .top-match .card-badge { background:var(--prime-teal) !important; color:var(--prime-bg) !important; }
 
 /* 카드 개수 */
 .mr-cards-2 .result-cards-row { grid-template-columns:repeat(2, 1fr) !important; }
@@ -306,25 +294,61 @@
 /* =========================================================
    리캡 모달
    ========================================================= */
-.recap-modal-overlay { position:fixed; inset:0; background:rgba(5,5,18,.8); z-index:9000; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(8px); }
+.recap-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(5,5,18,.8);
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+}
 .recap-modal-overlay.hidden { display:none; }
-.recap-modal-inner { position:relative; width:420px; height:85vh; border-radius:26px; overflow:hidden; box-shadow:0 40px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.06); }
+
+.recap-modal-inner {
+  position: relative;
+  width: 800px;
+  height: 85vh;
+  border-radius: 26px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.06);
+}
+
+/*
+ * 핵심: 모달 안의 #view-recap은 recap.css에서 position:fixed로 선언되어 있어
+ * 모달 밖으로 탈출하려 함. 여기서 relative로 덮어써서 modal-inner 안에 가둠.
+ * 면접 포인트: CSS 특이성(specificity)을 활용한 컨텍스트별 position 오버라이드
+ */
+.recap-modal-inner #view-recap {
+  position: relative !important;
+  inset: auto !important;
+  top: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: auto !important;
+}
+
+.recap-modal-inner .recap-shell {
+  height: 100% !important;
+}
+
+/* 닫기 버튼 — modal-inner 기준 우상단에 absolute로 고정 */
 .recap-modal-close {
-    position: fixed;
-    top: 20px;
-    right: calc(50% - 210px - 48px);  /* 모달 width(420px) 절반 + 여백 */
-    z-index: 9200;
-    background: rgba(255,255,255,.12);
-    border: 1px solid rgba(255,255,255,.18);
-    color: #fff;
-    border-radius: var(--r-pill);
-    padding: 6px 14px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 600;
-    backdrop-filter: blur(12px);
-    font-family: var(--font);
-    transition: background .14s;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 9200;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.18);
+  color: #fff;
+  border-radius: var(--r-pill);
+  padding: 6px 14px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  backdrop-filter: blur(12px);
+  font-family: var(--font);
+  transition: background .14s;
 }
 .recap-modal-close:hover { background: rgba(255,255,255,.22); }
 
@@ -339,7 +363,7 @@
 .mr-resize-preview { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--prime-bg); color:var(--prime-accent); font-size:12px; font-weight:700; padding:8px 20px; border-radius:var(--r-pill); pointer-events:none; z-index:20; white-space:nowrap; box-shadow:0 4px 16px rgba(30,27,75,.3); font-family:var(--mono); letter-spacing:.06em; }
 
 /* =========================================================
-   수출(Export) 섹션 및 인쇄 테마 (v26 Optimization)
+   수출(Export) 섹션 및 인쇄 테마
    ========================================================= */
 .mr-export-header { margin-top:60px; text-align:center; padding-bottom:56px; }
 .mr-export-divider { height:1px; background:linear-gradient(to right, transparent, var(--line-2), transparent); margin-bottom:48px; }
@@ -348,7 +372,7 @@
   display:inline-flex; align-items:center; gap:10px; padding:16px 32px;
   background:var(--card); border:1.5px solid var(--line-2); border-radius:var(--r-lg);
   font-size:15px; font-weight:700; color:var(--ink-2); cursor:pointer;
-  transition:all .16s ease; box-shadow:var(--shadow-sm); font-family:var(--font);
+  transition:all .16s ease; font-family:var(--font);
 }
 .mr-btn-export:hover { border-color:var(--violet); color:#fff; background:var(--violet); transform:translateY(-2px); box-shadow:0 8px 24px rgba(91,94,244,0.12); }
 .btn-pdf-save { background:var(--ink); color:#fff; border-color:var(--ink); }
@@ -364,7 +388,6 @@
   body { background: #fff !important; background-image: none !important; }
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 }
-
 
 /* =========================================================
    유틸
