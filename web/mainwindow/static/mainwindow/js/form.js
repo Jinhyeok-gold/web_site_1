@@ -33,10 +33,113 @@ function setView(viewId) {
     });
     document.getElementById(`view-${viewId}`)?.classList.remove('hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // result 뷰 진입 시 차트 애니메이션 재트리거
+    // 면접 포인트: hidden 상태에서 Chart.js가 캔버스 크기를 0으로 인식하므로
+    // view 전환 직후에 차트를 재생성해야 정상 애니메이션이 작동함
+    if (viewId === 'result') {
+        setTimeout(() => {
+            triggerChartAnimations();
+        }, 100);
+    }
   };
 
   if (!document.startViewTransition) { doSwitch(); return; }
+  document.documentElement.dataset.vtDir = 'forward';
   document.startViewTransition(doSwitch);
+}
+
+/**
+ * result 뷰 진입 시 게이지/레이더 애니메이션 실행
+ * - 게이지: 초기 렌더는 animation:false로 확대 효과 없이,
+ *   update() 시에만 duration을 부여해서 차오르는 효과만 남김
+ * - 레이더: hidden 해제 후 새로 생성해야 캔버스 크기가 정상 인식됨
+ */
+function triggerChartAnimations() {
+    const targetScore  = activeCharts._targetScore;
+    const targetLabels = activeCharts._targetLabels;
+    const targetData   = activeCharts._targetData;
+    if (targetScore === undefined || !targetLabels || !targetData) return;
+
+    // ── 게이지: 차오르는 애니메이션 ──
+    const gaugeCtx = document.getElementById('scoreGaugeCanvas');
+    if (gaugeCtx && activeCharts.gauge) {
+        activeCharts.gauge.destroy();
+    }
+    if (gaugeCtx) {
+        // 1) 0으로 즉시 그리기 (animation 없이)
+        activeCharts.gauge = new Chart(gaugeCtx.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [0, 100],
+                    backgroundColor: ['#6366f1', '#f1f5f9'],
+                    borderWidth: 0,
+                    circumference: 270,
+                    rotation: 225,
+                    cutout: '85%',
+                    borderRadius: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { tooltip: { enabled: false }, legend: { display: false } },
+                animation: { duration: 0 }  // false 대신 duration:0 — update()는 별도 설정 가능
+            }
+        });
+
+        // 2) 실제 값으로 업데이트 — 여기서 duration 지정하면 animation 살아있음
+        setTimeout(() => {
+            activeCharts.gauge.options.animation = { duration: 1800, easing: 'easeOutQuart' };
+            activeCharts.gauge.data.datasets[0].data = [targetScore, 100 - targetScore];
+            activeCharts.gauge.update();
+            animateNumber('gauge-score-val', 0, targetScore, 1800);
+        }, 50);
+    }
+
+    // ── 레이더: hidden 해제 후 새로 생성 ──
+    const radarCtx = document.getElementById('radarChartCanvas');
+    if (radarCtx) {
+        if (activeCharts.radar) activeCharts.radar.destroy();
+
+        // 0으로 시작해서 실제 값으로 차오르는 효과
+        activeCharts.radar = new Chart(radarCtx.getContext('2d'), {
+            type: 'radar',
+            data: {
+                labels: targetLabels,
+                datasets: [{
+                    label: '추천 적합도',
+                    data: targetLabels.map(() => 0),  // 0에서 시작
+                    backgroundColor: 'rgba(99, 102, 241, 0.15)',
+                    borderColor: '#6366f1',
+                    pointBackgroundColor: '#6366f1',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: { display: false },
+                        grid: { color: '#f1f5f9' },
+                        pointLabels: { font: { size: 12, weight: 'bold' } }
+                    }
+                },
+                plugins: { legend: { display: false } },
+                animation: { duration: 1600, easing: 'easeOutQuart' }
+            }
+        });
+
+        // 실제 값으로 업데이트 → 레이더 펼쳐지는 효과
+        setTimeout(() => {
+            activeCharts.radar.data.datasets[0].data = targetData;
+            activeCharts.radar.update();
+        }, 80);
+    }
 }
 
 function nextStep(step, dir = 'forward') {
@@ -55,10 +158,7 @@ function nextStep(step, dir = 'forward') {
       ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  // View Transitions 지원 여부 체크 → 폴백 안전
   if (!document.startViewTransition) { doSwitch(); return; }
-
-  // 방향 힌트를 data 속성으로 넘겨 CSS가 읽을 수 있게
   document.documentElement.dataset.vtDir = dir;
   document.startViewTransition(doSwitch);
 }
@@ -77,7 +177,6 @@ function updateSubRegions() {
         });
     }
     
-    // Manually trigger has-value check for sub-region
     if(window.updateHasValue) {
         window.updateHasValue(subSelect);
     }
@@ -87,7 +186,6 @@ async function handleMatch() {
     console.log("Starting precision diagnostic matching...");
     setView('matching');
     
-    // [STABILITY] Helper for safe data collection
     const getVal = (id, fallback = 0) => {
         const el = document.getElementById(id);
         if(!el) {
@@ -106,7 +204,6 @@ async function handleMatch() {
         return el.checked;
     };
 
-    // Collect all detailed fields
     const userData = {
         age: parseInt(getVal('inp-age', 29)),
         region: getVal('inp-region', 'Seoul'),
@@ -125,7 +222,6 @@ async function handleMatch() {
         low_income: false
     };
     currentUserData = userData;
-    console.log("Diagnostic Data Collected:", userData);
 
     try {
         const res = await fetch('/chatbot/api/policies/', {
@@ -144,14 +240,12 @@ async function handleMatch() {
         }
         
         const data = await res.json();
-        console.log("Matching Engine Results Received:", data);
         if (data.error) throw new Error(data.error);
         
         currentReport = data.report;
         
-        // Reset container and render
         const container = document.getElementById('matching-results-container');
-        if (container) container.innerHTML = ""; 
+        if (container) container.innerHTML = "";
         
         renderResults();
         await fetchAIReport(userData, data.report);
@@ -178,7 +272,6 @@ function renderResults() {
     
     let html = '';
     
-    // Category 1: Housing
     html += `<div class="category-section">
         <h3 class="category-title">🏠 맞춤형 주거 정책</h3>
         <p class="category-reason">${housing.reason}</p>
@@ -188,7 +281,6 @@ function renderResults() {
         </div>
     </div>`;
 
-    // Category 2: Finance
     html += `<div class="category-section">
         <h3 class="category-title">💰 금융 및 대출 지원</h3>
         <p class="category-reason">${finance.reason}</p>
@@ -198,7 +290,6 @@ function renderResults() {
         </div>
     </div>`;
 
-    // Category 3: Welfare
     html += `<div class="category-section">
         <h3 class="category-title">🎁 맞춤 복지 및 혜택</h3>
         <p class="category-reason">${welfare.reason}</p>
@@ -237,88 +328,36 @@ function renderPolicyCard(p, type, isTop = false) {
     `;
 }
 
+/**
+ * 차트 목표값만 activeCharts에 저장
+ * 실제 렌더링은 setView('result') 시점의 triggerChartAnimations()에서 담당
+ * 면접 포인트: hidden 캔버스에 Chart.js를 그리면 크기가 0으로 잡혀
+ * 애니메이션이 작동하지 않으므로, 뷰 전환 후 재생성하는 패턴을 사용
+ */
 function renderVisuals(chart_data, sim) {
     const radarData = chart_data.radar;
-    const matchingScore = Math.round((radarData["주거"] + radarData["금융"] + radarData["복지"]) / 3);
+    const radarVals = Object.values(radarData).filter(v => typeof v === 'number');
+    const matchingScore = radarVals.length
+        ? Math.round(radarVals.reduce((a, b) => a + b, 0) / radarVals.length)
+        : 0;
 
-    // 1. Overall Matching Gauge (Doughnut)
-    const gaugeCtx = document.getElementById('scoreGaugeCanvas').getContext('2d');
-    
-    // [STABILITY] Destroy existing chart instance
-    if (activeCharts.gauge) activeCharts.gauge.destroy();
-    
-    activeCharts.gauge = new Chart(gaugeCtx, {
-        type: 'doughnut',
-        data: {
-            datasets: [{
-                data: [matchingScore, 100 - matchingScore],
-                backgroundColor: ['#6366f1', '#f1f5f9'],
-                borderWidth: 0,
-                circumference: 270,
-                rotation: 225,
-                cutout: '85%',
-                borderRadius: 10
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { tooltip: { enabled: false }, legend: { display: false } },
-            animation: { duration: 2000, easing: 'easeOutQuart' }
-        }
-    });
-    
-    // Animate the score number
-    animateNumber('gauge-score-val', 0, matchingScore, 2000);
+    // 목표값 저장 (triggerChartAnimations에서 사용)
+    activeCharts._targetScore  = matchingScore;
+    activeCharts._targetLabels = Object.keys(radarData);
+    activeCharts._targetData   = Object.values(radarData);
 
-    // 2. Financial Simulation Restore
-    const simLimitEl = document.getElementById('sim-limit-val');
-    const simInterestEl = document.getElementById('sim-interest-val');
-    if (simLimitEl && sim) {
+    // 금융 시뮬레이션 수치 카운트업
+    if (document.getElementById('sim-limit-val') && sim) {
         animateNumber('sim-limit-val', 0, sim.max_limit, 1500);
     }
-    if (simInterestEl && sim) {
+    if (document.getElementById('sim-interest-val') && sim) {
         animateNumber('sim-interest-val', 0, sim.monthly_interest, 1500);
     }
-
-    // 3. Policy Suitability Radar Chart
-    const radarCtx = document.getElementById('radarChartCanvas').getContext('2d');
-    
-    // [STABILITY] Destroy existing chart instance
-    if (activeCharts.radar) activeCharts.radar.destroy();
-    
-    activeCharts.radar = new Chart(radarCtx, {
-        type: 'radar',
-        data: {
-            labels: Object.keys(radarData),
-            datasets: [{
-                label: '추천 적합도',
-                data: Object.values(radarData),
-                backgroundColor: 'rgba(99, 102, 241, 0.2)',
-                borderColor: '#6366f1',
-                pointBackgroundColor: '#6366f1',
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                r: {
-                    beginAtZero: true,
-                    max: 100,
-                    ticks: { display: false },
-                    grid: { color: '#f1f5f9' },
-                    pointLabels: { font: { size: 12, weight: 'bold' } }
-                }
-            },
-            plugins: { legend: { display: false } }
-        }
-    });
 }
 
 function animateNumber(id, start, end, duration) {
     const obj = document.getElementById(id);
+    if (!obj) return;
     let startTimestamp = null;
     const step = (timestamp) => {
         if (!startTimestamp) startTimestamp = timestamp;
@@ -340,7 +379,6 @@ async function fetchAIReport(userData, reportData) {
             body: JSON.stringify({ user_data: userData, report_data: reportData })
         });
         const data = await res.json();
-        // Modernized text injection
         box.innerHTML = `<div class="report-wrapper fade-in">
             <div class="ai-avatar"><i class="fas fa-robot"></i> Expert Analyst</div>
             <p class="report-paragraph">${data.report.replace(/\n/g, '<br/>')}</p>
@@ -351,7 +389,6 @@ async function fetchAIReport(userData, reportData) {
 }
 
 async function sendEmailToUser() {
-    console.log("Attempting to send report via email...");
     const btn = document.querySelector('.btn-email-user');
     if (!btn) return;
     const originalHtml = btn.innerHTML;
@@ -363,7 +400,6 @@ async function sendEmailToUser() {
         const targetElement = document.getElementById('view-result');
         const canvas = await html2canvas(targetElement, { scale: 1, useCORS: true });
         
-        // jsPDF 객체 생성 및 이미지 추가 (PNG 대신 JPEG로 압축률 상승)
         const imgData = canvas.toDataURL('image/jpeg', 0.7);
         const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
         const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -389,7 +425,6 @@ async function sendEmailToUser() {
             btn.style.background = '#059669';
             btn.style.borderColor = '#059669';
         } else {
-            // 서버에서 보낸 구체적인 에러 메시지 활용
             const errorMsg = data.error || "알 수 없는 오류가 발생했습니다.";
             throw new Error(errorMsg);
         }
@@ -405,7 +440,6 @@ async function sendEmailToUser() {
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Form Wizard Monitoring System Initialized.");
     
-    // Floating labels helper: Add 'has-value' class when input/select is not empty
     const inputs = document.querySelectorAll('.form-input, .form-select');
     window.updateHasValue = (el) => {
         if (el.value && el.value !== "") {
@@ -416,13 +450,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     inputs.forEach(el => {
-        // Initial check
         window.updateHasValue(el);
-        
-        // Listener for changes
         el.addEventListener('input', () => window.updateHasValue(el));
         el.addEventListener('change', () => window.updateHasValue(el));
-        // Add focus/blur listeners for extra reactivity
         el.addEventListener('focus', () => el.classList.add('is-focused'));
         el.addEventListener('blur', () => el.classList.remove('is-focused'));
     });
@@ -432,7 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Chatbot 모듈 [v22 Advanced Integration]
+// Chatbot 모듈
 function toggleChatbot() { document.getElementById('chatbot-modal').classList.toggle('hidden'); }
 
 async function handleChatSubmit(e) {
@@ -453,18 +483,10 @@ async function handleChatSubmit(e) {
         const data = await response.json();
         
         let text = data.reply;
-        
-        // 🎯 [ID:...] 태그 모두 찾기 (지원: 중복 카드)
         const idMatches = [...text.matchAll(/\[ID:([\w-]+)\]/g)];
-        
-        // 태그들을 제거한 본문 텍스트 추출
         let cleanText = text;
         idMatches.forEach(m => { cleanText = cleanText.replace(m[0], ''); });
-        
-        // 본문 먼저 출력
         appendChat('bot', cleanText.trim());
-        
-        // 발견된 모든 상품 카드 순차적으로 렌더링
         for (const match of idMatches) {
             await appendProductCardToChat(match[1]);
         }
@@ -476,7 +498,6 @@ async function handleChatSubmit(e) {
 async function appendProductCardToChat(productId) {
     const box = document.getElementById('chat-messages');
     
-    // 로딩 인디케이터
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'chat-bubble chat-bot loading-card';
     loadingDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 맞춤 정책 정보를 불러오는 중...';
@@ -487,7 +508,6 @@ async function appendProductCardToChat(productId) {
         const res = await fetch(`/chatbot/api/product-detail/?id=${productId}`);
         const data = await res.json();
         if(loadingDiv.parentNode) box.removeChild(loadingDiv);
-        
         if (data.error) throw new Error(data.error);
 
         const cardDiv = document.createElement('div');
@@ -503,7 +523,6 @@ async function appendProductCardToChat(productId) {
         box.appendChild(cardDiv);
     } catch (e) {
         if(loadingDiv.parentNode) box.removeChild(loadingDiv);
-        // 에러 시 로그만 남기고 지나감 (이미 본문이 출력되었으므로)
         console.warn("Card render failed for ID:", productId);
     }
     box.scrollTop = box.scrollHeight;
@@ -515,7 +534,6 @@ function appendChat(role, text) {
     const div = document.createElement('div');
     div.className = `chat-bubble chat-${role}`;
     
-    // [[BUTTON:TYPE|LABEL]] 모두 처리
     let cleanText = text;
     const btnMatches = [...text.matchAll(/\[\[BUTTON:([\w_]+)\|([^\]]+)\]\]/g)];
     let buttonsHtml = '';
