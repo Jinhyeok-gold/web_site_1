@@ -13,6 +13,8 @@
     /* =============================================
        토큰 — 마이리포트와 동일
        ============================================= */
+    html { overflow: hidden !important; }
+
     :root {
       --ink: #0d0d18; --ink-2: #2d2d45; --ink-3: #6e6e8a; --ink-4: #a6a6c0;
       --paper: #f2f2f7; --card: #ffffff; --card-2: #f7f7fb; --card-3: #eeeefc;
@@ -32,7 +34,7 @@
       background: var(--paper);
       display: flex;
       height: 100vh;
-      width: 100vw;
+      width: 100%;
       color: var(--ink);
       overflow: hidden;
       flex-direction: row !important;
@@ -49,6 +51,7 @@
       flex-direction: column;
       padding: 28px 20px;
       overflow-y: auto;
+      overflow-x: hidden;
       position: relative;
     }
     /* 사이드바 배경 장식 */
@@ -356,6 +359,7 @@
       .chat-history { padding: 16px 20px; }
       .chat-footer { padding: 14px 20px; }
     }
+
     </style>
 </head>
 <body>
